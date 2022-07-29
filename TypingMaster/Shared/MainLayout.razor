@@ -2,18 +2,17 @@
 
 <PageTitle>@Constants.AppFriendlyName</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
+<Layout>
+    <LayoutHeader>
         <NavMenu/>
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+    </LayoutHeader>
+    <LayoutContent>
+        @Body
+    </LayoutContent>
+    <LayoutFooter TextAlignment="TextAlignment.Center">
+        <Text TextColor="TextColor.Secondary" TextAlignment="TextAlignment.Center">
+            <Divider TextColor="TextColor.Secondary"/>
+            Copyright © @DateTime.Today.Year KorTym
+        </Text>
+    </LayoutFooter>
+</Layout>

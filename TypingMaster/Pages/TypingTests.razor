@@ -1,0 +1,71 @@
+﻿@page "/TypingTests"
+@using System.Diagnostics
+@inject IMessageService MessageService
+
+<PageTitle>Testy Pisania</PageTitle>
+
+<Fields>
+    <Field>
+        <FieldLabel></FieldLabel>
+        <Heading Size="HeadingSize.Is5">Wybierz długość testu</Heading>
+        <RadioGroup TValue="TypingTestType" Name="types" Color="Color.Light" Buttons @bind-CheckedValue="_typingTestType">
+            <Radio Value="@TypingTestType.Minimalistic">Minimalistyczny</Radio>
+            <Radio Value="@TypingTestType.Short">Krótki</Radio>
+            <Radio Value="@TypingTestType.Average">Średni</Radio>
+            <Radio Value="@TypingTestType.Long">Długi</Radio>
+            <Radio Value="@TypingTestType.Verylong">Bardzo długi</Radio>
+        </RadioGroup>
+        <FieldHelp>
+            <Text TextColor="TextColor.Danger">
+                Uwaga!
+            </Text>
+            <Text TextColor="TextColor.Secondary">
+                Długość testu wpływa na jego poziom trudności
+            </Text>
+        </FieldHelp>
+    </Field>
+</Fields>
+
+
+<TextEdit @ref="_sourceRef" ReadOnly Disabled @bind-Text="_sourceText"></TextEdit>
+<TextEdit @ref="_destinationRef" Placeholder="Tekst docelowy..." Text="@_destination" TextChanged="@OnDestinationChanged"/>
+<Progress Value="@_progressValue" Animated Striped></Progress>
+
+
+@code {
+
+    private int _progressValue;
+    private TextEdit _sourceRef;
+    private TextEdit _destinationRef;
+    private TypingTestType _typingTestType = TypingTestType.Average;
+    private string _sourceText = "Ala ma kota";
+    private string _destination = string.Empty;
+
+    private Stopwatch _stopWatch = new();  
+
+    private Task OnDestinationChanged(string value)
+    {
+        if(!_stopWatch.IsRunning)
+            _stopWatch.Start();
+
+        if (_sourceText.StartsWith(value))
+        {
+            _destination = value;
+            _progressValue = _destination.Length * 100 / _sourceText.Length;
+        }
+
+        if (_sourceText.Equals(_destination))
+        {
+            _stopWatch.Stop();
+            _destinationRef.ReadOnly = true;
+            _sourceRef.TextColor = TextColor.Success;
+            MessageService.Info( $"Wpisałeś poprawnie teskt w czasie: {_stopWatch.Elapsed}", "Gratulacje!");
+            _stopWatch.Reset();
+            return Task.CompletedTask;
+        }
+
+        _sourceRef.TextColor = TextColor.Danger;
+        return Task.CompletedTask;
+    }
+
+}
