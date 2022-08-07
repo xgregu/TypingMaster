@@ -24,8 +24,13 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
 		<PackageReference Include="NLog" Version="5.0.1" />
 		<PackageReference Include="NLog.Web.AspNetCore" Version="5.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\TypingTest.Domain\TypingTest.Domain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

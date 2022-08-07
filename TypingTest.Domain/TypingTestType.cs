@@ -1,4 +1,4 @@
-﻿namespace TypingMaster;
+﻿namespace TypingTest.Domain;
 
 public enum TypingTestType
 {

@@ -1,0 +1,58 @@
+﻿@inject IMessageService MessageService
+
+<Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default">
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>Test</ModalTitle>
+        </ModalHeader>
+        <ModalBody>
+            <TextEdit ReadOnly Disabled Text="@_test.TextToRewritten" Class="my-2"></TextEdit>
+            <TextEdit Placeholder="Zacznij pisać aby rozpocząć test..." Text="@_test.CurrentText" TextChanged="@OnDestinationChanged" Class="my-2"/>
+            <Divider DividerType="DividerType.TextContent" Text="Postęp" />
+            <Progress Value="@_test.CompletionPercentage" Animated Striped></Progress>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@Reset" Disabled="!_test.IsStarted">Rozpocznij od nowa</Button>
+            <Button Color="Color.Secondary" Clicked="@Hide">Zakończ test</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    
+    private Modal _modalRef;
+    private bool _cancelClose;
+
+    private Test _test = Test.EmptyTest();
+
+    public Task Show(TypingTestType testType, string testText)
+    {
+        _test = Test.InitializeTest(testType, testText);
+        _cancelClose = true;
+        _modalRef?.Show();
+        return Task.CompletedTask;
+    }
+
+    public Task Hide()
+    {
+        _cancelClose = false;
+        _modalRef?.Hide();
+        return Task.CompletedTask;
+    }
+
+    private Task Reset()
+    {
+        _test = Test.InitializeTest(_test.TestType, _test.TextToRewritten);
+        return Task.CompletedTask;
+    }
+
+    private async Task OnDestinationChanged(string value)
+    {
+        _test.AppendNewChar(value[^1]);
+
+        if (!_test.IsComplete)
+            return;
+
+        await MessageService.Info($"Wpisałeś poprawnie teskt w czasie: {_test.CompletionTime}", "Gratulacje!");
+    }
+}

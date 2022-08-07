@@ -1,8 +1,7 @@
 ﻿@page "/TypingTests"
-@using System.Diagnostics
-@inject IMessageService MessageService
+@inject IOptions<TypingTest> Options
 
-<PageTitle>Testy Pisania</PageTitle>
+<PageTitle>Test</PageTitle>
 
 <Fields>
     <Field>
@@ -25,47 +24,20 @@
         </FieldHelp>
     </Field>
 </Fields>
+<Button Color="Color.Primary" Clicked="@StartTest">StartTest</Button>
 
-
-<TextEdit @ref="_sourceRef" ReadOnly Disabled @bind-Text="_sourceText"></TextEdit>
-<TextEdit @ref="_destinationRef" Placeholder="Tekst docelowy..." Text="@_destination" TextChanged="@OnDestinationChanged"/>
-<Progress Value="@_progressValue" Animated Striped></Progress>
-
+<TestModal @ref="_testModalRef"></TestModal>
 
 @code {
 
-    private int _progressValue;
-    private TextEdit _sourceRef;
-    private TextEdit _destinationRef;
+
     private TypingTestType _typingTestType = TypingTestType.Average;
-    private string _sourceText = "Ala ma kota";
-    private string _destination = string.Empty;
+    private TestModal _testModalRef;
 
-    private Stopwatch _stopWatch = new();  
-
-    private Task OnDestinationChanged(string value)
+    private void StartTest()
     {
-        if(!_stopWatch.IsRunning)
-            _stopWatch.Start();
-
-        if (_sourceText.StartsWith(value))
-        {
-            _destination = value;
-            _progressValue = _destination.Length * 100 / _sourceText.Length;
-        }
-
-        if (_sourceText.Equals(_destination))
-        {
-            _stopWatch.Stop();
-            _destinationRef.ReadOnly = true;
-            _sourceRef.TextColor = TextColor.Success;
-            MessageService.Info( $"Wpisałeś poprawnie teskt w czasie: {_stopWatch.Elapsed}", "Gratulacje!");
-            _stopWatch.Reset();
-            return Task.CompletedTask;
-        }
-
-        _sourceRef.TextColor = TextColor.Danger;
-        return Task.CompletedTask;
+        var text = Options.Value.TypingTestTexts.FirstOrDefault(x => x.Type == _typingTestType)?.Text ?? "ERROR";
+        _testModalRef.Show(_typingTestType, text);
     }
 
 }

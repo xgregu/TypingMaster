@@ -1,8 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
+using TypingTest.Domain;
+using TypingTest.Domain.Models;
+using TypingTest.Domain.Options;
 
 namespace TypingMaster;
 
@@ -32,6 +37,8 @@ public class Startup
             .AddEnvironmentVariables()
             .AddJsonFile("appsettings.json", true, true)
             .Build());
+
+        services.AddOptions<TypingTest.Domain.Options.TypingTest>().Bind(Configuration.GetSection(TypingTest.Domain.Options.TypingTest.SectionKey));
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
