@@ -1,5 +1,6 @@
 ﻿@inject IMessageService MessageService
 @inject ITestService TestService
+@inject INotificationService NotificationService
 
 <Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default">
     <ModalContent Centered="true">
@@ -7,9 +8,9 @@
             <ModalTitle>Test</ModalTitle>
         </ModalHeader>
         <ModalBody>
-            <TextEdit ReadOnly Disabled Text="@_test.TextToRewritten" Class="my-2"></TextEdit>
-            <TextEdit Placeholder="Zacznij pisać aby rozpocząć test..." Text="@_test.CurrentText" TextChanged="@OnDestinationChanged" Class="my-2"/>
-            <Divider DividerType="DividerType.TextContent" Text="Postęp" />
+            <Paragraph Class="my-2">@_test.TextToRewritten</Paragraph>
+            <MemoEdit TextColor="@_currentTextColor" Placeholder="Zacznij pisać aby rozpocząć test..." Text="@_test.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
+            <Divider DividerType="DividerType.TextContent" Text="Postęp"/>
             <Progress Value="@_test.CompletionPercentage" Animated Striped></Progress>
         </ModalBody>
         <ModalFooter>
@@ -23,6 +24,8 @@
     
     private Modal _modalRef;
     private bool _cancelClose;
+    private TextColor _currentTextColor = TextColor.Default;
+
 
     private Test _test = Test.EmptyTest();
 
@@ -49,12 +52,13 @@
 
     private async Task OnDestinationChanged(string value)
     {
-        _test.AppendNewChar(value[^1]);
+        var isCorrect = _test.UpdateCurrentText(value);
+        _currentTextColor = isCorrect ? TextColor.Default : TextColor.Danger;
 
         if (!_test.IsComplete)
             return;
-        var statistic = TestService.GetTestStatistic(_test);
 
+        var statistic = TestService.GetTestStatistic(_test);
         var statisticText = $"Czas trwania - {statistic.CompletionTime}. Kliknięć na sekunde - {statistic.ClickPerSecond}. Skuteczność - {statistic.EffectivenessPercentage}%. Błędów - {statistic.Mistakes}";
         await MessageService.Info($"Statystki testu: \n\n{statisticText}","Gratulacje!");
     }
