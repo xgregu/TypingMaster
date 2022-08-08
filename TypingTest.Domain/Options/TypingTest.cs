@@ -1,6 +1,6 @@
-﻿using TypingTest.Domain.Models;
+﻿using TypingMaster.Domain.Models;
 
-namespace TypingTest.Domain.Options;
+namespace TypingMaster.Domain.Options;
 
 public class TypingTest
 {

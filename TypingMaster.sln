@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster", "TypingMaster\TypingMaster.csproj", "{A8216A2D-9420-4B82-BC6D-BA065E5F8237}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingTest.Domain", "TypingTest.Domain\TypingTest.Domain.csproj", "{826298B4-DBB5-4F17-AC4F-ED63209AB38A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster.Domain", "TypingTest.Domain\TypingMaster.Domain.csproj", "{826298B4-DBB5-4F17-AC4F-ED63209AB38A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

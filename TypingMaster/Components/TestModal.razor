@@ -1,4 +1,5 @@
 ﻿@inject IMessageService MessageService
+@inject ITestService TestService
 
 <Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default">
     <ModalContent Centered="true">
@@ -52,7 +53,9 @@
 
         if (!_test.IsComplete)
             return;
+        var statistic = TestService.GetTestStatistic(_test);
 
-        await MessageService.Info($"Wpisałeś poprawnie teskt w czasie: {_test.CompletionTime}", "Gratulacje!");
+        var statisticText = $"Czas trwania - {statistic.CompletionTime}. Kliknięć na sekunde - {statistic.ClickPerSecond}. Skuteczność - {statistic.EffectivenessPercentage}%. Błędów - {statistic.Mistakes}";
+        await MessageService.Info($"Statystki testu: \n\n{statisticText}","Gratulacje!");
     }
 }

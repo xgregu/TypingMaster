@@ -5,9 +5,8 @@ using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
-using TypingTest.Domain;
-using TypingTest.Domain.Models;
-using TypingTest.Domain.Options;
+using TypingMaster.Domain;
+using TypingMaster.Domain.Options;
 
 namespace TypingMaster;
 
@@ -38,7 +37,9 @@ public class Startup
             .AddJsonFile("appsettings.json", true, true)
             .Build());
 
-        services.AddOptions<TypingTest.Domain.Options.TypingTest>().Bind(Configuration.GetSection(TypingTest.Domain.Options.TypingTest.SectionKey));
+        services.AddOptions<TypingTest>().Bind(Configuration.GetSection(TypingTest.SectionKey));
+
+        services.AddTransient<ITestService, TestService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
