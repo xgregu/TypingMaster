@@ -2,17 +2,19 @@
 
 public class Test
 {
-    private Test(TypingTestType testType, string textToRewritten, bool isInitialized)
+    private Test(TypingTestType testType, string textToRewritten, bool isInitialized, string executorName)
     {
         Id = Guid.NewGuid();
         TestType = testType;
         TextToRewritten = textToRewritten;
         IsInitialized = isInitialized;
+        ExecutorName = executorName;
     }
 
     public Guid Id { get; }
     public TypingTestType TestType { get; }
     public string TextToRewritten { get; }
+    public string ExecutorName { get; }
     public string CurrentText { get; private set; }
     public bool IsInitialized { get; }
     public bool IsStarted => !string.IsNullOrWhiteSpace(CurrentText);
@@ -26,12 +28,12 @@ public class Test
 
     public static Test EmptyTest()
     {
-        return new Test(TypingTestType.Minimalistic, string.Empty, false);
+        return new Test(TypingTestType.Minimalistic, string.Empty, false, string.Empty);
     }
 
-    public static Test InitializeTest(TypingTestType testType, string text)
+    public static Test InitializeTest(TypingTestType testType, string text, string executorName)
     {
-        return new Test(testType, text, true);
+        return new Test(testType, text, true, executorName);
     }
 
     public bool UpdateCurrentText(string newText)
@@ -63,7 +65,7 @@ public class Test
             EndTime = DateTime.Now;
         }
 
-        if(newTextIsCorrect)
+        if (newTextIsCorrect)
             CompletionPercentage = CurrentText.Length * 100 / TextToRewritten.Length;
 
         return newTextIsCorrect;

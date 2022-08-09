@@ -21,10 +21,15 @@
 		<PackageReference Include="Blazorise.Components" Version="1.0.6" />
 		<PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.0.6" />
 		<PackageReference Include="Blazorise.Snackbar" Version="1.0.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="NLog.Web.AspNetCore" Version="5.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\TypingMaster.Database\TypingMaster.Database.csproj" />
 	  <ProjectReference Include="..\TypingTest.Domain\TypingMaster.Domain.csproj" />
 	</ItemGroup>
 

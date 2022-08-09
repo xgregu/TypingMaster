@@ -21,7 +21,7 @@ public class TestService : ITestService
         var completionTime = GetCompletionTime(test);
         var testLenght = test.TextToRewritten.Length;
         var mistakes = test.InorrectClicks;
-        
+
         return new TestStatistic(testLenght, effectiveness, clickPerSecond, completionTime, mistakes);
     }
 

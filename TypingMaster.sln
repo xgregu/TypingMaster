@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster", "TypingMaste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster.Domain", "TypingTest.Domain\TypingMaster.Domain.csproj", "{826298B4-DBB5-4F17-AC4F-ED63209AB38A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypingMaster.Database", "TypingMaster.Database\TypingMaster.Database.csproj", "{A86584FD-6888-42B7-8638-C80A953DB063}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{826298B4-DBB5-4F17-AC4F-ED63209AB38A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{826298B4-DBB5-4F17-AC4F-ED63209AB38A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{826298B4-DBB5-4F17-AC4F-ED63209AB38A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A86584FD-6888-42B7-8638-C80A953DB063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A86584FD-6888-42B7-8638-C80A953DB063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A86584FD-6888-42B7-8638-C80A953DB063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A86584FD-6888-42B7-8638-C80A953DB063}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

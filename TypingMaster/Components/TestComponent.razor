@@ -1,6 +1,7 @@
 ﻿@inject IMessageService MessageService
 @inject ITestService TestService
 @inject INotificationService NotificationService
+@inject ITestStore TestStore
 
 <Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default">
     <ModalContent Centered="true">
@@ -19,9 +20,11 @@
         </ModalFooter>
     </ModalContent>
 </Modal>
+<PleaseWaitPopup @ref="_pleaseWaitPopupRef"></PleaseWaitPopup>
 
 @code {
-    
+
+    private PleaseWaitPopup _pleaseWaitPopupRef;
     private Modal _modalRef;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
@@ -29,9 +32,9 @@
 
     private Test _test = Test.EmptyTest();
 
-    public Task Show(TypingTestType testType, string testText)
+    public Task Show(TypingTestType testType, string testText, string executorName)
     {
-        _test = Test.InitializeTest(testType, testText);
+        _test = Test.InitializeTest(testType, testText, executorName);
         _cancelClose = true;
         _modalRef?.Show();
         return Task.CompletedTask;
@@ -46,7 +49,7 @@
 
     private Task Reset()
     {
-        _test = Test.InitializeTest(_test.TestType, _test.TextToRewritten);
+        _test = Test.InitializeTest(_test.TestType, _test.TextToRewritten, _test.ExecutorName);
         return Task.CompletedTask;
     }
 
@@ -58,8 +61,15 @@
         if (!_test.IsComplete)
             return;
 
+        await _pleaseWaitPopupRef.Show();
+        var addTestTask = TestStore.Add(_test);
+        Task.WaitAll(addTestTask, Task.Delay(2000));
+        await _pleaseWaitPopupRef.Hide();
+
+
         var statistic = TestService.GetTestStatistic(_test);
         var statisticText = $"Czas trwania - {statistic.CompletionTime}. Kliknięć na sekunde - {statistic.ClickPerSecond}. Skuteczność - {statistic.EffectivenessPercentage}%. Błędów - {statistic.Mistakes}";
-        await MessageService.Info($"Statystki testu: \n\n{statisticText}","Gratulacje!");
+        await MessageService.Info($"Statystki testu: \n\n{statisticText}", "Gratulacje!");
     }
+
 }

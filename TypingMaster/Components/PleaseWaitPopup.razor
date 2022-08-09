@@ -1,0 +1,51 @@
+﻿@inject ILogger<PleaseWaitPopup> Logger
+
+<Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)">
+    <ModalContent Centered="true" Style="border: 0" Shadow="Shadow.Default">
+        <ModalBody Style="background: linear-gradient(to left, #dcdcdc 0%, #f5f5f5 50%, #dcdcdc 100%); border: 0; text-align: center;">
+            <h2 class="m-3">@(_customPleaseWaitText ?? PleaseWaitText)</h2>
+            <div class="m-3">
+                <SpinKit Type="SpinKitType.Fold" Size="3rem" Centered="true"/>
+            </div>
+        </ModalBody>
+    </ModalContent>
+</Modal>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        PleaseWaitText = PleaseWaitText ?? "Proszę czekać...";
+        base.OnInitialized();
+    }
+
+    [Parameter]
+    public string? PleaseWaitText { get; set; }
+
+    private string? _customPleaseWaitText;
+
+    private Modal _modalRef;
+    private bool _cancelClose;
+
+    public async Task Show()
+    {
+        Logger.LogInformation("PleaseWaitPopup show");
+        _cancelClose = true;
+        _modalRef?.Show();
+        await Task.Delay(500);
+    }
+
+    public Task Hide()
+    {
+        Logger.LogInformation("PleaseWaitPopup hide");
+        _cancelClose = false;
+        _modalRef?.Hide();
+        return Task.CompletedTask;
+    }
+
+    public void SetPleaseWaitText(string text)
+    {
+        _customPleaseWaitText = text;
+    }
+
+}

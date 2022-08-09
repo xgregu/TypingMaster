@@ -1,0 +1,63 @@
+﻿@inject IMessageService MessageService
+@inject ITestService TestService
+@inject INotificationService NotificationService
+@inject ITestStore TestStore
+
+<Modal @ref="_modalRef" Shadow="Shadow.Default">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Kim jesteś?</ModalTitle>
+            <CloseButton/>
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Wykonujący test</FieldLabel>
+                <TextEdit Placeholder="Przedstaw się..." @bind-Text="_name"/>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="Cancel">Close</Button>
+            <Button Color="Color.Primary" Clicked="Ok" Disabled="@string.IsNullOrWhiteSpace(_name)">OK</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+
+
+    private Modal _modalRef;
+    private string _name = string.Empty;
+
+
+    private TaskCompletionSource<string> _confirmationTask;
+
+    public async Task<string> ShowAndWaitForResult()
+    {
+        Show();
+        return await _confirmationTask.Task;
+    }
+
+    private void Show()
+    {
+        _confirmationTask = new TaskCompletionSource<string>();
+        _modalRef?.Show();
+    }
+
+    private void Hide()
+    {
+        _modalRef?.Hide();
+    }
+
+    private async Task Ok()
+    {
+        _confirmationTask.SetResult(_name);
+        await _modalRef.Close(CloseReason.None);
+    }
+
+    private async Task Cancel()
+    {
+        _confirmationTask.SetResult(string.Empty);
+        await _modalRef.Close(CloseReason.None);
+    }
+
+}

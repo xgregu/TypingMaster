@@ -1,10 +1,9 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
-using Microsoft.Extensions.Options;
 using NLog.Extensions.Logging;
+using TypingMaster.Database;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Options;
 
@@ -38,6 +37,9 @@ public class Startup
             .Build());
 
         services.AddOptions<TypingTest>().Bind(Configuration.GetSection(TypingTest.SectionKey));
+
+        services.AddDatabase();
+
 
         services.AddTransient<ITestService, TestService>();
     }

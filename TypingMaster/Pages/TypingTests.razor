@@ -26,18 +26,24 @@
 </Fields>
 <Button Color="Color.Primary" Clicked="@StartTest">StartTest</Button>
 
-<TestModal @ref="_testModalRef"></TestModal>
+<TestComponent @ref="_testModalRef"></TestComponent>
+<NameComponent @ref="_nameModalRef"></NameComponent>
 
 @code {
 
 
-    private TypingTestType _typingTestType = TypingTestType.Average;
-    private TestModal _testModalRef;
+    private readonly TypingTestType _typingTestType = TypingTestType.Average;
+    private TestComponent _testModalRef;
+    private NameComponent _nameModalRef;
 
-    private void StartTest()
+    private async Task StartTest()
     {
+        var executorName = await _nameModalRef.ShowAndWaitForResult();
+        if (string.IsNullOrWhiteSpace(executorName))
+            return;
+
         var text = Options.Value.TypingTestTexts.FirstOrDefault(x => x.Type == _typingTestType)?.Text ?? "ERROR";
-        _testModalRef.Show(_typingTestType, text);
+        await _testModalRef.Show(_typingTestType, text, executorName);
     }
 
 }
