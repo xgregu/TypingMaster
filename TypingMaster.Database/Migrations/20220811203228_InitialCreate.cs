@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -17,12 +17,13 @@ namespace TypingMaster.Database.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     TestId = table.Column<Guid>(type: "TEXT", nullable: false),
                     TestType = table.Column<int>(type: "INTEGER", nullable: false),
-                    Text = table.Column<string>(type: "TEXT", nullable: false),
+                    TextToRewritten = table.Column<string>(type: "TEXT", nullable: false),
                     ExecutorName = table.Column<string>(type: "TEXT", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    CorrectClicks = table.Column<int>(type: "INTEGER", nullable: false),
-                    InorrectClicks = table.Column<int>(type: "INTEGER", nullable: false)
+                    TestLenght = table.Column<int>(type: "INTEGER", nullable: false),
+                    EffectivenessPercentage = table.Column<int>(type: "INTEGER", nullable: false),
+                    ClickPerSecond = table.Column<double>(type: "REAL", nullable: false),
+                    CompletionTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
+                    Mistakes = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

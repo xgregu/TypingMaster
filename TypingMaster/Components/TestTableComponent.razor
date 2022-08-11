@@ -1,47 +1,72 @@
-﻿@inject ITestStore TestStore
-<DataGrid @ref="_tableRef" 
-    TItem="TestComplete"
+﻿@inject ILogger<TestTableComponent> Logger
+@inject ITestStore TestStore
+@inject ITestService TestService
+@implements IDisposable
+
+<DataGrid @ref="_tableRef"
+          TItem="Test"
           Data="@_testList"
           ReadData="@OnReadData"
           TotalItems="@_totalTests"
           PageSize="5"
           ShowPager
-          Responsive>
+          Responsive
+          SortMode="DataGridSortMode.Single">
     <DataGridCommandColumn/>
-    <DataGridColumn Field="@nameof(TestComplete.Id)" Caption="#" Sortable="false"/>
-    <DataGridColumn Field="@nameof(TestComplete.TestTypeName)" Caption="Typ" Editable/>
+    <DataGridColumn Field="@nameof(Test.Id)" Caption="#" Sortable="false"/>
+    <DataGridColumn Field="@nameof(Test.TestTypeName)" Caption="Typ" Editable/>
+    <DataGridColumn Field="@nameof(Test.ExecutorName)" Caption="Imię" Editable/>
+    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.TestLenght)}")" Caption="Długość" Editable/>
+    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.Mistakes)}")" Caption="Błędy" Editable/>
+    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.CompletionTime)}")" Caption="Czas" Editable>
+        <DisplayTemplate>
+            @{
+                var completionTime = (context as Test)?.Statistic.CompletionTime;
 
-    <DataGridColumn Field="@nameof(TestComplete.ExecutorName)" Caption="Imię" Editable/>
+                if (completionTime != null)
+                {
+                    @(completionTime.Value.Humanize())
+                }
+            }
+        </DisplayTemplate>
+    </DataGridColumn>
+    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.EffectivenessPercentage)}")" Caption="Skuteczność" Editable/>
+    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.ClickPerSecond)}")" Caption="Kliknięć na sekundę" Editable/>
 </DataGrid>
 
 @code{
-    private IReadOnlyList<TestComplete> _testList;
+
+    [Parameter]
+    public Expression<Func<Test, bool>> TestFilter { get; set; }
+
+    private DataGrid<Test> _tableRef;
+    private IReadOnlyList<Test> _testList;
     private int _totalTests;
-    private DataGrid<TestComplete> _tableRef;
 
-
-    private async Task OnReadData(DataGridReadDataEventArgs<TestComplete> e)
+    protected override void OnInitialized()
     {
-        _testList = await TestStore.GetAllTest();
-        if (!e.CancellationToken.IsCancellationRequested)
-        {
-            var response = e.ReadDataMode switch
-            {
-                DataGridReadDataMode.Virtualize => _testList.Skip(e.VirtualizeOffset).Take(e.VirtualizeCount).ToList(),
-                DataGridReadDataMode.Paging => _testList.Skip((e.Page - 1) * e.PageSize).Take(e.PageSize).ToList(),
-                _ => throw new Exception("Unhandled ReadDataMode")
-                };
-
-            if (!e.CancellationToken.IsCancellationRequested)
-            {
-                _totalTests = _testList.Count;
-                _testList = new List<TestComplete>(response);
-            }
-        }
+        TestStore.TestUpdated += TestStoreOnTestUpdated;
+        base.OnInitialized();
     }
 
-    public async Task Refresh()
+    private async void TestStoreOnTestUpdated(object? sender, Test e)
     {
-        await _tableRef.Refresh();
+        await _tableRef.Reload();
+    }
+
+    private async Task OnReadData(DataGridReadDataEventArgs<Test> e)
+    {
+        if (e.CancellationToken.IsCancellationRequested)
+            return;
+        var sortColumnInfo = e.Columns.FirstOrDefault(x => x.SortDirection != SortDirection.Default);
+        var response = await TestStore.GetTableData(e, TestFilter, sortColumnInfo);
+        
+        _testList = response.TestList;
+        _totalTests = response.TestCount;
+    }
+
+    public void Dispose()
+    {
+        TestStore.TestUpdated -= TestStoreOnTestUpdated;
     }
 }

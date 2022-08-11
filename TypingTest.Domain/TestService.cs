@@ -12,32 +12,42 @@ public class TestService : ITestService
         _logger = logger;
     }
 
-    public TestStatistic GetTestStatistic(Test test)
+    public Test TestInProgressEnd(TestInProgress testInProgress)
     {
-        _logger.LogInformation("Generate statistic - Test: {id}", test.Id);
+        return new Test
+        {
+            Id = Guid.NewGuid(),
+            TestType = testInProgress.Type,
+            TextToRewritten = testInProgress.TextToRewritten,
+            ExecutorName = testInProgress.ExecutorName,
+            Statistic = GetTestStatistic(testInProgress)
+        };
+    }
 
-        var effectiveness = GetEffectiveness(test);
-        var clickPerSecond = GetClickPerSecond(test);
-        var completionTime = GetCompletionTime(test);
-        var testLenght = test.TextToRewritten.Length;
-        var mistakes = test.InorrectClicks;
+    private TestStatistic GetTestStatistic(TestInProgress testInProgress)
+    {
+        var effectiveness = GetEffectiveness(testInProgress);
+        var clickPerSecond = GetClickPerSecond(testInProgress);
+        var completionTime = GetCompletionTime(testInProgress);
+        var testLenght = testInProgress.TextToRewritten.Length;
+        var mistakes = testInProgress.InorrectClicks;
 
         return new TestStatistic(testLenght, effectiveness, clickPerSecond, completionTime, mistakes);
     }
 
-    private double GetClickPerSecond(Test test)
+    private double GetClickPerSecond(TestInProgress test)
     {
         var completionTime = GetCompletionTime(test);
         var clickPerSecond = test.TotalClicks / completionTime.TotalSeconds;
         return Math.Round(clickPerSecond, 0);
     }
 
-    private int GetEffectiveness(Test test)
+    private int GetEffectiveness(TestInProgress test)
     {
         return test.CorrectClicks * 100 / test.TotalClicks;
     }
 
-    private TimeSpan GetCompletionTime(Test test)
+    private TimeSpan GetCompletionTime(TestInProgress test)
     {
         return test.EndTime - test.StartTime;
     }

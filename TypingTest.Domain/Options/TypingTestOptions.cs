@@ -2,8 +2,8 @@
 
 namespace TypingMaster.Domain.Options;
 
-public class TypingTest
+public class TypingTestOptions
 {
     public const string SectionKey = "TypingTest";
-    public TypingTestText[] TypingTestTexts { get; set; }
+    public TypingTestTextOPTIONS[] TypingTestTexts { get; set; }
 }

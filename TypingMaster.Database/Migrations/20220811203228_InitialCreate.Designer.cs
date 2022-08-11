@@ -11,7 +11,7 @@ using TypingMaster.Database;
 namespace TypingMaster.Database.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220809202302_InitialCreate")]
+    [Migration("20220811203228_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,29 +25,32 @@ namespace TypingMaster.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CorrectClicks")
-                        .HasColumnType("INTEGER");
+                    b.Property<double>("ClickPerSecond")
+                        .HasColumnType("REAL");
 
-                    b.Property<DateTime>("EndTime")
+                    b.Property<TimeSpan>("CompletionTime")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("EffectivenessPercentage")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ExecutorName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("InorrectClicks")
+                    b.Property<int>("Mistakes")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("TestId")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("TestLenght")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("TestType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Text")
+                    b.Property<string>("TextToRewritten")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

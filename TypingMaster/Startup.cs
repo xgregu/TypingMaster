@@ -36,7 +36,7 @@ public class Startup
             .AddJsonFile("appsettings.json", true, true)
             .Build());
 
-        services.AddOptions<TypingTest>().Bind(Configuration.GetSection(TypingTest.SectionKey));
+        services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
 
         services.AddDatabase();
 

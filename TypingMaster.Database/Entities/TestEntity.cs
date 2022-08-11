@@ -11,13 +11,15 @@ public class TestEntity
     public int Id { get; set; }
     public Guid TestId { get; set; }
     public TypingTestType TestType { get; set; }
-    public string Text { get; set; }
+    public string TextToRewritten { get; set; }
     public string ExecutorName { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public int CorrectClicks { get; set; }
-    public int InorrectClicks { get; set; }
+    public int TestLenght { get; set; }
+    public int EffectivenessPercentage { get; set; }
+    public double ClickPerSecond { get; set; }
+    public TimeSpan CompletionTime { get; set; }
+    public int Mistakes { get; set; }
 }
+
 internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
 {
     public void Configure(EntityTypeBuilder<TestEntity> builder)
@@ -25,14 +27,16 @@ internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.TestId).IsRequired();
         builder.Property(x => x.TestType).IsRequired();
-        builder.Property(x => x.Text).IsRequired();
+        builder.Property(x => x.TextToRewritten).IsRequired();
         builder.Property(x => x.ExecutorName).IsRequired();
-        builder.Property(x => x.StartTime).IsRequired();
-        builder.Property(x => x.EndTime).IsRequired();
-        builder.Property(x => x.CorrectClicks).IsRequired();
-        builder.Property(x => x.InorrectClicks).IsRequired();
+        builder.Property(x => x.TestLenght).IsRequired();
+        builder.Property(x => x.EffectivenessPercentage).IsRequired();
+        builder.Property(x => x.ClickPerSecond).IsRequired();
+        builder.Property(x => x.CompletionTime).IsRequired();
+        builder.Property(x => x.Mistakes).IsRequired();
     }
 }
+
 internal static class TestEntityExtensions
 {
     public static TestEntity ToEntity(this Test model)
@@ -40,34 +44,33 @@ internal static class TestEntityExtensions
         if (model is null)
             return null;
 
-
         return new TestEntity
         {
             TestId = model.Id,
             TestType = model.TestType,
-            Text = model.TextToRewritten,
+            TextToRewritten = model.TextToRewritten,
             ExecutorName = model.ExecutorName,
-            StartTime = model.StartTime,
-            EndTime = model.EndTime,
-            CorrectClicks = model.CorrectClicks,
-            InorrectClicks = model.InorrectClicks
+            TestLenght = model.Statistic.TestLenght,
+            EffectivenessPercentage = model.Statistic.EffectivenessPercentage,
+            ClickPerSecond = model.Statistic.ClickPerSecond,
+            CompletionTime = model.Statistic.CompletionTime,
+            Mistakes = model.Statistic.Mistakes,
         };
     }
 
-    public static TestComplete ToModel(this TestEntity entity)
+    public static Test ToModel(this TestEntity entity)
     {
-        if (entity is null) return null;
+        if (entity is null)
+            return null;
 
-        return new TestComplete
+        return new Test
         {
             Id = entity.TestId,
-            Text = entity.Text,
-            ExecutorName = entity.ExecutorName,
             TestType = entity.TestType,
-            StartTime = entity.StartTime,
-            EndTime = entity.EndTime,
-            CorrectClicks = entity.CorrectClicks,
-            InorrectClicks = entity.InorrectClicks
+            TextToRewritten = entity.TextToRewritten,
+            ExecutorName = entity.ExecutorName,
+            Statistic = new TestStatistic(entity.TestLenght, entity.EffectivenessPercentage,
+                entity.ClickPerSecond, entity.CompletionTime, entity.Mistakes)
         };
     }
 }

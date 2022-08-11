@@ -1,9 +1,7 @@
 ﻿@page "/TypingTests"
-@inject IOptions<TypingTest> Options
-@inject ITestStore TestStore
+@inject IOptions<TypingTestOptions> Options
 
 <PageTitle>Test</PageTitle>
-
 <Fields>
     <Field>
         <FieldLabel></FieldLabel>
@@ -29,13 +27,13 @@
 <TestTableComponent @ref="_testTableComponent"></TestTableComponent>
 
 
-<TestComponent @ref="_testModalRef" OnTestCompleted="async () => await _testTableComponent.Refresh()"></TestComponent>
+<TestComponent @ref="_testModalRef"></TestComponent>
 <NameComponent @ref="_nameModalRef"></NameComponent>
 
 @code {
 
-    private List<TestComplete> _completeTestList;
     private TypingTestType _typingTestType = TypingTestType.Average;
+
     private TestComponent _testModalRef;
     private NameComponent _nameModalRef;
     private TestTableComponent _testTableComponent;
@@ -50,5 +48,4 @@
         var text = Options.Value.TypingTestTexts.FirstOrDefault(x => x.Type == _typingTestType)?.Text ?? "ERROR";
         await _testModalRef.Show(_typingTestType, text, executorName);
     }
-
 }
