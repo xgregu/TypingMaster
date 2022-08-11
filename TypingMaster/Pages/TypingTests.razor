@@ -1,5 +1,6 @@
 ﻿@page "/TypingTests"
 @inject IOptions<TypingTest> Options
+@inject ITestStore TestStore
 
 <PageTitle>Test</PageTitle>
 
@@ -25,16 +26,20 @@
     </Field>
 </Fields>
 <Button Color="Color.Primary" Clicked="@StartTest">StartTest</Button>
+<TestTableComponent @ref="_testTableComponent"></TestTableComponent>
 
-<TestComponent @ref="_testModalRef"></TestComponent>
+
+<TestComponent @ref="_testModalRef" OnTestCompleted="async () => await _testTableComponent.Refresh()"></TestComponent>
 <NameComponent @ref="_nameModalRef"></NameComponent>
 
 @code {
 
-
-    private readonly TypingTestType _typingTestType = TypingTestType.Average;
+    private List<TestComplete> _completeTestList;
+    private TypingTestType _typingTestType = TypingTestType.Average;
     private TestComponent _testModalRef;
     private NameComponent _nameModalRef;
+    private TestTableComponent _testTableComponent;
+
 
     private async Task StartTest()
     {

@@ -28,7 +28,7 @@
     private Modal _modalRef;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
-
+    [Parameter] public EventCallback OnTestCompleted { get; set; }
 
     private Test _test = Test.EmptyTest();
 
@@ -64,6 +64,7 @@
         await _pleaseWaitPopupRef.Show();
         var addTestTask = TestStore.Add(_test);
         Task.WaitAll(addTestTask, Task.Delay(2000));
+        await OnTestCompleted.InvokeAsync();
         await _pleaseWaitPopupRef.Hide();
 
 

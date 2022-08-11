@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster", "TypingMaste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster.Domain", "TypingTest.Domain\TypingMaster.Domain.csproj", "{826298B4-DBB5-4F17-AC4F-ED63209AB38A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypingMaster.Database", "TypingMaster.Database\TypingMaster.Database.csproj", "{A86584FD-6888-42B7-8638-C80A953DB063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster.Database", "TypingMaster.Database\TypingMaster.Database.csproj", "{A86584FD-6888-42B7-8638-C80A953DB063}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
