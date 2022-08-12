@@ -10,7 +10,7 @@ public class TestInProgress
     }
 
     public string TextToRewritten { get; }
-    public TypingTestType  Type { get;  }
+    public TypingTestType Type { get; }
     public string ExecutorName { get; }
     public string CurrentText { get; private set; }
     public int CompletionPercentage { get; private set; }

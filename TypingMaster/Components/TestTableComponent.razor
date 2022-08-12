@@ -9,11 +9,12 @@
           ReadData="@OnReadData"
           TotalItems="@_totalTests"
           PageSize="5"
+          RowStyling="@OnRowStyling"
           ShowPager
           Responsive
-          SortMode="DataGridSortMode.Single">
+          Sortable="false">
     <DataGridCommandColumn/>
-    <DataGridColumn Field="@nameof(Test.Id)" Caption="#" Sortable="false"/>
+    <DataGridColumn Field="@nameof(Test.TestDate)" Caption="Data"/>
     <DataGridColumn Field="@nameof(Test.TestTypeName)" Caption="Typ" Editable/>
     <DataGridColumn Field="@nameof(Test.ExecutorName)" Caption="Imię" Editable/>
     <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.TestLenght)}")" Caption="Długość" Editable/>
@@ -37,7 +38,7 @@
 @code{
 
     [Parameter]
-    public Expression<Func<Test, bool>> TestFilter { get; set; }
+    public Expression<Func<Test, bool>>? TestFilter { get; set; }
 
     private DataGrid<Test> _tableRef;
     private IReadOnlyList<Test> _testList;
@@ -60,9 +61,26 @@
             return;
         var sortColumnInfo = e.Columns.FirstOrDefault(x => x.SortDirection != SortDirection.Default);
         var response = await TestStore.GetTableData(e, TestFilter, sortColumnInfo);
-        
+
         _testList = response.TestList;
         _totalTests = response.TestCount;
+    }
+
+    private void OnRowStyling(Test test, DataGridRowStyling styling)
+    {
+        switch (test.Statistic.EffectivenessPercentage)
+        {
+            case >= 75:
+                styling.Style = "color: green;";
+                return;
+            case >= 30:
+                styling.Style = "color: orange;";
+                return;
+            default:
+                styling.Style = "color: red;";
+                break;
+        }
+        ;
     }
 
     public void Dispose()

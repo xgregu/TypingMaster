@@ -9,5 +9,6 @@ public class Test
     public string TestTypeName => TestType.Humanize();
     public string TextToRewritten { get; init; }
     public string ExecutorName { get; init; }
+    public DateTime TestDate { get; init; }
     public TestStatistic Statistic { get; init; }
 }

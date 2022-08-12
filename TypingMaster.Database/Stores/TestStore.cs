@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Blazorise.DataGrid;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
-using Blazorise;
-using Blazorise.DataGrid;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using TypingMaster.Database.Entities;
 using TypingMaster.Domain.Models;
 
@@ -39,24 +37,6 @@ public class TestStore : ITestStore
 
         var queryable = GetQuerableTests(context, predicate);
         var querableCount = queryable.Count();
-
-
-        /*if (sortColumnInfo is not null)
-        {
-            var propertyInfo = typeof(Test).GetProperty(sortColumnInfo.Field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            var propertyInfo2 = typeof(TestStatistic).GetProperty(sortColumnInfo.Field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            switch (sortColumnInfo.SortDirection)
-            {
-                case SortDirection.Default:
-                    break;
-                case SortDirection.Ascending:
-                    queryable = queryable.OrderBy(x => propertyInfo.GetValue(x, null));
-                    break;
-                case SortDirection.Descending:
-                    queryable = queryable.OrderByDescending(x => x.GetType().GetProperty(sortColumnInfo.Field));
-                    break;
-            }
-        }*/
 
         if (dataArgs.CancellationToken.IsCancellationRequested)
             return new TestTableDataResponse(queryable.ToList(), querableCount);
@@ -91,27 +71,5 @@ public class TestStore : ITestStore
             .AsQueryable();
 
         return predicate == null ? tests : tests.Where(predicate);
-    }
-}
-
-public static class IQueryableExtensions
-{
-    public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, string propertyName)
-    {
-        return source.OrderBy(ToLambda<T>(propertyName));
-    }
-
-    public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> source, string propertyName)
-    {
-        return source.OrderByDescending(ToLambda<T>(propertyName));
-    }
-
-    private static Expression<Func<T, object>> ToLambda<T>(string propertyName)
-    {
-        var parameter = Expression.Parameter(typeof(T));
-        var property = Expression.Property(parameter, propertyName);
-        var propAsObject = Expression.Convert(property, typeof(object));
-
-        return Expression.Lambda<Func<T, object>>(propAsObject, parameter);
     }
 }

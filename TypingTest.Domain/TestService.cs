@@ -20,7 +20,8 @@ public class TestService : ITestService
             TestType = testInProgress.Type,
             TextToRewritten = testInProgress.TextToRewritten,
             ExecutorName = testInProgress.ExecutorName,
-            Statistic = GetTestStatistic(testInProgress)
+            Statistic = GetTestStatistic(testInProgress),
+            TestDate = DateTime.Now
         };
     }
 

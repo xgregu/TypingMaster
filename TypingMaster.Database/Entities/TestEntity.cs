@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Models;
 
@@ -18,6 +18,7 @@ public class TestEntity
     public double ClickPerSecond { get; set; }
     public TimeSpan CompletionTime { get; set; }
     public int Mistakes { get; set; }
+    public DateTime TestDate { get; set; }
 }
 
 internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
@@ -34,6 +35,7 @@ internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
         builder.Property(x => x.ClickPerSecond).IsRequired();
         builder.Property(x => x.CompletionTime).IsRequired();
         builder.Property(x => x.Mistakes).IsRequired();
+        builder.Property(x => x.TestDate).IsRequired();
     }
 }
 
@@ -55,6 +57,7 @@ internal static class TestEntityExtensions
             ClickPerSecond = model.Statistic.ClickPerSecond,
             CompletionTime = model.Statistic.CompletionTime,
             Mistakes = model.Statistic.Mistakes,
+            TestDate = model.TestDate,
         };
     }
 
@@ -70,7 +73,8 @@ internal static class TestEntityExtensions
             TextToRewritten = entity.TextToRewritten,
             ExecutorName = entity.ExecutorName,
             Statistic = new TestStatistic(entity.TestLenght, entity.EffectivenessPercentage,
-                entity.ClickPerSecond, entity.CompletionTime, entity.Mistakes)
+                entity.ClickPerSecond, entity.CompletionTime, entity.Mistakes),
+            TestDate = entity.TestDate
         };
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Blazorise.DataGrid;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Blazorise.DataGrid;
 using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Database.Stores;

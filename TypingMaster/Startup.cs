@@ -1,8 +1,8 @@
-﻿using System.Text.Json.Serialization;
-using Blazorise;
+﻿using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using NLog.Extensions.Logging;
+using System.Text.Json.Serialization;
 using TypingMaster.Database;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Options;
