@@ -4,44 +4,60 @@
 @implements IDisposable
 
 <DataGrid @ref="_tableRef"
-          TItem="Test"
+          TItem="TestTableModel"
           Data="@_testList"
           ReadData="@OnReadData"
           TotalItems="@_totalTests"
-          PageSize="5"
-          RowStyling="@OnRowStyling"
           ShowPager
           Responsive
-          Sortable="false">
-    <DataGridCommandColumn/>
-    <DataGridColumn Field="@nameof(Test.TestDate)" Caption="Data"/>
-    <DataGridColumn Field="@nameof(Test.TestTypeName)" Caption="Typ" Editable/>
-    <DataGridColumn Field="@nameof(Test.ExecutorName)" Caption="Imię" Editable/>
-    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.TestLenght)}")" Caption="Długość" Editable/>
-    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.Mistakes)}")" Caption="Błędy" Editable/>
-    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.CompletionTime)}")" Caption="Czas" Editable>
-        <DisplayTemplate>
-            @{
-                var completionTime = (context as Test)?.Statistic.CompletionTime;
+          Sortable="false"
+          Filterable="false">
+    <DataGridColumns>
+        <DataGridCommandColumn/>
+        <DataGridColumn Field="@nameof(TestTableModel.TestDate)" Caption="Data">
+            <DisplayTemplate>
+                @{
+                    var dateTime = (context as TestTableModel)?.TestDate;
 
-                if (completionTime != null)
-                {
-                    @(completionTime.Value.Humanize())
+                    if (dateTime != null)
+                    {
+                        @(dateTime.Value.ToString("dd.MM.yyyy HH:mm"))
+                    }
                 }
-            }
-        </DisplayTemplate>
-    </DataGridColumn>
-    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.EffectivenessPercentage)}")" Caption="Skuteczność" Editable/>
-    <DataGridColumn Field="@($"{nameof(Test.Statistic)}.{nameof(Test.Statistic.ClickPerSecond)}")" Caption="Kliknięć na sekundę" Editable/>
+            </DisplayTemplate>
+        </DataGridColumn>
+        <DataGridColumn Field="@nameof(TestTableModel.TestTypeName)" Caption="Typ" Editable/>
+        <DataGridColumn Field="@nameof(TestTableModel.ExecutorName)" Caption="Imię" Editable/>
+        <DataGridColumn Field="@nameof(TestTableModel.TestLenght)" Caption="Długość" Editable/>
+        <DataGridColumn Field="@nameof(TestTableModel.Mistakes)" Caption="Błędy" Editable/>
+        <DataGridColumn Field="@nameof(TestTableModel.CompletionTime)" Caption="Czas" Editable>
+            <DisplayTemplate>
+                @{
+                    var completionTime = (context as TestTableModel)?.CompletionTime;
+
+                    if (completionTime != null)
+                    {
+                        @(completionTime.Value.Humanize())
+                    }
+                }
+            </DisplayTemplate>
+        </DataGridColumn>
+        <DataGridColumn Field="@nameof(TestTableModel.EffectivenessPercentage)" Caption="Skuteczność" Editable/>
+        <DataGridColumn Field="@nameof(TestTableModel.ClickPerSecond)" Caption="Kliknięć na sekundę" Editable/>
+        <DataGridColumn Field="@nameof(TestTableModel.OverallRating)" Caption="Ogólna ocena" Editable/>
+    </DataGridColumns>
+    <EmptyTemplate>
+        <Paragraph>Brak testów</Paragraph>
+    </EmptyTemplate>
+    <LoadingTemplate>
+        <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
+    </LoadingTemplate>
 </DataGrid>
 
 @code{
 
-    [Parameter]
-    public Expression<Func<Test, bool>>? TestFilter { get; set; }
-
-    private DataGrid<Test> _tableRef;
-    private IReadOnlyList<Test> _testList;
+    private DataGrid<TestTableModel> _tableRef;
+    private IReadOnlyList<TestTableModel> _testList;
     private int _totalTests;
 
     protected override void OnInitialized()
@@ -55,36 +71,44 @@
         await _tableRef.Reload();
     }
 
-    private async Task OnReadData(DataGridReadDataEventArgs<Test> e)
+    private async Task OnReadData(DataGridReadDataEventArgs<TestTableModel> e)
     {
         if (e.CancellationToken.IsCancellationRequested)
             return;
-        var sortColumnInfo = e.Columns.FirstOrDefault(x => x.SortDirection != SortDirection.Default);
-        var response = await TestStore.GetTableData(e, TestFilter, sortColumnInfo);
 
-        _testList = response.TestList;
-        _totalTests = response.TestCount;
-    }
+        var skip = (e.Page - 1) * e.PageSize;
+        var take = e.PageSize;
 
-    private void OnRowStyling(Test test, DataGridRowStyling styling)
-    {
-        switch (test.Statistic.EffectivenessPercentage)
+        var response = await TestStore.GetTableData(skip, take);
+
+        _testList = response.TestList.Select(x =>
         {
-            case >= 75:
-                styling.Style = "color: green;";
-                return;
-            case >= 30:
-                styling.Style = "color: orange;";
-                return;
-            default:
-                styling.Style = "color: red;";
-                break;
-        }
-        ;
+            var testStatistic = TestService.GetTestStatistic(x);
+            return new TestTableModel
+            {  
+                TestType = x.TestType,
+                TextToRewritten = x.TextToRewritten,
+                ExecutorName = x.ExecutorName,
+                TestDate = x.TestDate,
+                InorrectClicks = x.InorrectClicks,
+                TotalClicks = x.TotalClicks,
+                StartTime = x.StartTime,
+                EndTime = x.EndTime,
+                TestLenght = testStatistic.TestLenght,
+                EffectivenessPercentage = testStatistic.EffectivenessPercentage,
+                ClickPerSecond = testStatistic.ClickPerSecond,
+                CompletionTime = testStatistic.CompletionTime,
+                Mistakes = testStatistic.Mistakes,
+                OverallRating = testStatistic.OverallRating
+            };
+        }).ToList();
+
+        _totalTests = response.TestCount;
     }
 
     public void Dispose()
     {
         TestStore.TestUpdated -= TestStoreOnTestUpdated;
     }
+
 }

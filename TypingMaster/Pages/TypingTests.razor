@@ -4,8 +4,7 @@
 <PageTitle>Test</PageTitle>
 <Fields>
     <Field>
-        <FieldLabel></FieldLabel>
-        <Heading Size="HeadingSize.Is5">Wybierz długość testu</Heading>
+        <Heading Size="HeadingSize.Is5">Wybierz długość testu.</Heading>
         <RadioGroup TValue="TypingTestType" Name="types" Color="Color.Light" Buttons @bind-CheckedValue="_typingTestType">
             <Radio Value="@TypingTestType.Minimalistic">Minimalistyczny</Radio>
             <Radio Value="@TypingTestType.Short">Krótki</Radio>
@@ -24,28 +23,29 @@
     </Field>
 </Fields>
 <Button Color="Color.Primary" Clicked="@StartTest">StartTest</Button>
-<TestTableComponent @ref="_testTableComponent"></TestTableComponent>
-
+<TestTableComponent @ref="_testTableComponent" ></TestTableComponent>
 
 <TestComponent @ref="_testModalRef"></TestComponent>
-<NameComponent @ref="_nameModalRef"></NameComponent>
 
 @code {
 
     private TypingTestType _typingTestType = TypingTestType.Average;
 
     private TestComponent _testModalRef;
-    private NameComponent _nameModalRef;
     private TestTableComponent _testTableComponent;
+    private TypingTestTextOptions[] _typingTestTexts;
 
+    protected override Task OnInitializedAsync()
+    {
+        _typingTestTexts = Options.Value.TypingTestTexts;
+        return base.OnInitializedAsync();
+    }
 
     private async Task StartTest()
     {
-        var executorName = await _nameModalRef.ShowAndWaitForResult();
-        if (string.IsNullOrWhiteSpace(executorName))
-            return;
-
-        var text = Options.Value.TypingTestTexts.FirstOrDefault(x => x.Type == _typingTestType)?.Text ?? "ERROR";
-        await _testModalRef.Show(_typingTestType, text, executorName);
+        var text = GetTypiingTestText(_typingTestType);
+        await _testModalRef.Show(_typingTestType, text);
     }
+
+    private string GetTypiingTestText(TypingTestType type) => _typingTestTexts.FirstOrDefault(x => x.Type == type)?.Text ?? "ERROR";
 }

@@ -12,43 +12,62 @@ public class TestService : ITestService
         _logger = logger;
     }
 
-    public Test TestInProgressEnd(TestInProgress testInProgress)
+    public Test TestInProgressEnd(TestInProgress testInProgress, string executorName)
     {
         return new Test
         {
             Id = Guid.NewGuid(),
             TestType = testInProgress.Type,
             TextToRewritten = testInProgress.TextToRewritten,
-            ExecutorName = testInProgress.ExecutorName,
-            Statistic = GetTestStatistic(testInProgress),
-            TestDate = DateTime.Now
+            ExecutorName = executorName,
+            TestDate = DateTime.Now,
+            TotalClicks = testInProgress.TotalClicks,
+            EndTime = testInProgress.EndTime,
+            StartTime = testInProgress.StartTime,
+            InorrectClicks = testInProgress.InorrectClicks
         };
     }
 
-    private TestStatistic GetTestStatistic(TestInProgress testInProgress)
+    public TestStatistic GetTestStatistic(Test test)
     {
-        var effectiveness = GetEffectiveness(testInProgress);
-        var clickPerSecond = GetClickPerSecond(testInProgress);
-        var completionTime = GetCompletionTime(testInProgress);
-        var testLenght = testInProgress.TextToRewritten.Length;
-        var mistakes = testInProgress.InorrectClicks;
-
-        return new TestStatistic(testLenght, effectiveness, clickPerSecond, completionTime, mistakes);
+        var effectiveness = GetEffectiveness(test);
+        var clickPerSecond = GetClickPerSecond(test);
+        var completionTime = GetCompletionTime(test);
+        var testLenght = test.TextToRewritten.Length;
+        var mistakes = test.InorrectClicks;
+        var overallRating = GetOverallRating(test, effectiveness, clickPerSecond);
+        return new TestStatistic(testLenght, effectiveness, clickPerSecond, completionTime, mistakes, overallRating);
     }
 
-    private double GetClickPerSecond(TestInProgress test)
+    private int GetOverallRating(Test test, int effectiveness, double clickPerSecond)
+    {
+        var value = (effectiveness * clickPerSecond);
+        var multiplier = test.TestType switch
+        {
+            TypingTestType.Minimalistic => 0.8,
+            TypingTestType.Short => 0.9,
+            TypingTestType.Average => 1,
+            TypingTestType.Long => 1.1,
+            TypingTestType.Verylong => 1.2,
+            _ => 1
+        };
+
+        return (int)(value * multiplier);
+    }
+
+    private double GetClickPerSecond(Test test)
     {
         var completionTime = GetCompletionTime(test);
         var clickPerSecond = test.TotalClicks / completionTime.TotalSeconds;
-        return Math.Round(clickPerSecond, 0);
+        return Math.Round(clickPerSecond, 2);
     }
 
-    private int GetEffectiveness(TestInProgress test)
+    private int GetEffectiveness(Test test)
     {
         return test.CorrectClicks * 100 / test.TotalClicks;
     }
 
-    private TimeSpan GetCompletionTime(TestInProgress test)
+    private TimeSpan GetCompletionTime(Test test)
     {
         return test.EndTime - test.StartTime;
     }

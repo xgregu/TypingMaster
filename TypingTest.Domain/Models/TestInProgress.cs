@@ -2,16 +2,14 @@
 
 public class TestInProgress
 {
-    private TestInProgress(string textToRewritten, TypingTestType type, string executorName)
+    private TestInProgress(string textToRewritten, TypingTestType type)
     {
         TextToRewritten = textToRewritten;
         Type = type;
-        ExecutorName = executorName;
     }
 
     public string TextToRewritten { get; }
     public TypingTestType Type { get; }
-    public string ExecutorName { get; }
     public string CurrentText { get; private set; }
     public int CompletionPercentage { get; private set; }
     public bool IsStarted => !string.IsNullOrWhiteSpace(CurrentText);
@@ -25,12 +23,12 @@ public class TestInProgress
 
     public static TestInProgress EmptyTest()
     {
-        return new TestInProgress(string.Empty, TypingTestType.Minimalistic, string.Empty);
+        return new TestInProgress(string.Empty, TypingTestType.Minimalistic);
     }
 
-    public static TestInProgress InitializeTest(string text, TypingTestType type, string executorName)
+    public static TestInProgress InitializeTest(string text, TypingTestType type)
     {
-        return new TestInProgress(text, type, executorName);
+        return new TestInProgress(text, type);
     }
 
     public bool UpdateCurrentText(string newText)

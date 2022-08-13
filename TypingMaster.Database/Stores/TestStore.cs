@@ -1,10 +1,9 @@
-﻿using Blazorise.DataGrid;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using TypingMaster.Database.Entities;
 using TypingMaster.Domain.Models;
@@ -26,29 +25,23 @@ public class TestStore : ITestStore
     {
         await using var context =
             _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
-        return await GetQuerableTests(context, x => !string.IsNullOrWhiteSpace(x.Id.ToString())).ToListAsync();
+        var tests = context.Tests
+            .Select(x => x.ToModel());
+        return await tests.ToListAsync();
     }
 
-    public async Task<TestTableDataResponse> GetTableData(DataGridReadDataEventArgs<Test> dataArgs,
-        Expression<Func<Test, bool>> predicate, DataGridColumnInfo sortColumnInfo)
+    public async Task<TestTableDataResponse> GetTableData(int skipCount, int takeCount)
     {
         await using var context =
             _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
 
-        var queryable = GetQuerableTests(context, predicate);
+        var queryable = context.Tests
+            .OrderByDescending(x => x.TestDate)
+            .Select(x => x.ToModel())
+            .AsQueryable();
+
         var querableCount = queryable.Count();
-
-        if (dataArgs.CancellationToken.IsCancellationRequested)
-            return new TestTableDataResponse(queryable.ToList(), querableCount);
-
-        var response = dataArgs.ReadDataMode switch
-        {
-            DataGridReadDataMode.Virtualize => queryable.Skip(dataArgs.VirtualizeOffset)
-                .Take(dataArgs.VirtualizeCount),
-            DataGridReadDataMode.Paging => queryable.Skip((dataArgs.Page - 1) * dataArgs.PageSize)
-                .Take(dataArgs.PageSize),
-            _ => throw new Exception("Unhandled ReadDataMode")
-        };
+        var response = queryable.Skip(skipCount).Take(takeCount);
 
         return new TestTableDataResponse(response.ToList(), querableCount);
     }
@@ -61,15 +54,5 @@ public class TestStore : ITestStore
         await context.Tests.AddAsync(testEntity);
         await context.SaveChangesAsync();
         TestUpdated?.Invoke(this, test);
-    }
-
-    private static IQueryable<Test> GetQuerableTests(TestDbContext context,
-        Expression<Func<Test, bool>> predicate)
-    {
-        var tests = context.Tests
-            .Select(x => x.ToModel())
-            .AsQueryable();
-
-        return predicate == null ? tests : tests.Where(predicate);
     }
 }

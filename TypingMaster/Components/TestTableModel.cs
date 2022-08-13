@@ -1,8 +1,10 @@
 ﻿using Humanizer;
+using TypingMaster.Domain;
+using TypingMaster.Domain.Models;
 
-namespace TypingMaster.Domain.Models;
+namespace TypingMaster.Components;
 
-public class Test
+public class TestTableModel
 {
     public Guid Id { get; init; }
     public TypingTestType TestType { get; init; }
@@ -15,4 +17,10 @@ public class Test
     public int TotalClicks { get; init; }
     public DateTime StartTime { get; init; }
     public DateTime EndTime { get; init; }
+    public int TestLenght { get; init; }
+    public int EffectivenessPercentage { get; init; }
+    public double ClickPerSecond { get; init; }
+    public TimeSpan CompletionTime { get; init; }
+    public int Mistakes { get; set; }
+    public int OverallRating { get; set; }
 }

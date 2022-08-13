@@ -13,12 +13,11 @@ public class TestEntity
     public TypingTestType TestType { get; set; }
     public string TextToRewritten { get; set; }
     public string ExecutorName { get; set; }
-    public int TestLenght { get; set; }
-    public int EffectivenessPercentage { get; set; }
-    public double ClickPerSecond { get; set; }
-    public TimeSpan CompletionTime { get; set; }
-    public int Mistakes { get; set; }
     public DateTime TestDate { get; set; }
+    public int InorrectClicks { get; set; }
+    public int TotalClicks { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
 }
 
 internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
@@ -30,12 +29,10 @@ internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
         builder.Property(x => x.TestType).IsRequired();
         builder.Property(x => x.TextToRewritten).IsRequired();
         builder.Property(x => x.ExecutorName).IsRequired();
-        builder.Property(x => x.TestLenght).IsRequired();
-        builder.Property(x => x.EffectivenessPercentage).IsRequired();
-        builder.Property(x => x.ClickPerSecond).IsRequired();
-        builder.Property(x => x.CompletionTime).IsRequired();
-        builder.Property(x => x.Mistakes).IsRequired();
-        builder.Property(x => x.TestDate).IsRequired();
+        builder.Property(x => x.InorrectClicks).IsRequired();
+        builder.Property(x => x.TotalClicks).IsRequired();
+        builder.Property(x => x.StartTime).IsRequired();
+        builder.Property(x => x.EndTime).IsRequired();
     }
 }
 
@@ -52,12 +49,11 @@ internal static class TestEntityExtensions
             TestType = model.TestType,
             TextToRewritten = model.TextToRewritten,
             ExecutorName = model.ExecutorName,
-            TestLenght = model.Statistic.TestLenght,
-            EffectivenessPercentage = model.Statistic.EffectivenessPercentage,
-            ClickPerSecond = model.Statistic.ClickPerSecond,
-            CompletionTime = model.Statistic.CompletionTime,
-            Mistakes = model.Statistic.Mistakes,
             TestDate = model.TestDate,
+            InorrectClicks = model.InorrectClicks,
+            TotalClicks = model.TotalClicks,
+            StartTime = model.StartTime,
+            EndTime = model.EndTime,
         };
     }
 
@@ -72,9 +68,11 @@ internal static class TestEntityExtensions
             TestType = entity.TestType,
             TextToRewritten = entity.TextToRewritten,
             ExecutorName = entity.ExecutorName,
-            Statistic = new TestStatistic(entity.TestLenght, entity.EffectivenessPercentage,
-                entity.ClickPerSecond, entity.CompletionTime, entity.Mistakes),
-            TestDate = entity.TestDate
+            TestDate = entity.TestDate,
+            InorrectClicks = entity.InorrectClicks,
+            TotalClicks = entity.TotalClicks,
+            EndTime = entity.EndTime,
+            StartTime = entity.StartTime,
         };
     }
 }

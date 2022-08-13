@@ -11,7 +11,7 @@ using TypingMaster.Database;
 namespace TypingMaster.Database.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20220811203228_InitialCreate")]
+    [Migration("20220813210156_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,27 +25,24 @@ namespace TypingMaster.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("ClickPerSecond")
-                        .HasColumnType("REAL");
-
-                    b.Property<TimeSpan>("CompletionTime")
+                    b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("EffectivenessPercentage")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ExecutorName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Mistakes")
+                    b.Property<int>("InorrectClicks")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("TestDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("TestId")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("TestLenght")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TestType")
                         .HasColumnType("INTEGER");
@@ -53,6 +50,9 @@ namespace TypingMaster.Database.Migrations
                     b.Property<string>("TextToRewritten")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalClicks")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

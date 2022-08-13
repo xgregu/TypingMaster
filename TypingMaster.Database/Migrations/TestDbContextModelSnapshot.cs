@@ -23,21 +23,18 @@ namespace TypingMaster.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("ClickPerSecond")
-                        .HasColumnType("REAL");
-
-                    b.Property<TimeSpan>("CompletionTime")
+                    b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("EffectivenessPercentage")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ExecutorName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Mistakes")
+                    b.Property<int>("InorrectClicks")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TestDate")
                         .HasColumnType("TEXT");
@@ -45,15 +42,15 @@ namespace TypingMaster.Database.Migrations
                     b.Property<Guid>("TestId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TestLenght")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("TestType")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("TextToRewritten")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("TotalClicks")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

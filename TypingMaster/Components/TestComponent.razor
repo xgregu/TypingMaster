@@ -6,17 +6,28 @@
 <Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default">
     <ModalContent Centered>
         <ModalHeader>
-            <ModalTitle>TdataArgsst</ModalTitle>
+            <ModalTitle>Test @(_testInProgress.Type.AsString(EnumFormat.Description))</ModalTitle>
         </ModalHeader>
         <ModalBody>
-            <Paragraph Class="my-2">@_testInProgress.TextToRewritten</Paragraph>
-            <MemoEdit TextColor="@_currentTextColor" Placeholder="Zacznij pisać aby rozpocząć tdataArgsst..." Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
-            <Divider DividerType="DividerType.TextContent" Text="Postęp"/>
-            <Progress Value="_testInProgress.CompletionPercentage" Animated Striped></Progress>
+            @if (!string.IsNullOrWhiteSpace(_executorName) && _executorName.Length >= 3)
+            {
+                <Paragraph Class="my-2">@_testInProgress.TextToRewritten</Paragraph>
+                <MemoEdit TextColor="@_currentTextColor" Placeholder="Zacznij pisać aby rozpocząć test..." Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
+                <Divider DividerType="DividerType.TextContent" Text="Postęp"/>
+                <Progress Value="_testInProgress.CompletionPercentage" Animated Striped></Progress>
+                <Divider DividerType="DividerType.TextContent" Text="Wykonawca testu"/>
+            }
+            <Validation UsePattern>
+                <TextEdit Pattern="[A-Za-z]{3}" Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted">
+                    <Feedback>
+                        <ValidationError>Wpisz conajmniej 3 znaki!</ValidationError>
+                    </Feedback>
+                </TextEdit>
+            </Validation>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="@Reset" Disabled="!_testInProgress.IsStarted">Rozpocznij od nowa</Button>
-            <Button Color="Color.Secondary" Clicked="@Hide">Zakończ test</Button>
+            <Button Color="Color.Secondary" Clicked="@Hide">Zamknij test</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -28,12 +39,13 @@
     private Modal _modalRef;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
+    private string _executorName = string.Empty;
 
     private TestInProgress _testInProgress = TestInProgress.EmptyTest();
 
-    public Task Show(TypingTestType testType, string testText, string executorName)
+    public Task Show(TypingTestType testType, string testText)
     {
-        _testInProgress = TestInProgress.InitializeTest(testText, testType, executorName);
+        _testInProgress = TestInProgress.InitializeTest(testText, testType);
         _cancelClose = true;
         _modalRef?.Show();
         return Task.CompletedTask;
@@ -41,6 +53,7 @@
 
     public Task Hide()
     {
+        _executorName = string.Empty;
         _cancelClose = false;
         _modalRef?.Hide();
         return Task.CompletedTask;
@@ -48,7 +61,7 @@
 
     private Task Reset()
     {
-        _testInProgress = TestInProgress.InitializeTest(_testInProgress.TextToRewritten, _testInProgress.Type, _testInProgress.ExecutorName);
+        _testInProgress = TestInProgress.InitializeTest(_testInProgress.TextToRewritten, _testInProgress.Type);
         return Task.CompletedTask;
     }
 
@@ -63,12 +76,16 @@
 
     private async Task EndTest()
     {
-        var test = TestService.TestInProgressEnd(_testInProgress);
         await _pleaseWaitPopupRef.Show();
+        var test = TestService.TestInProgressEnd(_testInProgress, _executorName);
         await TestStore.Add(test);
+
+        var testStatistic = TestService.GetTestStatistic(test);
+        var statisticText = $"Czas trwania - {testStatistic.CompletionTime}. Kliknięć na sekunde - {testStatistic.ClickPerSecond}. Skuteczność - {testStatistic.EffectivenessPercentage}%. Błędów - {testStatistic.Mistakes}. Ocena - {testStatistic.OverallRating}";
         await _pleaseWaitPopupRef.Hide();
-        var statisticText = $"Czas trwania - {test.Statistic.CompletionTime}. Kliknięć na sekunde - {test.Statistic.ClickPerSecond}. Skuteczność - {test.Statistic.EffectivenessPercentage}%. Błędów - {test.Statistic.Mistakes}";
+
         await MessageService.Info($"Statystki testu: \n\n{statisticText}", "Gratulacje!");
+        await Hide();
     }
 
 }
