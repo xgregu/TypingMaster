@@ -22,5 +22,5 @@ public class TestTableModel
     public double ClickPerSecond { get; init; }
     public TimeSpan CompletionTime { get; init; }
     public int Mistakes { get; set; }
-    public int OverallRating { get; set; }
+    public int Points { get; set; }
 }

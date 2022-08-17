@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using TypingMaster.Database.Entities;
+using TypingMaster.Domain;
 using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Database.Stores;
@@ -13,11 +14,13 @@ namespace TypingMaster.Database.Stores;
 public class TestStore : ITestStore
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ITestService _testService;
     public event EventHandler<Test> TestUpdated;
 
-    public TestStore(IServiceScopeFactory serviceScopeFactory)
+    public TestStore(IServiceScopeFactory serviceScopeFactory, ITestService testService)
     {
         _serviceScopeFactory = serviceScopeFactory;
+        _testService = testService;
     }
 
 
@@ -54,5 +57,19 @@ public class TestStore : ITestStore
         await context.Tests.AddAsync(testEntity);
         await context.SaveChangesAsync();
         TestUpdated?.Invoke(this, test);
+    }
+
+    public async Task<int> GetTestRanking(Guid testId)
+    {
+        await using var context = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        var index = context.Tests
+            .ToList()
+            .OrderByDescending(x =>
+            {
+                var testStatistic = _testService.GetTestStatistic(x.ToModel());
+                return testStatistic.OverallRating;
+
+            }).ToList().FindIndex(x => x.TestId == testId);
+        return index + 1;
     }
 }

@@ -31,17 +31,17 @@ public class TestService : ITestService
     public TestStatistic GetTestStatistic(Test test)
     {
         var effectiveness = GetEffectiveness(test);
-        var clickPerSecond = GetClickPerSecond(test);
+        var clickPerMinute = GetClickPerMinute(test);
         var completionTime = GetCompletionTime(test);
         var testLenght = test.TextToRewritten.Length;
         var mistakes = test.InorrectClicks;
-        var overallRating = GetOverallRating(test, effectiveness, clickPerSecond);
-        return new TestStatistic(testLenght, effectiveness, clickPerSecond, completionTime, mistakes, overallRating);
+        var points = GetPoints(test, effectiveness, clickPerMinute);
+        return new TestStatistic(testLenght, effectiveness, clickPerMinute, completionTime, mistakes, points);
     }
 
-    private int GetOverallRating(Test test, int effectiveness, double clickPerSecond)
+    private static int GetPoints(Test test, int effectiveness, double clickPerMinute)
     {
-        var value = (effectiveness * clickPerSecond);
+        var value = effectiveness * clickPerMinute;
         var multiplier = test.TestType switch
         {
             TypingTestType.Minimalistic => 0.8,
@@ -51,23 +51,22 @@ public class TestService : ITestService
             TypingTestType.Verylong => 1.2,
             _ => 1
         };
-
         return (int)(value * multiplier);
     }
 
-    private double GetClickPerSecond(Test test)
+    private static double GetClickPerMinute(Test test)
     {
         var completionTime = GetCompletionTime(test);
-        var clickPerSecond = test.TotalClicks / completionTime.TotalSeconds;
-        return Math.Round(clickPerSecond, 2);
+        var clickPerMinute = test.TotalClicks / completionTime.TotalMinutes;
+        return Math.Round(clickPerMinute, 2);
     }
 
-    private int GetEffectiveness(Test test)
+    private static int GetEffectiveness(Test test)
     {
         return test.CorrectClicks * 100 / test.TotalClicks;
     }
 
-    private TimeSpan GetCompletionTime(Test test)
+    private static TimeSpan GetCompletionTime(Test test)
     {
         return test.EndTime - test.StartTime;
     }

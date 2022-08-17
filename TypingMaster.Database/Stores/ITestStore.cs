@@ -15,4 +15,5 @@ public interface ITestStore
     Task<IReadOnlyList<Test>> GetAllTest();
     Task<TestTableDataResponse> GetTableData(int skipCount, int takeCount);
     Task Add(Test test);
+    Task<int> GetTestRanking(Guid testId);
 }

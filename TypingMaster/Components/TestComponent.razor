@@ -32,10 +32,12 @@
     </ModalContent>
 </Modal>
 <PleaseWaitPopup @ref="_pleaseWaitPopupRef"></PleaseWaitPopup>
+<TestStatisticComponent @ref="_testStatisticComponentRef"></TestStatisticComponent>
 
 @code {
 
     private PleaseWaitPopup _pleaseWaitPopupRef;
+    private TestStatisticComponent _testStatisticComponentRef;
     private Modal _modalRef;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
@@ -53,7 +55,6 @@
 
     public Task Hide()
     {
-        _executorName = string.Empty;
         _cancelClose = false;
         _modalRef?.Hide();
         return Task.CompletedTask;
@@ -79,13 +80,10 @@
         await _pleaseWaitPopupRef.Show();
         var test = TestService.TestInProgressEnd(_testInProgress, _executorName);
         await TestStore.Add(test);
-
-        var testStatistic = TestService.GetTestStatistic(test);
-        var statisticText = $"Czas trwania - {testStatistic.CompletionTime}. Kliknięć na sekunde - {testStatistic.ClickPerSecond}. Skuteczność - {testStatistic.EffectivenessPercentage}%. Błędów - {testStatistic.Mistakes}. Ocena - {testStatistic.OverallRating}";
+        await Hide();
         await _pleaseWaitPopupRef.Hide();
 
-        await MessageService.Info($"Statystki testu: \n\n{statisticText}", "Gratulacje!");
-        await Hide();
+        await _testStatisticComponentRef.Show(test);
     }
 
 }

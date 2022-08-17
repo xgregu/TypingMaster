@@ -6,12 +6,12 @@
 <DataGrid @ref="_tableRef"
           TItem="TestTableModel"
           Data="@_testList"
-          ReadData="@OnReadData"
           TotalItems="@_totalTests"
           ShowPager
           Responsive
           Sortable="false"
-          Filterable="false">
+          Filterable="false"
+          RowDoubleClicked="OnRowDoubleClicked">
     <DataGridColumns>
         <DataGridCommandColumn/>
         <DataGridColumn Field="@nameof(TestTableModel.TestDate)" Caption="Data">
@@ -28,23 +28,7 @@
         </DataGridColumn>
         <DataGridColumn Field="@nameof(TestTableModel.TestTypeName)" Caption="Typ" Editable/>
         <DataGridColumn Field="@nameof(TestTableModel.ExecutorName)" Caption="Imię" Editable/>
-        <DataGridColumn Field="@nameof(TestTableModel.TestLenght)" Caption="Długość" Editable/>
-        <DataGridColumn Field="@nameof(TestTableModel.Mistakes)" Caption="Błędy" Editable/>
-        <DataGridColumn Field="@nameof(TestTableModel.CompletionTime)" Caption="Czas" Editable>
-            <DisplayTemplate>
-                @{
-                    var completionTime = (context as TestTableModel)?.CompletionTime;
-
-                    if (completionTime != null)
-                    {
-                        @(completionTime.Value.Humanize())
-                    }
-                }
-            </DisplayTemplate>
-        </DataGridColumn>
-        <DataGridColumn Field="@nameof(TestTableModel.EffectivenessPercentage)" Caption="Skuteczność" Editable/>
-        <DataGridColumn Field="@nameof(TestTableModel.ClickPerSecond)" Caption="Kliknięć na sekundę" Editable/>
-        <DataGridColumn Field="@nameof(TestTableModel.OverallRating)" Caption="Ogólna ocena" Editable/>
+        <DataGridColumn Field="@nameof(TestTableModel.Points)" Caption="Punkty" Editable/>
     </DataGridColumns>
     <EmptyTemplate>
         <Paragraph>Brak testów</Paragraph>
@@ -53,39 +37,49 @@
         <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
     </LoadingTemplate>
 </DataGrid>
+<TestStatisticComponent @ref="_testStatisticComponentRef"></TestStatisticComponent>
 
 @code{
 
+    private TestStatisticComponent _testStatisticComponentRef;
     private DataGrid<TestTableModel> _tableRef;
     private IReadOnlyList<TestTableModel> _testList;
     private int _totalTests;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         TestStore.TestUpdated += TestStoreOnTestUpdated;
-        base.OnInitialized();
+        await UpdateTests();
+        await base.OnInitializedAsync();
     }
 
     private async void TestStoreOnTestUpdated(object? sender, Test e)
     {
+        await UpdateTests();
         await _tableRef.Reload();
+        await _tableRef.Refresh();
+        StateHasChanged();
     }
 
-    private async Task OnReadData(DataGridReadDataEventArgs<TestTableModel> e)
+    public void Dispose()
     {
-        if (e.CancellationToken.IsCancellationRequested)
-            return;
+        TestStore.TestUpdated -= TestStoreOnTestUpdated;
+    }
 
-        var skip = (e.Page - 1) * e.PageSize;
-        var take = e.PageSize;
+    private async void OnRowDoubleClicked(DataGridRowMouseEventArgs<TestTableModel> obj)
+    {
+        await _testStatisticComponentRef.Show(obj.Item);
+    }
 
-        var response = await TestStore.GetTableData(skip, take);
-
-        _testList = response.TestList.Select(x =>
+    private async Task UpdateTests()
+    {
+        var allTest = await TestStore.GetAllTest();
+        _testList = allTest.Select(x =>
         {
             var testStatistic = TestService.GetTestStatistic(x);
             return new TestTableModel
-            {  
+            {
+                Id = x.Id,
                 TestType = x.TestType,
                 TextToRewritten = x.TextToRewritten,
                 ExecutorName = x.ExecutorName,
@@ -99,16 +93,9 @@
                 ClickPerSecond = testStatistic.ClickPerSecond,
                 CompletionTime = testStatistic.CompletionTime,
                 Mistakes = testStatistic.Mistakes,
-                OverallRating = testStatistic.OverallRating
+                Points = testStatistic.OverallRating
             };
-        }).ToList();
-
-        _totalTests = response.TestCount;
-    }
-
-    public void Dispose()
-    {
-        TestStore.TestUpdated -= TestStoreOnTestUpdated;
+        }).OrderByDescending(x => x.Points).ToList();
     }
 
 }
