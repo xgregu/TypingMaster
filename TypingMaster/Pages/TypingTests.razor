@@ -2,29 +2,31 @@
 @inject IOptions<TypingTestOptions> Options
 
 <PageTitle>Test</PageTitle>
-<Fields>
-    <Field>
-        <Heading Size="HeadingSize.Is5">Wybierz długość testu.</Heading>
-        <RadioGroup TValue="TypingTestType" Name="types" Color="Color.Light" Buttons @bind-CheckedValue="_typingTestType">
-            <Radio Value="@TypingTestType.Minimalistic">Minimalistyczny</Radio>
-            <Radio Value="@TypingTestType.Short">Krótki</Radio>
-            <Radio Value="@TypingTestType.Average">Średni</Radio>
-            <Radio Value="@TypingTestType.Long">Długi</Radio>
-            <Radio Value="@TypingTestType.Verylong">Bardzo długi</Radio>
-        </RadioGroup>
-        <FieldHelp>
-            <Text TextColor="TextColor.Danger">
-                Uwaga!
-            </Text>
-            <Text TextColor="TextColor.Secondary">
-                Długość testu wpływa na jego poziom trudności
-            </Text>
-        </FieldHelp>
-    </Field>
-</Fields>
-<Button Color="Color.Primary" Clicked="@StartTest">StartTest</Button>
-<TestTableComponent @ref="_testTableComponent" ></TestTableComponent>
-
+<Div Style="text-align: center" Class="px-2">
+    <Fields>
+        <Field>
+            <Heading Size="HeadingSize.Is5">Wybierz</Heading>
+            <RadioGroup TValue="TypingTestType" Name="types" Color="Color.Light" Buttons @bind-CheckedValue="_typingTestType">
+                <Radio Value="@TypingTestType.Minimalistic">Minimalistyczny</Radio>
+                <Radio Value="@TypingTestType.Short">Krótki</Radio>
+                <Radio Value="@TypingTestType.Average">Średni</Radio>
+                <Radio Value="@TypingTestType.Long">Długi</Radio>
+                <Radio Value="@TypingTestType.Verylong">Bardzo długi</Radio>
+            </RadioGroup>
+            <FieldHelp>
+                <Text TextColor="TextColor.Danger">
+                    Uwaga!
+                </Text>
+                <Text TextColor="TextColor.Secondary">
+                    Długość testu wpływa na jego poziom trudności
+                </Text>
+            </FieldHelp>
+        </Field>
+    </Fields>
+    <Button Color="Color.Primary" Clicked="@StartTest">Uruchom</Button>
+    <Heading Size="HeadingSize.Is5" Class="mt-3">Ranking</Heading>
+    <TestTableComponent @ref="_testTableComponent"></TestTableComponent>
+</Div>
 <TestComponent @ref="_testModalRef"></TestComponent>
 
 @code {
@@ -43,9 +45,10 @@
 
     private async Task StartTest()
     {
-        var text = GetTypiingTestText(_typingTestType);
-        await _testModalRef.Show(_typingTestType, text);
+        var text = GetTypingTestText(_typingTestType);
+        var test = await _testModalRef.ShowAndWaitForResult(_typingTestType, text);
+        await _testTableComponent.ScrollToTest(test.Id);
     }
 
-    private string GetTypiingTestText(TypingTestType type) => _typingTestTexts.FirstOrDefault(x => x.Type == type)?.Text ?? "ERROR";
+    private string GetTypingTestText(TypingTestType type) => _typingTestTexts.FirstOrDefault(x => x.Type == type)?.Text ?? "ERROR";
 }

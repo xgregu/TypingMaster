@@ -6,14 +6,26 @@
 <DataGrid @ref="_tableRef"
           TItem="TestTableModel"
           Data="@_testList"
-          TotalItems="@_totalTests"
-          ShowPager
           Responsive
           Sortable="false"
           Filterable="false"
+          Virtualize
+          Striped
           RowDoubleClicked="OnRowDoubleClicked">
     <DataGridColumns>
         <DataGridCommandColumn/>
+        <DataGridColumn Field="@nameof(TestTableModel.Id)" Caption="#">
+            <DisplayTemplate>
+                @{
+                    var id = (context as TestTableModel)?.Id;
+
+                    if (id != Guid.Empty || id != null)
+                    {
+                        @(GetIndex(id.Value))
+                    }
+                }
+            </DisplayTemplate>
+        </DataGridColumn>
         <DataGridColumn Field="@nameof(TestTableModel.TestDate)" Caption="Data">
             <DisplayTemplate>
                 @{
@@ -31,12 +43,18 @@
         <DataGridColumn Field="@nameof(TestTableModel.Points)" Caption="Punkty" Editable/>
     </DataGridColumns>
     <EmptyTemplate>
-        <Paragraph>Brak testów</Paragraph>
+        <Paragraph>Nikt nie wykonał jeszcze testu. Bądź pierwszy!</Paragraph>
     </EmptyTemplate>
     <LoadingTemplate>
         <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
     </LoadingTemplate>
 </DataGrid>
+<Text TextColor="TextColor.Success">
+    <Icon Name="IconName.Lightbulb"/>
+</Text>
+<Text TextColor="TextColor.Secondary">
+    Wybierz test aby wyświetlić szczegółowe statysyki
+</Text>
 <TestStatisticComponent @ref="_testStatisticComponentRef"></TestStatisticComponent>
 
 @code{
@@ -64,6 +82,15 @@
     public void Dispose()
     {
         TestStore.TestUpdated -= TestStoreOnTestUpdated;
+    }
+
+    public async Task ScrollToTest(Guid testId)
+    {
+        var row = GetIndex(testId);
+        await _tableRef.ScrollToRow(row);
+
+        var item = _testList.First(x => x.Id == testId);
+        await _tableRef.Select(item);
     }
 
     private async void OnRowDoubleClicked(DataGridRowMouseEventArgs<TestTableModel> obj)
@@ -98,4 +125,8 @@
         }).OrderByDescending(x => x.Points).ToList();
     }
 
+    private int GetIndex(Guid testId)
+    {
+        return _testList.ToList().FindIndex(x => x.Id == testId) + 1;
+    }
 }

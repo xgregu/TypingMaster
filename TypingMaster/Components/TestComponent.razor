@@ -45,12 +45,21 @@
 
     private TestInProgress _testInProgress = TestInProgress.EmptyTest();
 
-    public Task Show(TypingTestType testType, string testText)
+    private TaskCompletionSource<Test> _confirmationTask;
+
+    public async Task<Test> ShowAndWaitForResult(TypingTestType testType, string testText)
+    {
+        Show(testType, testText);
+
+        return await _confirmationTask.Task;
+    }
+
+    public void Show(TypingTestType testType, string testText)
     {
         _testInProgress = TestInProgress.InitializeTest(testText, testType);
+        _confirmationTask = new();
         _cancelClose = true;
         _modalRef?.Show();
-        return Task.CompletedTask;
     }
 
     public Task Hide()
@@ -82,8 +91,8 @@
         await TestStore.Add(test);
         await Hide();
         await _pleaseWaitPopupRef.Hide();
-
         await _testStatisticComponentRef.Show(test);
+        _confirmationTask.SetResult(test);
     }
 
 }

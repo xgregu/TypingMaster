@@ -72,4 +72,14 @@ public class TestStore : ITestStore
             }).ToList().FindIndex(x => x.TestId == testId);
         return index + 1;
     }
+
+    public async Task<Test> FindLast()
+    {
+        await using var context = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        var entity = await context.Tests.AsNoTracking()
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        return entity.ToModel();
+    }
 }

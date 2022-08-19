@@ -16,4 +16,5 @@ public interface ITestStore
     Task<TestTableDataResponse> GetTableData(int skipCount, int takeCount);
     Task Add(Test test);
     Task<int> GetTestRanking(Guid testId);
+    Task<Test> FindLast();
 }

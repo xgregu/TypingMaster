@@ -10,6 +10,14 @@
             <Table Striped>
                 <TableBody>
                     <TableRow>
+                        <TableRowCell>Ranking</TableRowCell>
+                        <TableRowCell>@_testRanking</TableRowCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableRowCell>Punkty</TableRowCell>
+                        <TableRowCell>@_testStatistic?.OverallRating</TableRowCell>
+                    </TableRow>
+                    <TableRow>
                         <TableRowCell>Czas trwania</TableRowCell>
                         <TableRowCell>@_testStatistic?.CompletionTime.Humanize() (@_testStatistic?.CompletionTime)</TableRowCell>
                     </TableRow>
@@ -24,14 +32,6 @@
                     <TableRow>
                         <TableRowCell>Błędów</TableRowCell>
                         <TableRowCell>@_testStatistic?.Mistakes</TableRowCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableRowCell>Punkty</TableRowCell>
-                        <TableRowCell>@_testStatistic?.OverallRating</TableRowCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableRowCell>Ranking</TableRowCell>
-                        <TableRowCell>@_testRanking</TableRowCell>
                     </TableRow>
                 </TableBody>
             </Table>
