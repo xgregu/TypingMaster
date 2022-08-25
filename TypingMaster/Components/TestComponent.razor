@@ -57,7 +57,7 @@
     public void Show(TypingTestType testType, string testText)
     {
         _testInProgress = TestInProgress.InitializeTest(testText, testType);
-        _confirmationTask = new();
+        _confirmationTask = new TaskCompletionSource<Test>();
         _cancelClose = true;
         _modalRef?.Show();
     }

@@ -76,7 +76,7 @@
         await UpdateTests();
         await _tableRef.Reload();
         await _tableRef.Refresh();
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

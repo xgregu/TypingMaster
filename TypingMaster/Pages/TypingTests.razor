@@ -1,18 +1,21 @@
 ﻿@page "/TypingTests"
+@page "/"
 @inject IOptions<TypingTestOptions> Options
 
 <PageTitle>Test</PageTitle>
 <Div Style="text-align: center" Class="px-2">
     <Fields>
         <Field>
-            <Heading Size="HeadingSize.Is5">Wybierz</Heading>
-            <RadioGroup TValue="TypingTestType" Name="types" Color="Color.Light" Buttons @bind-CheckedValue="_typingTestType">
-                <Radio Value="@TypingTestType.Minimalistic">Minimalistyczny</Radio>
-                <Radio Value="@TypingTestType.Short">Krótki</Radio>
-                <Radio Value="@TypingTestType.Average">Średni</Radio>
-                <Radio Value="@TypingTestType.Long">Długi</Radio>
-                <Radio Value="@TypingTestType.Verylong">Bardzo długi</Radio>
-            </RadioGroup>
+            <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
+            <Buttons Shadow="Shadow.Large">
+                <Buttons>
+                    <Button Color="Color.Primary" Clicked="() => StartTest(TypingTestType.Minimalistic)">Minimalistyczny</Button>
+                    <Button Color="Color.Secondary" Clicked="() => StartTest(TypingTestType.Short)">Krótki</Button>
+                    <Button Color="Color.Success" Clicked="() => StartTest(TypingTestType.Average)">Średni</Button>
+                    <Button Color="Color.Warning" Clicked="() => StartTest(TypingTestType.Long)">Długi</Button>
+                    <Button Color="Color.Danger" Clicked="() => StartTest(TypingTestType.Verylong)">Bardzo długi</Button>
+                </Buttons>
+            </Buttons>
             <FieldHelp>
                 <Text TextColor="TextColor.Danger">
                     Uwaga!
@@ -23,7 +26,6 @@
             </FieldHelp>
         </Field>
     </Fields>
-    <Button Color="Color.Primary" Clicked="@StartTest">Uruchom</Button>
     <Heading Size="HeadingSize.Is5" Class="mt-3">Ranking</Heading>
     <TestTableComponent @ref="_testTableComponent"></TestTableComponent>
 </Div>
@@ -31,7 +33,6 @@
 
 @code {
 
-    private TypingTestType _typingTestType = TypingTestType.Average;
 
     private TestComponent _testModalRef;
     private TestTableComponent _testTableComponent;
@@ -43,12 +44,14 @@
         return base.OnInitializedAsync();
     }
 
-    private async Task StartTest()
+    private async void StartTest(TypingTestType testType)
     {
-        var text = GetTypingTestText(_typingTestType);
-        var test = await _testModalRef.ShowAndWaitForResult(_typingTestType, text);
+        var text = GetTypingTestText(testType);
+        var test = await _testModalRef.ShowAndWaitForResult(testType, text);
         await _testTableComponent.ScrollToTest(test.Id);
     }
 
     private string GetTypingTestText(TypingTestType type) => _typingTestTexts.FirstOrDefault(x => x.Type == type)?.Text ?? "ERROR";
+
+
 }

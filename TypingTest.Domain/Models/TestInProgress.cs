@@ -19,7 +19,7 @@ public class TestInProgress
     public DateTime StartTime { get; private set; }
     public DateTime EndTime { get; private set; }
     public bool IsComplete { get; private set; }
-
+    public TimeSpan CurrentTestTime => (IsComplete ? EndTime : DateTime.Now) - StartTime;
 
     public static TestInProgress EmptyTest()
     {

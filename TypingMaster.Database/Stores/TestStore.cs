@@ -23,12 +23,12 @@ public class TestStore : ITestStore
         _testService = testService;
     }
 
-
     public async Task<IReadOnlyList<Test>> GetAllTest()
     {
         await using var context =
             _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         var tests = context.Tests
+            .AsNoTracking()
             .Select(x => x.ToModel());
         return await tests.ToListAsync();
     }
@@ -39,6 +39,7 @@ public class TestStore : ITestStore
             _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
 
         var queryable = context.Tests
+            .AsNoTracking()
             .OrderByDescending(x => x.TestDate)
             .Select(x => x.ToModel())
             .AsQueryable();
@@ -63,6 +64,7 @@ public class TestStore : ITestStore
     {
         await using var context = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         var index = context.Tests
+            .AsNoTracking()
             .ToList()
             .OrderByDescending(x =>
             {
