@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using PSC.Blazor.Components.BrowserDetect;
+using TypingMaster.Domain.Extensions;
 using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Domain;
@@ -12,7 +14,7 @@ public class TestService : ITestService
         _logger = logger;
     }
 
-    public Test TestInProgressEnd(TestInProgress testInProgress, string executorName)
+    public Test TestInProgressEnd(TestInProgress testInProgress, string executorName, BrowserInfo browserInfo)
     {
         return new Test
         {
@@ -24,7 +26,15 @@ public class TestService : ITestService
             TotalClicks = testInProgress.TotalClicks,
             EndTime = testInProgress.EndTime,
             StartTime = testInProgress.StartTime,
-            InorrectClicks = testInProgress.InorrectClicks
+            InorrectClicks = testInProgress.InorrectClicks,
+            IsDesktop = browserInfo.IsDesktop,
+            IsMobile = browserInfo.IsMobile,
+            IsTablet = browserInfo.IsTablet,
+            IsAndroid = browserInfo.IsAndroid,
+            IsIPhone = browserInfo.IsIPhone,
+            IsIPad = browserInfo.IsIPad,
+            IsIPadPro = browserInfo.IsIPadPro,
+            OsName = browserInfo.OSName,
         };
     }
 

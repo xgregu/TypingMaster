@@ -18,6 +18,14 @@ public class TestEntity
     public int TotalClicks { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
+    public string? OsName { get; set; }
+    public bool? IsDesktop { get; set; }
+    public bool? IsMobile { get; set; }
+    public bool? IsTablet { get; set; }
+    public bool? IsAndroid { get; set; }
+    public bool? IsIPhone { get; set; }
+    public bool? IsIPad { get; set; }
+    public bool? IsIPadPro { get; set; }
 }
 
 internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
@@ -32,7 +40,14 @@ internal class TestEntityConfiguration : IEntityTypeConfiguration<TestEntity>
         builder.Property(x => x.InorrectClicks).IsRequired();
         builder.Property(x => x.TotalClicks).IsRequired();
         builder.Property(x => x.StartTime).IsRequired();
-        builder.Property(x => x.EndTime).IsRequired();
+        builder.Property(x => x.IsDesktop).IsRequired();
+        builder.Property(x => x.IsMobile).IsRequired();
+        builder.Property(x => x.IsTablet).IsRequired();
+        builder.Property(x => x.IsAndroid).IsRequired();
+        builder.Property(x => x.IsIPhone).IsRequired();
+        builder.Property(x => x.IsIPad).IsRequired();
+        builder.Property(x => x.IsIPadPro).IsRequired();
+        builder.Property(x => x.OsName).IsRequired();
     }
 }
 
@@ -54,6 +69,14 @@ internal static class TestEntityExtensions
             TotalClicks = model.TotalClicks,
             StartTime = model.StartTime,
             EndTime = model.EndTime,
+            IsDesktop = model.IsDesktop,
+            IsMobile = model.IsMobile,
+            IsTablet = model.IsTablet,
+            IsAndroid = model.IsAndroid,
+            IsIPhone = model.IsIPhone,
+            IsIPad = model.IsIPad,
+            IsIPadPro = model.IsIPadPro,
+            OsName = model.OsName,
         };
     }
 
@@ -73,6 +96,14 @@ internal static class TestEntityExtensions
             TotalClicks = entity.TotalClicks,
             EndTime = entity.EndTime,
             StartTime = entity.StartTime,
+            IsDesktop = entity.IsDesktop,
+            IsMobile = entity.IsMobile,
+            IsTablet = entity.IsTablet,
+            IsAndroid = entity.IsAndroid,
+            IsIPhone = entity.IsIPhone,
+            IsIPad = entity.IsIPad,
+            IsIPadPro = entity.IsIPadPro,
+            OsName = entity.OsName,
         };
     }
 }

@@ -1,4 +1,5 @@
-﻿@inject IMessageService MessageService
+﻿@using PSC.Blazor.Components.BrowserDetect
+@inject IMessageService MessageService
 @inject ITestService TestService
 @inject INotificationService NotificationService
 @inject ITestStore TestStore
@@ -33,7 +34,7 @@
 </Modal>
 <PleaseWaitPopup @ref="_pleaseWaitPopupRef"></PleaseWaitPopup>
 <TestStatisticComponent @ref="_testStatisticComponentRef"></TestStatisticComponent>
-
+<BrowserDetect @bind-BrowserInfo="@BrowserInfo" />
 @code {
 
     private PleaseWaitPopup _pleaseWaitPopupRef;
@@ -46,7 +47,8 @@
     private TestInProgress _testInProgress = TestInProgress.EmptyTest();
 
     private TaskCompletionSource<Test> _confirmationTask;
-
+    private  BrowserInfo BrowserInfo { get; set; }
+    
     public async Task<Test> ShowAndWaitForResult(TypingTestType testType, string testText)
     {
         Show(testType, testText);
@@ -87,7 +89,7 @@
     private async Task EndTest()
     {
         await _pleaseWaitPopupRef.Show();
-        var test = TestService.TestInProgressEnd(_testInProgress, _executorName);
+        var test = TestService.TestInProgressEnd(_testInProgress, _executorName, BrowserInfo);
         await TestStore.Add(test);
         await Hide();
         await _pleaseWaitPopupRef.Hide();

@@ -129,7 +129,8 @@
                 ClickPerSecond = testStatistic.ClickPerSecond,
                 CompletionTime = testStatistic.CompletionTime,
                 Mistakes = testStatistic.Mistakes,
-                Points = testStatistic.OverallRating
+                Points = testStatistic.OverallRating, OsName = x.OsName, IsDesktop = x.IsDesktop, IsMobile = x.IsMobile, IsTablet = x.IsTablet, IsAndroid = x.IsAndroid, IsIPhone = x.IsIPhone, IsIPad = x.IsIPad, IsIPadPro = x.IsIPadPro,
+
             };
         }).OrderByDescending(x => x.Points).ToList();
     }

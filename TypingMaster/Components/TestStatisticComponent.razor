@@ -1,4 +1,5 @@
-﻿@inject ITestService TestService
+﻿@using Blazorise
+@inject ITestService TestService
 @inject ITestStore TestStore
 
 <Modal @ref="_modalRef" Shadow="Shadow.Default">
@@ -34,8 +35,100 @@
                         <TableRowCell>@(_testStatistic?.EffectivenessPercentage)%</TableRowCell>
                     </TableRow>
                     <TableRow>
-                        <TableRowCell>Błędów</TableRowCell>
-                        <TableRowCell>@_testStatistic?.Mistakes</TableRowCell>
+                        <TableRowCell>System</TableRowCell>
+                        <TableRowCell>@_test?.OsName</TableRowCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableRowCell>Typ urządzenia</TableRowCell>
+                        <TableRowCell>
+                            <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center">
+                                <div class="m-1">
+                                    <Badge Color="@(_test?.IsDesktop ?? false ? Color.Success : Color.Danger)">
+                                        @if (_test?.IsDesktop ?? false)
+                                        {
+                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
+                                        }
+                                    </Badge> <Text>Desktop</Text>
+                                </div>
+                                <div class="m-1">
+                                    <Badge Color="@(_test?.IsMobile ?? false ? Color.Success : Color.Danger)">
+                                        @if (_test?.IsMobile ?? false)
+                                        {
+                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
+                                        }
+                                    </Badge> <Text>Smartfon</Text>
+                                </div>
+                                <div class="m-1">
+                                    <Badge Color="@(_test?.IsTablet ?? false ? Color.Success : Color.Danger)">
+                                        @if (_test?.IsTablet ?? false)
+                                        {
+                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
+                                        }
+                                    </Badge> <Text>Tablet</Text>
+                                </div>
+                                <div class="m-1">
+                                    <Badge Color="@(_test?.IsAndroid ?? false ? Color.Success : Color.Danger)">
+                                        @if (_test?.IsAndroid ?? false)
+                                        {
+                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
+                                        }
+                                    </Badge> <Text>Android</Text>
+                                </div>
+                                <div class="m-1">
+
+                                    <Badge Color="@(_test?.IsIPhone ?? false ? Color.Success : Color.Danger)">
+                                        @if (_test?.IsIPhone ?? false)
+                                        {
+                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
+                                        }
+                                    </Badge> <Text>iPhone</Text>
+                                </div>
+                                <div class="m-1">
+                                    <Badge Color="@(_test?.IsIPad ?? false ? Color.Success : Color.Danger)">
+                                        @if (_test?.IsIPad ?? false)
+                                        {
+                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
+                                        }
+                                    </Badge> <Text>iPad</Text>
+                                </div>
+                                <div class="m-1">
+                                    <Badge Color="@(_test?.IsIPadPro ?? false ? Color.Success : Color.Danger)">
+                                        @if (_test?.IsIPadPro ?? false)
+                                        {
+                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
+                                        }
+                                    </Badge> <Text>iPad Pro</Text>
+                                </div>
+                            </div>
+                        </TableRowCell>
                     </TableRow>
                 </TableBody>
             </Table>
@@ -76,7 +169,7 @@
             InorrectClicks = testTableModel.InorrectClicks,
             TotalClicks = testTableModel.TotalClicks,
             StartTime = testTableModel.StartTime,
-            EndTime = testTableModel.EndTime
+            EndTime = testTableModel.EndTime, OsName = testTableModel.OsName, IsDesktop = testTableModel.IsDesktop, IsMobile = testTableModel.IsMobile, IsTablet = testTableModel.IsTablet, IsAndroid = testTableModel.IsAndroid, IsIPhone = testTableModel.IsIPhone, IsIPad = testTableModel.IsIPad, IsIPadPro = testTableModel.IsIPadPro,
         };
         _testStatistic = TestService.GetTestStatistic(_test);
         _testRanking = await TestStore.GetTestRanking(_test.Id);

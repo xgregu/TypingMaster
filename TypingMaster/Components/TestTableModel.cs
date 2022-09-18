@@ -23,4 +23,12 @@ public class TestTableModel
     public TimeSpan CompletionTime { get; init; }
     public int Mistakes { get; set; }
     public int Points { get; set; }
+    public string? OsName { get; set; }
+    public bool? IsDesktop { get; set; }
+    public bool? IsMobile { get; set; }
+    public bool? IsTablet { get; set; }
+    public bool? IsAndroid { get; set; }
+    public bool? IsIPhone { get; set; }
+    public bool? IsIPad { get; set; }
+    public bool? IsIPadPro { get; set; }
 }
