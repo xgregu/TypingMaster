@@ -3,7 +3,7 @@
 @inject INotificationService NotificationService
 @inject ITestStore TestStore
 
-<Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default">
+<Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100">
     <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>Test @(_testInProgress.Type.AsString(EnumFormat.Description))</ModalTitle>

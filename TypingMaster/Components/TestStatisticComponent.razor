@@ -18,6 +18,10 @@
                         <TableRowCell>@_testStatistic?.OverallRating</TableRowCell>
                     </TableRow>
                     <TableRow>
+                        <TableRowCell>Typ</TableRowCell>
+                        <TableRowCell>@_test?.TestTypeName</TableRowCell>
+                    </TableRow>
+                    <TableRow>
                         <TableRowCell>Czas trwania</TableRowCell>
                         <TableRowCell>@_testStatistic?.CompletionTime.Humanize() (@_testStatistic?.CompletionTime)</TableRowCell>
                     </TableRow>
@@ -84,4 +88,5 @@
         _modalRef?.Hide();
         return Task.CompletedTask;
     }
+
 }

@@ -3,33 +3,31 @@
 @inject IOptions<TypingTestOptions> Options
 
 <PageTitle>Test</PageTitle>
-<Div Style="text-align: center" Class="px-2">
-    <Fields>
-        <Field>
-            <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
-            <Buttons Shadow="Shadow.Large">
-                <Buttons>
-                    <Button Color="Color.Primary" Clicked="() => StartTest(TypingTestType.Minimalistic)">Minimalistyczny</Button>
-                    <Button Color="Color.Secondary" Clicked="() => StartTest(TypingTestType.Short)">Krótki</Button>
-                    <Button Color="Color.Success" Clicked="() => StartTest(TypingTestType.Average)">Średni</Button>
-                    <Button Color="Color.Warning" Clicked="() => StartTest(TypingTestType.Long)">Długi</Button>
-                    <Button Color="Color.Danger" Clicked="() => StartTest(TypingTestType.Verylong)">Bardzo długi</Button>
-                </Buttons>
-            </Buttons>
-            <FieldHelp>
-                <Text TextColor="TextColor.Danger">
-                    Uwaga!
-                </Text>
-                <Text TextColor="TextColor.Secondary">
-                    Długość testu wpływa na jego poziom trudności
-                </Text>
-            </FieldHelp>
-        </Field>
-    </Fields>
+<Div Flex="Flex.JustifyContent.Center.Column.AlignItems.Stretch" Width="Width.Is100" Height="Height.Is100">
+    <Div Flex="Flex.JustifyContent.Center">
+        <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
+    </Div>
+    <Div Flex="Flex.AlignItems.Center.JustifyContent.Center.OnFullHD.AlignItems.Center.JustifyContent.Center.OnMobile.Wrap" Padding="Padding.Is1.OnX">
+        <Button Color="Color.Primary" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Minimalistic)">Minimalistyczny</Button>
+        <Button Color="Color.Secondary" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Short)">Krótki</Button>
+        <Button Color="Color.Success" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Average)">Średni</Button>
+        <Button Color="Color.Warning" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Long)">Długi</Button>
+        <Button Color="Color.Danger" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Verylong)">Bardzo długi</Button>
+
+    </Div>
+    <Div Flex="Flex.JustifyContent.Center">
+        <Text TextColor="TextColor.Danger">
+            Uwaga! 
+        </Text>
+        <Text TextColor="TextColor.Secondary">
+            Długość testu wpływa na jego poziom trudności
+        </Text>
+    </Div>
+
     <Heading Size="HeadingSize.Is5" Class="mt-3">Ranking</Heading>
     <TestTableComponent @ref="_testTableComponent"></TestTableComponent>
+    <TestComponent @ref="_testModalRef"></TestComponent>
 </Div>
-<TestComponent @ref="_testModalRef"></TestComponent>
 
 @code {
 

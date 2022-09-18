@@ -3,59 +3,68 @@
 @inject ITestService TestService
 @implements IDisposable
 
-<DataGrid @ref="_tableRef"
-          TItem="TestTableModel"
-          Data="@_testList"
-          Responsive
-          Sortable="false"
-          Filterable="false"
-          Virtualize
-          Striped
-          RowDoubleClicked="OnRowDoubleClicked">
-    <DataGridColumns>
-        <DataGridCommandColumn/>
-        <DataGridColumn Field="@nameof(TestTableModel.Id)" Caption="#">
-            <DisplayTemplate>
-                @{
-                    var id = (context as TestTableModel)?.Id;
+<Div Flex="Flex.JustifyContent.Center.Column">
+    <DataGrid @ref="_tableRef"
+              TItem="TestTableModel"
+              Data="@_testList"
+              Responsive
+              Sortable="false"
+              Filterable="false"
+              Virtualize
+              VirtualizeOptions="@(new() 
+                                 {
+                                     DataGridHeight = "100%"
+                                 })"
+              Striped
+              RowDoubleClicked="OnRowDoubleClicked">
+        <DataGridColumns>
+            <DataGridCommandColumn/>
+            <DataGridColumn Field="@nameof(TestTableModel.Id)" Caption="#">
+                <DisplayTemplate>
+                    @{
+                        var id = (context as TestTableModel)?.Id;
 
-                    if (id != Guid.Empty || id != null)
-                    {
-                        @(GetIndex(id.Value))
+                        if (id != Guid.Empty || id != null)
+                        {
+                            @(GetIndex(id.Value))
+                        }
                     }
-                }
-            </DisplayTemplate>
-        </DataGridColumn>
-        <DataGridColumn Field="@nameof(TestTableModel.TestDate)" Caption="Data">
-            <DisplayTemplate>
-                @{
-                    var dateTime = (context as TestTableModel)?.TestDate;
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn Field="@nameof(TestTableModel.TestDate)" Caption="Data">
+                <DisplayTemplate>
+                    @{
+                        var dateTime = (context as TestTableModel)?.TestDate;
 
-                    if (dateTime != null)
-                    {
-                        @(dateTime.Value.ToString("dd.MM.yyyy HH:mm"))
+                        if (dateTime != null)
+                        {
+                            @(dateTime.Value.ToString("dd.MM.yyyy HH:mm"))
+                        }
                     }
-                }
-            </DisplayTemplate>
-        </DataGridColumn>
-        <DataGridColumn Field="@nameof(TestTableModel.TestTypeName)" Caption="Typ" Editable/>
-        <DataGridColumn Field="@nameof(TestTableModel.ExecutorName)" Caption="Imię" Editable/>
-        <DataGridColumn Field="@nameof(TestTableModel.Points)" Caption="Punkty" Editable/>
-    </DataGridColumns>
-    <EmptyTemplate>
-        <Paragraph>Nikt nie wykonał jeszcze testu. Bądź pierwszy!</Paragraph>
-    </EmptyTemplate>
-    <LoadingTemplate>
-        <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
-    </LoadingTemplate>
-</DataGrid>
-<Text TextColor="TextColor.Success">
-    <Icon Name="IconName.Lightbulb"/>
-</Text>
-<Text TextColor="TextColor.Secondary">
-    Wybierz test aby wyświetlić szczegółowe statysyki
-</Text>
-<TestStatisticComponent @ref="_testStatisticComponentRef"></TestStatisticComponent>
+                </DisplayTemplate>
+            </DataGridColumn>
+            @*<DataGridColumn Field="@nameof(TestTableModel.TestTypeName)" Caption="Typ" Editable/>*@
+            <DataGridColumn Field="@nameof(TestTableModel.ExecutorName)" Caption="Imię" Editable/>
+            <DataGridColumn Field="@nameof(TestTableModel.Points)" Caption="Punkty" Editable/>
+        </DataGridColumns>
+        <EmptyTemplate>
+            <Paragraph>Nikt nie wykonał jeszcze testu. Bądź pierwszy!</Paragraph>
+        </EmptyTemplate>
+        <LoadingTemplate>
+            <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
+        </LoadingTemplate>
+    </DataGrid>
+
+    <Div Flex="Flex.JustifyContent.Center">
+        <Text TextColor="TextColor.Success">
+            <Icon Name="IconName.Lightbulb"/>
+        </Text>
+        <Text TextColor="TextColor.Secondary">
+            Wybierz test aby wyświetlić szczegółowe statysyki
+        </Text>
+    </Div>
+    <TestStatisticComponent @ref="_testStatisticComponentRef"></TestStatisticComponent>
+</Div>
 
 @code{
 
@@ -129,4 +138,5 @@
     {
         return _testList.ToList().FindIndex(x => x.Id == testId) + 1;
     }
+
 }

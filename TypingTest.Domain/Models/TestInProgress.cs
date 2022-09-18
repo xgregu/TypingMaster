@@ -48,7 +48,9 @@ public class TestInProgress
 
         if (!TextToRewritten.StartsWith(newText))
         {
-            InorrectClicks++;
+            if(CurrentText?.Length - newText?.Length == -1)
+                InorrectClicks++;
+            
             newTextIsCorrect = false;
         }
 
