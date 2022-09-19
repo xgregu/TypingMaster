@@ -28,9 +28,11 @@
     <TestTableComponent @ref="_testTableComponent"></TestTableComponent>
     <TestComponent @ref="_testModalRef"></TestComponent>
 </Div>
+<BrowserDetect @bind-BrowserInfo="@BrowserInfo"/>
 
-@code {
-
+@code
+{
+    private BrowserInfo BrowserInfo { get; set; }
 
     private TestComponent _testModalRef;
     private TestTableComponent _testTableComponent;

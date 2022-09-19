@@ -1,6 +1,8 @@
 ﻿@using Blazorise
+@using System.Globalization
 @inject ITestService TestService
 @inject ITestStore TestStore
+@inject IBrowserContext BrowserContext
 
 <Modal @ref="_modalRef" Shadow="Shadow.Default">
     <ModalContent Centered>
@@ -24,7 +26,7 @@
                     </TableRow>
                     <TableRow>
                         <TableRowCell>Czas trwania</TableRowCell>
-                        <TableRowCell>@_testStatistic?.CompletionTime.Humanize() (@_testStatistic?.CompletionTime)</TableRowCell>
+                        <TableRowCell>@_testStatistic?.CompletionTime.Humanize(culture: BrowserContext.BrowserCulture) (@_testStatistic?.CompletionTime)</TableRowCell>
                     </TableRow>
                     <TableRow>
                         <TableRowCell>Kliknięć na minutę</TableRowCell>
@@ -39,94 +41,16 @@
                         <TableRowCell>@_test?.OsName</TableRowCell>
                     </TableRow>
                     <TableRow>
-                        <TableRowCell>Typ urządzenia</TableRowCell>
+                        <TableRowCell>Urządzenie</TableRowCell>
                         <TableRowCell>
                             <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center">
-                                <div class="m-1">
-                                    <Badge Color="@(_test?.IsDesktop ?? false ? Color.Success : Color.Danger)">
-                                        @if (_test?.IsDesktop ?? false)
-                                        {
-                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
-                                        }
-                                    </Badge> <Text>Desktop</Text>
-                                </div>
-                                <div class="m-1">
-                                    <Badge Color="@(_test?.IsMobile ?? false ? Color.Success : Color.Danger)">
-                                        @if (_test?.IsMobile ?? false)
-                                        {
-                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
-                                        }
-                                    </Badge> <Text>Smartfon</Text>
-                                </div>
-                                <div class="m-1">
-                                    <Badge Color="@(_test?.IsTablet ?? false ? Color.Success : Color.Danger)">
-                                        @if (_test?.IsTablet ?? false)
-                                        {
-                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
-                                        }
-                                    </Badge> <Text>Tablet</Text>
-                                </div>
-                                <div class="m-1">
-                                    <Badge Color="@(_test?.IsAndroid ?? false ? Color.Success : Color.Danger)">
-                                        @if (_test?.IsAndroid ?? false)
-                                        {
-                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
-                                        }
-                                    </Badge> <Text>Android</Text>
-                                </div>
-                                <div class="m-1">
-
-                                    <Badge Color="@(_test?.IsIPhone ?? false ? Color.Success : Color.Danger)">
-                                        @if (_test?.IsIPhone ?? false)
-                                        {
-                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
-                                        }
-                                    </Badge> <Text>iPhone</Text>
-                                </div>
-                                <div class="m-1">
-                                    <Badge Color="@(_test?.IsIPad ?? false ? Color.Success : Color.Danger)">
-                                        @if (_test?.IsIPad ?? false)
-                                        {
-                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
-                                        }
-                                    </Badge> <Text>iPad</Text>
-                                </div>
-                                <div class="m-1">
-                                    <Badge Color="@(_test?.IsIPadPro ?? false ? Color.Success : Color.Danger)">
-                                        @if (_test?.IsIPadPro ?? false)
-                                        {
-                                            <Icon Name="IconName.Check" aria-label="Confirmed"/>
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Times" aria-label="Cancelled"/>
-                                        }
-                                    </Badge> <Text>iPad Pro</Text>
-                                </div>
+                                <DeviceTypeStatistic IsDevice="@_test?.IsDesktop" Name="Desktop"></DeviceTypeStatistic>
+                                <DeviceTypeStatistic IsDevice="@_test?.IsMobile" Name="Smartfon"></DeviceTypeStatistic>
+                                <DeviceTypeStatistic IsDevice="@_test?.IsTablet" Name="Tablet"></DeviceTypeStatistic>
+                                <DeviceTypeStatistic IsDevice="@_test?.IsAndroid" Name="Android"></DeviceTypeStatistic>
+                                <DeviceTypeStatistic IsDevice="@_test?.IsIPhone" Name="iPhone"></DeviceTypeStatistic>
+                                <DeviceTypeStatistic IsDevice="@_test?.IsIPad" Name="iPad"></DeviceTypeStatistic>
+                                <DeviceTypeStatistic IsDevice="@_test?.IsIPadPro" Name="iPad Pro"></DeviceTypeStatistic>
                             </div>
                         </TableRowCell>
                     </TableRow>
@@ -145,7 +69,7 @@
     private TestStatistic _testStatistic;
     private int _testRanking;
     private string _title;
-
+    
     public async Task Show(Test test)
     {
         _test = test;

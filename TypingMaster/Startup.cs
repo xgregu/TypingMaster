@@ -39,9 +39,9 @@ public class Startup
         services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
 
         services.AddDatabase();
-
-
+        
         services.AddTransient<ITestService, TestService>();
+        services.AddSingleton<IBrowserContext, BrowserContext>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
