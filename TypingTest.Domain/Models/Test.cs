@@ -15,12 +15,4 @@ public class Test
     public int TotalClicks { get; init; }
     public DateTime StartTime { get; init; }
     public DateTime EndTime { get; init; }
-    public string? OsName { get; init; }
-    public bool? IsDesktop { get; init; }
-    public bool? IsMobile { get; init; }
-    public bool? IsTablet { get; init; }
-    public bool? IsAndroid { get; init; }
-    public bool? IsIPhone { get; init; }
-    public bool? IsIPad { get; init; }
-    public bool? IsIPadPro { get; init; }
 }

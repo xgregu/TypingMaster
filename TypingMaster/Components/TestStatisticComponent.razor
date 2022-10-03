@@ -36,24 +36,6 @@
                         <TableRowCell>Skuteczność</TableRowCell>
                         <TableRowCell>@(_testStatistic?.EffectivenessPercentage)%</TableRowCell>
                     </TableRow>
-                    <TableRow>
-                        <TableRowCell>System</TableRowCell>
-                        <TableRowCell>@_test?.OsName</TableRowCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableRowCell>Urządzenie</TableRowCell>
-                        <TableRowCell>
-                            <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center">
-                                <DeviceTypeStatistic IsDevice="@_test?.IsDesktop" Name="Desktop"></DeviceTypeStatistic>
-                                <DeviceTypeStatistic IsDevice="@_test?.IsMobile" Name="Smartfon"></DeviceTypeStatistic>
-                                <DeviceTypeStatistic IsDevice="@_test?.IsTablet" Name="Tablet"></DeviceTypeStatistic>
-                                <DeviceTypeStatistic IsDevice="@_test?.IsAndroid" Name="Android"></DeviceTypeStatistic>
-                                <DeviceTypeStatistic IsDevice="@_test?.IsIPhone" Name="iPhone"></DeviceTypeStatistic>
-                                <DeviceTypeStatistic IsDevice="@_test?.IsIPad" Name="iPad"></DeviceTypeStatistic>
-                                <DeviceTypeStatistic IsDevice="@_test?.IsIPadPro" Name="iPad Pro"></DeviceTypeStatistic>
-                            </div>
-                        </TableRowCell>
-                    </TableRow>
                 </TableBody>
             </Table>
         </ModalBody>
@@ -93,7 +75,7 @@
             InorrectClicks = testTableModel.InorrectClicks,
             TotalClicks = testTableModel.TotalClicks,
             StartTime = testTableModel.StartTime,
-            EndTime = testTableModel.EndTime, OsName = testTableModel.OsName, IsDesktop = testTableModel.IsDesktop, IsMobile = testTableModel.IsMobile, IsTablet = testTableModel.IsTablet, IsAndroid = testTableModel.IsAndroid, IsIPhone = testTableModel.IsIPhone, IsIPad = testTableModel.IsIPad, IsIPadPro = testTableModel.IsIPadPro,
+            EndTime = testTableModel.EndTime
         };
         _testStatistic = TestService.GetTestStatistic(_test);
         _testRanking = await TestStore.GetTestRanking(_test.Id);

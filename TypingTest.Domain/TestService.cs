@@ -14,7 +14,7 @@ public class TestService : ITestService
         _logger = logger;
     }
 
-    public Test TestInProgressEnd(TestInProgress testInProgress, string executorName, BrowserInfo browserInfo)
+    public Test TestInProgressEnd(TestInProgress testInProgress, string executorName)
     {
         return new Test
         {
@@ -26,15 +26,7 @@ public class TestService : ITestService
             TotalClicks = testInProgress.TotalClicks,
             EndTime = testInProgress.EndTime,
             StartTime = testInProgress.StartTime,
-            InorrectClicks = testInProgress.InorrectClicks,
-            IsDesktop = browserInfo.IsDesktop,
-            IsMobile = browserInfo.IsMobile,
-            IsTablet = browserInfo.IsTablet,
-            IsAndroid = browserInfo.IsAndroid,
-            IsIPhone = browserInfo.IsIPhone,
-            IsIPad = browserInfo.IsIPad,
-            IsIPadPro = browserInfo.IsIPadPro,
-            OsName = browserInfo.OSName,
+            InorrectClicks = testInProgress.InorrectClicks
         };
     }
 
