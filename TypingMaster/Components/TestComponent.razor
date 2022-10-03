@@ -12,11 +12,12 @@
         <ModalBody>
             @if (!string.IsNullOrWhiteSpace(_executorName) && _executorName.Length >= 3)
             {
-                <Paragraph Class="my-2">@_testInProgress.TextToRewritten</Paragraph>
+                <Paragraph Class="my-2" Style="@StyleNoSelect">@_testInProgress.TextToRewritten</Paragraph>
                 <MemoEdit TextColor="@_currentTextColor" Placeholder="Zacznij pisać aby rozpocząć test..." Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
-                <Divider DividerType="DividerType.TextContent" Text="Postęp"/>
+                <Divider DividerType="DividerType.TextContent" Text="@_testInProgress.CurrentTestTime.Humanize()"/>
+                <Divider DividerType="DividerType.TextContent" Text="@_testInProgress.CurrentTestTime.ToString()"/>
                 <Progress Value="_testInProgress.CompletionPercentage" Animated Striped></Progress>
-                <Divider DividerType="DividerType.TextContent" Text="Wykonawca testu"/>
+                <Divider DividerType="DividerType.TextContent" Text="@(_testInProgress.CompletionPercentage + "%")"/>
             }
             <Validation UsePattern>
                 <TextEdit Pattern="[A-Za-z]{3}" Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted">
@@ -36,6 +37,8 @@
 <TestStatisticComponent @ref="_testStatisticComponentRef"/>
 @code {
 
+        private const string StyleNoSelect = "-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;";
+    
     private TransparentWaitPopup _transparentWaitPopupRef;
     private TestStatisticComponent _testStatisticComponentRef;
     private Modal _modalRef;
@@ -46,7 +49,24 @@
     private TestInProgress _testInProgress = TestInProgress.EmptyTest();
 
     private TaskCompletionSource<Test> _confirmationTask;
-    
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Factory.StartNew(TestTimeWatcher, TaskCreationOptions.RunContinuationsAsynchronously);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task TestTimeWatcher()
+    {
+        while (true)
+        {
+            if(_testInProgress.IsStarted)
+                await InvokeAsync(StateHasChanged);
+            
+            await Task.Delay(25);
+        }
+    }
+
     public async Task<Test> ShowAndWaitForResult(TypingTestType testType, string testText)
     {
         Show(testType, testText);
@@ -87,7 +107,7 @@
     private async Task EndTest()
     {
         await _transparentWaitPopupRef.Show();
-        var test = TestService.TestInProgressEnd(_testInProgress, _executorName, BrowserContext.BrowserInfo);
+        var test = TestService.TestInProgressEnd(_testInProgress, _executorName);
         await TestStore.Add(test);
         await Hide();
         await _transparentWaitPopupRef.Hide();
