@@ -1,6 +1,4 @@
-﻿@using Blazorise
-@using System.Globalization
-@inject ITestService TestService
+﻿@inject ITestService TestService
 @inject ITestStore TestStore
 @inject IBrowserContext BrowserContext
 
@@ -87,5 +85,4 @@
         _modalRef?.Hide();
         return Task.CompletedTask;
     }
-
 }

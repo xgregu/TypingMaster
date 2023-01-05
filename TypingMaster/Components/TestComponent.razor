@@ -10,49 +10,48 @@
             <ModalTitle>Test @(_testInProgress.Type.AsString(EnumFormat.Description))</ModalTitle>
         </ModalHeader>
         <ModalBody>
-            @if (!string.IsNullOrWhiteSpace(_executorName) && _executorName.Length >= 3)
+            @if (_executorNameIsValid)
             {
-                <Paragraph Class="my-2" Style="@StyleNoSelect">@_testInProgress.TextToRewritten</Paragraph>
+                <Highlighter Class="my-2" Style="@StyleHighlighter" Text="@_testInProgress.TextToRewritten" HighlightedText="@_inputText" CaseSensitive/>
                 <MemoEdit TextColor="@_currentTextColor" Placeholder="Zacznij pisać aby rozpocząć test..." Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
                 <Divider DividerType="DividerType.TextContent" Text="@_testInProgress.CurrentTestTime.Humanize()"/>
                 <Divider DividerType="DividerType.TextContent" Text="@_testInProgress.CurrentTestTime.ToString()"/>
                 <Progress Value="_testInProgress.CompletionPercentage" Animated Striped></Progress>
                 <Divider DividerType="DividerType.TextContent" Text="@(_testInProgress.CompletionPercentage + "%")"/>
             }
-            <Validation UsePattern>
-                <TextEdit Pattern="[A-Za-z]{3}" Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted">
-                    <Feedback>
-                        <ValidationError>Wpisz conajmniej 3 znaki!</ValidationError>
-                    </Feedback>
-                </TextEdit>
+            <Validation Validator="ValidateExecutorName">
+                <TextEdit Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted"/>
             </Validation>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@Reset" Disabled="!_testInProgress.IsStarted">Rozpocznij od nowa</Button>
+            <Button Color="Color.Primary" Clicked="@Clear" Disabled="@(_testInProgress.IsStarted)">Rozpocznij od nowa</Button>
             <Button Color="Color.Secondary" Clicked="@Hide">Zamknij test</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
 <TransparentWaitPopup @ref="_transparentWaitPopupRef"/>
 <TestStatisticComponent @ref="_testStatisticComponentRef"/>
-@code {
 
-        private const string StyleNoSelect = "-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;";
-    
+@code {
+        private const int RequiredExecutorNameLenght = 2;
+        private const string StyleHighlighter = "background-color: #80bdff; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;";
+
     private TransparentWaitPopup _transparentWaitPopupRef;
     private TestStatisticComponent _testStatisticComponentRef;
     private Modal _modalRef;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
     private string _executorName = string.Empty;
+    private bool _executorNameIsValid = false;
 
     private TestInProgress _testInProgress = TestInProgress.EmptyTest();
 
     private TaskCompletionSource<Test> _confirmationTask;
+    private string _inputText;
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Factory.StartNew(TestTimeWatcher, TaskCreationOptions.RunContinuationsAsynchronously);
+        _ = Task.Run(TestTimeWatcher);
         await base.OnInitializedAsync();
     }
 
@@ -60,46 +59,48 @@
     {
         while (true)
         {
-            if(_testInProgress.IsStarted)
+            if (_testInProgress.IsStarted)
                 await InvokeAsync(StateHasChanged);
-            
+
             await Task.Delay(25);
         }
     }
 
     public async Task<Test> ShowAndWaitForResult(TypingTestType testType, string testText)
     {
-        Show(testType, testText);
-
-        return await _confirmationTask.Task;
+        try
+        {
+            _testInProgress = TestInProgress.InitializeTest(testText, testType);
+            _confirmationTask = new TaskCompletionSource<Test>();
+            _cancelClose = true;
+            _modalRef?.Show();
+            return await _confirmationTask.Task;
+        }
+        finally
+        {
+            await Hide();
+        }
     }
 
-    public void Show(TypingTestType testType, string testText)
+    private async Task Hide()
     {
-        _testInProgress = TestInProgress.InitializeTest(testText, testType);
-        _confirmationTask = new TaskCompletionSource<Test>();
-        _cancelClose = true;
-        _modalRef?.Show();
-    }
-
-    public Task Hide()
-    {
+        await Clear();
         _cancelClose = false;
         _modalRef?.Hide();
-        return Task.CompletedTask;
     }
-
-    private Task Reset()
+    
+    private async Task Clear()
     {
         _testInProgress = TestInProgress.InitializeTest(_testInProgress.TextToRewritten, _testInProgress.Type);
-        return Task.CompletedTask;
+        _inputText = string.Empty;
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task OnDestinationChanged(string value)
     {
+        _inputText = value;
         var isCorrect = _testInProgress.UpdateCurrentText(value);
         _currentTextColor = isCorrect ? TextColor.Default : TextColor.Danger;
-
         if (_testInProgress.IsComplete)
             await EndTest();
     }
@@ -109,10 +110,21 @@
         await _transparentWaitPopupRef.Show();
         var test = TestService.TestInProgressEnd(_testInProgress, _executorName);
         await TestStore.Add(test);
-        await Hide();
         await _transparentWaitPopupRef.Hide();
         await _testStatisticComponentRef.Show(test);
         _confirmationTask.SetResult(test);
+    }
+
+    private void ValidateExecutorName(ValidatorEventArgs e)
+    {
+        var executorNamePattern = $"[A-Za-z]{{{RequiredExecutorNameLenght}}}";
+        var executorNameRegex = new Regex(executorNamePattern);
+
+        var executorName = Convert.ToString(e.Value);
+        e.Status = string.IsNullOrEmpty(executorName) ? ValidationStatus.None :
+            executorNameRegex.IsMatch(executorName) ? ValidationStatus.Success : ValidationStatus.Error;
+
+        _executorNameIsValid = e.Status == ValidationStatus.Success;
     }
 
 }

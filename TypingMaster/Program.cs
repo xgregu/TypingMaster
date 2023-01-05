@@ -18,13 +18,11 @@ public class Program
     private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
     {
         LogManager.GetCurrentClassLogger().Fatal(e.ExceptionObject);
-        Environment.Exit(1);
     }
 
     private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
         LogManager.GetCurrentClassLogger().Fatal((Exception)e.Exception);
-        Environment.Exit(1);
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)
