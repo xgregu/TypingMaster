@@ -1,8 +1,7 @@
 ﻿using Humanizer;
 using TypingMaster.Domain;
-using TypingMaster.Domain.Models;
 
-namespace TypingMaster.Components;
+namespace TypingMaster.Components.Models;
 
 public class TestTableModel
 {

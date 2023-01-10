@@ -14,6 +14,7 @@
 <MessageAlert/>
 <NotificationAlert/>
 <BrowserDetect @bind-BrowserInfo="@BrowserInfo"/>
+
 @code
 {
     private BrowserInfo BrowserInfo { get; set; }
@@ -26,7 +27,7 @@
         BrowserContext.SetBrowserCulture("pl-PL");
         return base.OnAfterRenderAsync(firstRender);
     }
-    
+
     private async Task BrowserInfoWatcher()
     {
         while (BrowserInfo is null) await Task.Delay(50);

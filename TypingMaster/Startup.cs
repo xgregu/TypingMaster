@@ -1,8 +1,11 @@
-﻿using Blazorise;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
+using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using MediatR;
+using MediatR.Courier.DependencyInjection;
 using NLog.Extensions.Logging;
-using System.Text.Json.Serialization;
 using TypingMaster.Database;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Options;
@@ -39,9 +42,19 @@ public class Startup
         services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
 
         services.AddDatabase();
-        
+
         services.AddTransient<ITestService, TestService>();
         services.AddSingleton<IBrowserContext, BrowserContext>();
+
+        var files = Directory
+            .EnumerateFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                $"{Constants.AppName}.*.dll",
+                SearchOption.AllDirectories)
+            .ToList();
+        var assemblies = files.Select(Assembly.LoadFrom).ToList();
+        assemblies.Add(Assembly.GetExecutingAssembly());
+        services.AddMediatR(assemblies.ToArray());
+        services.AddCourier(assemblies.ToArray());
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

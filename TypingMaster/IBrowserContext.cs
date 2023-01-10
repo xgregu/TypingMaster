@@ -6,8 +6,8 @@ namespace TypingMaster;
 public interface IBrowserContext
 {
     public BrowserInfo BrowserInfo { get; }
-    public void SetBrowserInfo(BrowserInfo browserInfo);
     public CultureInfo BrowserCulture { get; }
+    public void SetBrowserInfo(BrowserInfo browserInfo);
     public void SetBrowserCulture(string languageCode);
 }
 

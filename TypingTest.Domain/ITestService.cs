@@ -1,5 +1,4 @@
-﻿using PSC.Blazor.Components.BrowserDetect;
-using TypingMaster.Domain.Models;
+﻿using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Domain;
 

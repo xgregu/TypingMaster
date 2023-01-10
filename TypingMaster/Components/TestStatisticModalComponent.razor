@@ -1,0 +1,41 @@
+﻿@inject ITestService TestService
+@inject ITestStore TestStore
+@inject IBrowserContext BrowserContext
+
+<Modal @ref="_modalRef" Shadow="Shadow.Default">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>@_title</ModalTitle>
+        </ModalHeader>
+        <ModalBody>
+            <TestStatisticTableComponent TestId="_test?.Id"/>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="@Hide">Zamknij</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    private Modal? _modalRef;
+    private Test _test = new();
+    private string _title = string.Empty;
+
+    public async Task Show(Test? test)
+    {
+        if (test == null)
+            return;
+
+        _test = test;
+        _title = $"Gratulacje {_test.ExecutorName}! Twoje statystki:";
+        await InvokeAsync(StateHasChanged);
+        _modalRef?.Show();
+    }
+
+    public Task Hide()
+    {
+        _modalRef?.Hide();
+        return Task.CompletedTask;
+    }
+
+}

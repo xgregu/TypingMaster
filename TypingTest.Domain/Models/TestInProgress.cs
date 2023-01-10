@@ -12,7 +12,7 @@ public class TestInProgress
     public TypingTestType Type { get; }
     public string CurrentText { get; private set; }
     public int CompletionPercentage { get; private set; }
-    public bool IsStarted => !string.IsNullOrWhiteSpace(CurrentText);
+    public bool IsStarted { get; private set; }
     public int CorrectClicks => TotalClicks - InorrectClicks;
     public int InorrectClicks { get; private set; }
     public int TotalClicks { get; private set; }
@@ -43,28 +43,34 @@ public class TestInProgress
         var newTextIsCorrect = true;
         TotalClicks++;
 
-        if (string.IsNullOrWhiteSpace(CurrentText))
-            StartTime = DateTime.Now;
-
         if (!TextToRewritten.StartsWith(newText))
         {
-            if(CurrentText?.Length - newText?.Length == -1)
+            if (CurrentText?.Length - newText?.Length == -1)
                 InorrectClicks++;
-            
+
             newTextIsCorrect = false;
         }
 
         CurrentText = newText;
 
-        if (TextToRewritten.Equals(CurrentText))
-        {
-            IsComplete = true;
-            EndTime = DateTime.Now;
-        }
-
         if (newTextIsCorrect)
             CompletionPercentage = CurrentText.Length * 100 / TextToRewritten.Length;
 
+        if (TextToRewritten.Equals(CurrentText))
+            EndTest();
+
         return newTextIsCorrect;
+    }
+
+    public void StartTest()
+    {
+        IsStarted = true;
+        StartTime = DateTime.Now;
+    }
+
+    private void EndTest()
+    {
+        IsComplete = true;
+        EndTime = DateTime.Now;
     }
 }

@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using PSC.Blazor.Components.BrowserDetect;
-using TypingMaster.Domain.Extensions;
 using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Domain;
@@ -43,7 +41,7 @@ public class TestService : ITestService
 
     private static int GetPoints(Test test, int effectiveness, double clickPerMinute)
     {
-        var value = effectiveness * clickPerMinute;
+        var result = effectiveness * clickPerMinute;
         var multiplier = test.TestType switch
         {
             TypingTestType.Minimalistic => 0.8,
@@ -53,7 +51,7 @@ public class TestService : ITestService
             TypingTestType.Verylong => 1.2,
             _ => 1
         };
-        return (int)(value * multiplier);
+        return (int) (result * multiplier);
     }
 
     private static double GetClickPerMinute(Test test)

@@ -1,6 +1,7 @@
 ﻿@inject ILogger<TestTableComponent> Logger
 @inject ITestStore TestStore
 @inject ITestService TestService
+@inject ICourier Courier
 @implements IDisposable
 
 <Div Flex="Flex.JustifyContent.Center.Column">
@@ -11,23 +12,18 @@
               Sortable="false"
               Filterable="false"
               Virtualize
-              VirtualizeOptions="@(new() 
-                                 {
-                                     DataGridHeight = "100%"
-                                 })"
-              Striped
-              RowDoubleClicked="OnRowDoubleClicked">
+              VirtualizeOptions="@(new VirtualizeOptions {DataGridHeight = "100%"})"
+              DetailRowTrigger="DetailRowTrigger"
+              @bind-SelectedRow="@_selectedTest"
+              Striped>
         <DataGridColumns>
             <DataGridCommandColumn/>
             <DataGridColumn Field="@nameof(TestTableModel.Id)" Caption="#">
                 <DisplayTemplate>
                     @{
                         var id = (context as TestTableModel)?.Id;
-
-                        if (id != Guid.Empty || id != null)
-                        {
+                        if (id != Guid.Empty && id != null)
                             @(GetIndex(id.Value))
-                        }
                     }
                 </DisplayTemplate>
             </DataGridColumn>
@@ -35,15 +31,11 @@
                 <DisplayTemplate>
                     @{
                         var dateTime = (context as TestTableModel)?.TestDate;
-
                         if (dateTime != null)
-                        {
                             @(dateTime.Value.ToString("dd.MM.yyyy HH:mm"))
-                        }
                     }
                 </DisplayTemplate>
             </DataGridColumn>
-            @*<DataGridColumn Field="@nameof(TestTableModel.TestTypeName)" Caption="Typ" Editable/>*@
             <DataGridColumn Field="@nameof(TestTableModel.ExecutorName)" Caption="Imię" Editable/>
             <DataGridColumn Field="@nameof(TestTableModel.Points)" Caption="Punkty" Editable/>
         </DataGridColumns>
@@ -53,58 +45,43 @@
         <LoadingTemplate>
             <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
         </LoadingTemplate>
+        <DetailRowTemplate>
+            <Container Flex="Flex.Column.JustifyContent.Center.AlignItems.Center">
+                <TestStatisticTableComponent TestId="@context.Id"/>
+            </Container>
+        </DetailRowTemplate>
     </DataGrid>
 
     <Div Flex="Flex.JustifyContent.Center">
         <Text TextColor="TextColor.Success">
-            <Icon Name="IconName.Lightbulb"/>
+            <Icon Name="IconName.Lightbulb" Margin="Margin.Is1.OnX"/>
         </Text>
         <Text TextColor="TextColor.Secondary">
             Wybierz test aby wyświetlić szczegółowe statysyki
         </Text>
     </Div>
-    <TestStatisticComponent @ref="_testStatisticComponentRef"></TestStatisticComponent>
 </Div>
 
 @code{
 
-    private TestStatisticComponent _testStatisticComponentRef;
     private DataGrid<TestTableModel> _tableRef;
     private IReadOnlyList<TestTableModel> _testList;
     private int _totalTests;
+    private TestTableModel _selectedTest;
 
     protected override async Task OnInitializedAsync()
     {
-        TestStore.TestUpdated += TestStoreOnTestUpdated;
+        Courier.Subscribe<TestUpdated>(OnTestUpdated);
         await UpdateTests();
         await base.OnInitializedAsync();
     }
 
-    private async void TestStoreOnTestUpdated(object? sender, Test e)
+    private async Task OnTestUpdated(TestUpdated testUpdated)
     {
         await UpdateTests();
         await _tableRef.Reload();
         await _tableRef.Refresh();
         await InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        TestStore.TestUpdated -= TestStoreOnTestUpdated;
-    }
-
-    public async Task ScrollToTest(Guid testId)
-    {
-        var row = GetIndex(testId);
-        await _tableRef.ScrollToRow(row);
-
-        var item = _testList.First(x => x.Id == testId);
-        await _tableRef.Select(item);
-    }
-
-    private async void OnRowDoubleClicked(DataGridRowMouseEventArgs<TestTableModel> obj)
-    {
-        await _testStatisticComponentRef.Show(obj.Item);
     }
 
     private async Task UpdateTests()
@@ -137,6 +114,16 @@
     private int GetIndex(Guid testId)
     {
         return _testList.ToList().FindIndex(x => x.Id == testId) + 1;
+    }
+
+    public void Dispose()
+    {
+        Courier.UnSubscribe<TestUpdated>(OnTestUpdated);
+    }
+
+    private bool DetailRowTrigger(DetailRowTriggerEventArgs<TestTableModel> arg)
+    {
+        return arg.Item.Id == _selectedTest?.Id;
     }
 
 }

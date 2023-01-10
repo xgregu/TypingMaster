@@ -1,7 +1,7 @@
 ﻿@inject ILogger<TransparentWaitPopup> Logger
 
 <Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)">
-    <ModalContent Centered="true"  Style="background-color: transparent; border: 0" Shadow="Shadow.None">
+    <ModalContent Centered="true" Style="background-color: transparent; border: 0" Shadow="Shadow.None">
         <ModalBody Style="background-color: transparent; border: 0; text-align: center;">
             <div class="m-3">
                 <SpinKit Color="#0000ff" Type="SpinKitType.Chase" Size="5rem" Centered="true"/>
@@ -11,7 +11,7 @@
 </Modal>
 
 @code {
-    
+
     private Modal _modalRef;
     private bool _cancelClose;
 
@@ -30,4 +30,5 @@
         _modalRef?.Hide();
         return Task.CompletedTask;
     }
+
 }

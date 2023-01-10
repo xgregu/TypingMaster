@@ -3,7 +3,7 @@
 @inject IOptions<TypingTestOptions> Options
 
 <PageTitle>Test</PageTitle>
-<Div Flex="Flex.JustifyContent.Center.Column.AlignItems.Stretch" Width="Width.Is100" Height="Height.Is100">
+<Div Flex="Flex.JustifyContent.Center.Column.AlignItems.Stretch" Width="Width.Is100">
     <Div Flex="Flex.JustifyContent.Center">
         <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
     </Div>
@@ -16,8 +16,8 @@
 
     </Div>
     <Div Flex="Flex.JustifyContent.Center">
-        <Text TextColor="TextColor.Danger">
-            Uwaga! 
+        <Text TextColor="TextColor.Danger" Margin="Margin.Is1.OnX">
+            Uwaga!
         </Text>
         <Text TextColor="TextColor.Secondary">
             Długość testu wpływa na jego poziom trudności
@@ -28,12 +28,9 @@
     <TestTableComponent @ref="_testTableComponent"></TestTableComponent>
     <TestComponent @ref="_testModalRef"></TestComponent>
 </Div>
-<BrowserDetect @bind-BrowserInfo="@BrowserInfo"/>
 
 @code
 {
-    private BrowserInfo BrowserInfo { get; set; }
-
     private TestComponent _testModalRef;
     private TestTableComponent _testTableComponent;
     private TypingTestTextOptions[] _typingTestTexts;
@@ -46,10 +43,12 @@
 
     private async void StartTest(TypingTestType testType)
     {
-        var text = GetTypingTestText(testType);
-        var test = await _testModalRef.ShowAndWaitForResult(testType, text);
-        await _testTableComponent.ScrollToTest(test.Id);
+        var testText = GetTypingTestText(testType);
+        _ = await _testModalRef.ShowAndWaitForResult(testType, testText);
     }
 
-    private string GetTypingTestText(TypingTestType type) => _typingTestTexts.FirstOrDefault(x => x.Type == type)?.Text ?? "ERROR";
+    private string GetTypingTestText(TypingTestType type)
+    {
+        return _typingTestTexts.FirstOrDefault(x => x.Type == type)?.Text ?? "ERROR";
+    }
 }

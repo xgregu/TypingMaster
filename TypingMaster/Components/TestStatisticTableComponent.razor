@@ -1,0 +1,64 @@
+﻿@inject ITestService TestService
+@inject ITestStore TestStore
+@inject IBrowserContext BrowserContext
+
+<Table Striped Responsive>
+    <TableBody>
+        <TableRow>
+            <TableRowCell>Ranking</TableRowCell>
+            <TableRowCell>@_testRanking</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowCell>Punkty</TableRowCell>
+            <TableRowCell>@_testStatistic?.OverallRating</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowCell>Typ</TableRowCell>
+            <TableRowCell>@_test?.TestTypeName</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowCell>Czas trwania</TableRowCell>
+            <TableRowCell>@_testStatistic?.CompletionTime.Humanize(culture: BrowserContext.BrowserCulture) (@_testStatistic?.CompletionTime)</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowCell>Kliknięć na minutę</TableRowCell>
+            <TableRowCell>@_testStatistic?.ClickPerSecond</TableRowCell>
+        </TableRow>
+        <TableRow>
+            <TableRowCell>Skuteczność</TableRowCell>
+            <TableRowCell>@(_testStatistic?.EffectivenessPercentage)%</TableRowCell>
+        </TableRow>
+    </TableBody>
+</Table>
+
+
+@code {
+    private TestStatistic _testStatistic;
+    private int _testRanking;
+    private Test? _test;
+    private Guid? _testId;
+
+    [Parameter]
+    [EditorRequired]
+    public Guid? TestId
+    {
+        get => _testId;
+        set
+        {
+            _testId = value;
+            _ = Refresh();
+        }
+    }
+
+    private async Task Refresh()
+    {
+        if (TestId == Guid.Empty || TestId == null)
+            return;
+
+        _test = await TestStore.GetTest(TestId.Value);
+        _testStatistic = TestService.GetTestStatistic(_test);
+        _testRanking = await TestStore.GetTestRanking(_test.Id);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+}

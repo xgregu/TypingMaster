@@ -1,6 +1,4 @@
-﻿using TypingMaster.Domain.Models;
-
-namespace TypingMaster.Domain.Options;
+﻿namespace TypingMaster.Domain.Options;
 
 public class TypingTestOptions
 {

@@ -1,26 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TypingMaster.Database.Entities;
 using TypingMaster.Domain;
+using TypingMaster.Domain.Events;
 using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Database.Stores;
 
 public class TestStore : ITestStore
 {
+    private readonly IMediator _mediator;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ITestService _testService;
-    public event EventHandler<Test> TestUpdated;
 
-    public TestStore(IServiceScopeFactory serviceScopeFactory, ITestService testService)
+    public TestStore(IServiceScopeFactory serviceScopeFactory, ITestService testService, IMediator mediator)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _testService = testService;
+        _mediator = mediator;
     }
 
     public async Task<IReadOnlyList<Test>> GetAllTest()
@@ -57,12 +59,13 @@ public class TestStore : ITestStore
         var testEntity = test.ToEntity();
         await context.Tests.AddAsync(testEntity);
         await context.SaveChangesAsync();
-        TestUpdated?.Invoke(this, test);
+        await _mediator.Publish(new TestUpdated(test));
     }
 
     public async Task<int> GetTestRanking(Guid testId)
     {
-        await using var context = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        await using var context =
+            _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         var index = context.Tests
             .AsNoTracking()
             .ToList()
@@ -70,17 +73,28 @@ public class TestStore : ITestStore
             {
                 var testStatistic = _testService.GetTestStatistic(x.ToModel());
                 return testStatistic.OverallRating;
-
             }).ToList().FindIndex(x => x.TestId == testId);
         return index + 1;
     }
 
     public async Task<Test> FindLast()
     {
-        await using var context = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        await using var context =
+            _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         var entity = await context.Tests.AsNoTracking()
             .OrderByDescending(x => x.Id)
             .FirstOrDefaultAsync();
+
+        return entity.ToModel();
+    }
+
+    public async Task<Test> GetTest(Guid id)
+    {
+        await using var context =
+            _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+
+        var entity = await context.Tests.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.TestId == id);
 
         return entity.ToModel();
     }
