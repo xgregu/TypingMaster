@@ -1,5 +1,4 @@
-﻿@inject IBrowserContext BrowserContext
-<Router AppAssembly="@typeof(App).Assembly">
+﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
         <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
@@ -13,24 +12,3 @@
 </Router>
 <MessageAlert/>
 <NotificationAlert/>
-<BrowserDetect @bind-BrowserInfo="@BrowserInfo"/>
-
-@code
-{
-    private BrowserInfo BrowserInfo { get; set; }
-    private TransparentWaitPopup _transparentWaitPopupRef;
-
-
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        Task.Factory.StartNew(BrowserInfoWatcher, TaskCreationOptions.RunContinuationsAsynchronously);
-        BrowserContext.SetBrowserCulture("pl-PL");
-        return base.OnAfterRenderAsync(firstRender);
-    }
-
-    private async Task BrowserInfoWatcher()
-    {
-        while (BrowserInfo is null) await Task.Delay(50);
-        BrowserContext.SetBrowserInfo(BrowserInfo);
-    }
-}

@@ -13,8 +13,7 @@
               Filterable="false"
               Virtualize
               VirtualizeOptions="@(new VirtualizeOptions {DataGridHeight = "100%"})"
-              DetailRowTrigger="DetailRowTrigger"
-              @bind-SelectedRow="@_selectedTest"
+              SelectedRowChanged="OnSelectedRowChanged"
               Striped>
         <DataGridColumns>
             <DataGridCommandColumn/>
@@ -45,11 +44,6 @@
         <LoadingTemplate>
             <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
         </LoadingTemplate>
-        <DetailRowTemplate>
-            <Container Flex="Flex.Column.JustifyContent.Center.AlignItems.Center">
-                <TestStatisticTableComponent TestId="@context.Id"/>
-            </Container>
-        </DetailRowTemplate>
     </DataGrid>
 
     <Div Flex="Flex.JustifyContent.Center">
@@ -61,9 +55,10 @@
         </Text>
     </Div>
 </Div>
-
+    <TestStatisticModalComponent @ref="_testStatisticModalRef"/>
 @code{
-
+    
+    private TestStatisticModalComponent _testStatisticModalRef;
     private DataGrid<TestTableModel> _tableRef;
     private IReadOnlyList<TestTableModel> _testList;
     private int _totalTests;
@@ -87,27 +82,10 @@
     private async Task UpdateTests()
     {
         var allTest = await TestStore.GetAllTest();
-        _testList = allTest.Select(x =>
+        _testList = allTest.Select(test =>
         {
-            var testStatistic = TestService.GetTestStatistic(x);
-            return new TestTableModel
-            {
-                Id = x.Id,
-                TestType = x.TestType,
-                TextToRewritten = x.TextToRewritten,
-                ExecutorName = x.ExecutorName,
-                TestDate = x.TestDate,
-                InorrectClicks = x.InorrectClicks,
-                TotalClicks = x.TotalClicks,
-                StartTime = x.StartTime,
-                EndTime = x.EndTime,
-                TestLenght = testStatistic.TestLenght,
-                EffectivenessPercentage = testStatistic.EffectivenessPercentage,
-                ClickPerSecond = testStatistic.ClickPerSecond,
-                CompletionTime = testStatistic.CompletionTime,
-                Mistakes = testStatistic.Mistakes,
-                Points = testStatistic.OverallRating
-            };
+            var testStatistic = TestService.GetTestStatistic(test);
+            return test.ToTestTable(testStatistic);
         }).OrderByDescending(x => x.Points).ToList();
     }
 
@@ -121,9 +99,11 @@
         Courier.UnSubscribe<TestUpdated>(OnTestUpdated);
     }
 
-    private bool DetailRowTrigger(DetailRowTriggerEventArgs<TestTableModel> arg)
+    private async Task OnSelectedRowChanged(TestTableModel arg)
     {
-        return arg.Item.Id == _selectedTest?.Id;
+        _selectedTest = arg;
+        var test = await TestStore.GetTest(arg.Id);
+        await _testStatisticModalRef.Show(test);
     }
 
 }

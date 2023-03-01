@@ -44,7 +44,6 @@ public class Startup
         services.AddDatabase();
 
         services.AddTransient<ITestService, TestService>();
-        services.AddSingleton<IBrowserContext, BrowserContext>();
 
         var files = Directory
             .EnumerateFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),

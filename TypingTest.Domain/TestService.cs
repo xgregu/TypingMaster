@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using TypingMaster.Domain.Extensions;
 using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Domain;
@@ -14,18 +15,8 @@ public class TestService : ITestService
 
     public Test TestInProgressEnd(TestInProgress testInProgress, string executorName)
     {
-        return new Test
-        {
-            Id = Guid.NewGuid(),
-            TestType = testInProgress.Type,
-            TextToRewritten = testInProgress.TextToRewritten,
-            ExecutorName = executorName,
-            TestDate = DateTime.Now,
-            TotalClicks = testInProgress.TotalClicks,
-            EndTime = testInProgress.EndTime,
-            StartTime = testInProgress.StartTime,
-            InorrectClicks = testInProgress.InorrectClicks
-        };
+        var newtest = testInProgress.EndTest(executorName);
+        return newtest;
     }
 
     public TestStatistic GetTestStatistic(Test test)

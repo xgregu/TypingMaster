@@ -1,6 +1,5 @@
 ﻿@inject ITestService TestService
 @inject ITestStore TestStore
-@inject IBrowserContext BrowserContext
 
 <Modal @ref="_modalRef" Shadow="Shadow.Default">
     <ModalContent Centered>
@@ -8,7 +7,7 @@
             <ModalTitle>@_title</ModalTitle>
         </ModalHeader>
         <ModalBody>
-            <TestStatisticTableComponent TestId="_test?.Id"/>
+            <TestStatisticTableComponent Test="_test"/>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="@Hide">Zamknij</Button>
@@ -18,7 +17,7 @@
 
 @code {
     private Modal? _modalRef;
-    private Test _test = new();
+    private Test? _test;
     private string _title = string.Empty;
 
     public async Task Show(Test? test)

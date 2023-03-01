@@ -1,8 +1,8 @@
-﻿@inject IMessageService MessageService
+﻿@using TypingMaster.Domain.Extensions
+@inject IMessageService MessageService
 @inject ITestService TestService
 @inject INotificationService NotificationService
 @inject ITestStore TestStore
-@inject IBrowserContext BrowserContext
 
 <Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100">
     <ModalContent Centered Style="background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 50%, #dcdcdc 100%)">
@@ -102,7 +102,7 @@
     private async Task EndTest()
     {
         await _transparentWaitPopupRef.Show();
-        var test = TestService.TestInProgressEnd(_testInProgress, _executorName);
+        var test = _testInProgress.EndTest(_executorName);
         await TestStore.Add(test);
         await _transparentWaitPopupRef.Hide();
         await _testStatisticModalRef.Show(test);
