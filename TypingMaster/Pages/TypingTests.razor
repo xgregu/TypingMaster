@@ -1,5 +1,6 @@
 ﻿@page "/TypingTests"
 @page "/"
+
 @inject IOptions<TypingTestOptions> Options
 
 <PageTitle>Test</PageTitle>
@@ -8,12 +9,10 @@
         <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
     </Div>
     <Div Flex="Flex.AlignItems.Center.JustifyContent.Center.OnFullHD.AlignItems.Center.JustifyContent.Center.OnMobile.Wrap" Padding="Padding.Is1.OnX">
-        <Button Color="Color.Primary" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Minimalistic)">Minimalistyczny</Button>
-        <Button Color="Color.Secondary" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Short)">Krótki</Button>
-        <Button Color="Color.Success" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Average)">Średni</Button>
-        <Button Color="Color.Warning" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Long)">Długi</Button>
-        <Button Color="Color.Danger" Margin="Margin.Is1" Clicked="() => StartTest(TypingTestType.Verylong)">Bardzo długi</Button>
-
+        @foreach (var type in (TypingTestType[])Enum.GetValues(typeof(TypingTestType)))
+        {
+            @GetButton(type)
+        }
     </Div>
     <Div Flex="Flex.JustifyContent.Center">
         <Text TextColor="TextColor.Danger" Margin="Margin.Is1.OnX">
@@ -49,6 +48,35 @@
 
     private string GetTypingTestText(TypingTestType type)
     {
-        return _typingTestTexts.FirstOrDefault(x => x.Type == type)?.Text ?? "ERROR";
+        return _typingTestTexts
+            .Where(x => x.Type == type)
+            .MinBy(x => Guid.NewGuid())?.Text ?? "ERROR";
     }
+
+    private RenderFragment GetButton(TypingTestType type)
+    {
+        var text = type.AsString(EnumFormat.Description);
+        var testAvaiable = _typingTestTexts.Any(x => x.Type == type);
+        var color = GetColor(type);
+
+        return @<Button
+                    Color="color"
+                    Margin="Margin.Is1"
+                    Clicked="() => StartTest(type)"
+                    Disabled="!testAvaiable"
+                    Outline="!testAvaiable"
+                    @key="type">
+                   @text
+               </Button>;
+    }
+
+    private static Color GetColor(TypingTestType type) => type switch
+    {
+        TypingTestType.Minimalistic => Color.Primary,
+        TypingTestType.Short => Color.Secondary,
+        TypingTestType.Average => Color.Success,
+        TypingTestType.Long => Color.Warning,
+        TypingTestType.Verylong => Color.Danger,
+        _ => Color.Primary
+        };
 }

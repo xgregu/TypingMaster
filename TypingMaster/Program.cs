@@ -22,13 +22,22 @@ public class Program
 
     private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
-        LogManager.GetCurrentClassLogger().Fatal((Exception) e.Exception);
+        LogManager.GetCurrentClassLogger().Fatal((Exception)e.Exception);
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)
     {
         return Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
-            .UseNLog(NLogAspNetCoreOptions.Default);
+            .UseNLog(NLogAspNetCoreOptions.Default)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+                webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+                webBuilder.UseKestrel(options => options.Limits.MaxRequestBodySize = null);
+#if DEBUG
+                webBuilder.UseWebRoot("wwwroot");
+                webBuilder.UseStaticWebAssets();
+#endif
+            });
     }
 }

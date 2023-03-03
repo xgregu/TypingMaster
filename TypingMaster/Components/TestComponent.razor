@@ -29,15 +29,15 @@
         </ModalFooter>
     </ModalContent>
 </Modal>
-<TransparentWaitPopup @ref="_transparentWaitPopupRef"/>
+<PleaseWaitPopup @ref="_pleaseWaitPopupRef"/>
 <TestStatisticModalComponent @ref="_testStatisticModalRef"/>
 
 @code {
         private const int RequiredExecutorNameLenght = 2;
         private const string StyleHighlighter = "background-color: #80bdff; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;";
+    
     private string Placeholder => _testInProgress.IsStarted ? string.Empty : "Zacznij pisać aby rozpocząć test...";
-
-    private TransparentWaitPopup _transparentWaitPopupRef;
+    private PleaseWaitPopup _pleaseWaitPopupRef;
     private TestStatisticModalComponent _testStatisticModalRef;
     private Modal _modalRef;
     private bool _cancelClose;
@@ -101,10 +101,10 @@
 
     private async Task EndTest()
     {
-        await _transparentWaitPopupRef.Show();
+        await _pleaseWaitPopupRef.Show();
         var test = _testInProgress.EndTest(_executorName);
         await TestStore.Add(test);
-        await _transparentWaitPopupRef.Hide();
+        await _pleaseWaitPopupRef.Hide();
         await _testStatisticModalRef.Show(test);
         _confirmationTask.SetResult(test);
     }

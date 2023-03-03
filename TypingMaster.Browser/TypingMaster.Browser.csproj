@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Platforms>AnyCPU</Platforms>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,10 +22,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.19"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\TypingTest.Domain\TypingMaster.Domain.csproj"/>
     </ItemGroup>
 
 </Project>

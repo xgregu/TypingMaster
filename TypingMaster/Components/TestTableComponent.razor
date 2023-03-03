@@ -12,7 +12,7 @@
               Sortable="false"
               Filterable="false"
               Virtualize
-              VirtualizeOptions="@(new VirtualizeOptions {DataGridHeight = "100%"})"
+              VirtualizeOptions="@(new VirtualizeOptions { DataGridHeight = "100%" })"
               SelectedRowChanged="OnSelectedRowChanged"
               Striped>
         <DataGridColumns>
@@ -55,14 +55,13 @@
         </Text>
     </Div>
 </Div>
-    <TestStatisticModalComponent @ref="_testStatisticModalRef"/>
+<TestStatisticModalComponent @ref="_testStatisticModalRef"/>
+
 @code{
-    
+
     private TestStatisticModalComponent _testStatisticModalRef;
     private DataGrid<TestTableModel> _tableRef;
     private IReadOnlyList<TestTableModel> _testList;
-    private int _totalTests;
-    private TestTableModel _selectedTest;
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,7 +100,6 @@
 
     private async Task OnSelectedRowChanged(TestTableModel arg)
     {
-        _selectedTest = arg;
         var test = await TestStore.GetTest(arg.Id);
         await _testStatisticModalRef.Show(test);
     }

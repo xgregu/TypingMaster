@@ -11,12 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="netlify.tom">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Blazorise.Bootstrap" Version="1.1.5" />
         <PackageReference Include="Blazorise.Components" Version="1.1.5" />
         <PackageReference Include="Blazorise.DataGrid" Version="1.1.5" />
@@ -29,7 +23,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.0" />
-        <PackageReference Include="PSC.Blazor.Components.BrowserDetect" Version="1.0.6" />
         <PackageReference Include="MediatR" Version="11.1.0" />
         <PackageReference Include="MediatR.Courier" Version="5.0.0" />
         <PackageReference Include="MediatR.Courier.DependencyInjection" Version="5.0.0" />
@@ -37,6 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\TypingMaster.Browser\TypingMaster.Browser.csproj" />
         <ProjectReference Include="..\TypingMaster.Database\TypingMaster.Database.csproj" />
         <ProjectReference Include="..\TypingTest.Domain\TypingMaster.Domain.csproj" />
     </ItemGroup>

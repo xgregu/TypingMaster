@@ -4,6 +4,5 @@ namespace TypingMaster.Domain;
 
 public interface ITestService
 {
-    Test TestInProgressEnd(TestInProgress testInProgress, string executorName);
     TestStatistic GetTestStatistic(Test test);
 }

@@ -1,11 +1,11 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using MediatR;
 using MediatR.Courier.DependencyInjection;
 using NLog.Extensions.Logging;
+using TypingMaster.Browser;
 using TypingMaster.Database;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Options;
@@ -23,6 +23,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var serverMode = Convert.ToBoolean(Configuration.GetRequiredSection("ServerMode").Value);
+
         services.AddBlazorise()
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();
@@ -41,19 +43,11 @@ public class Startup
 
         services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
 
-        services.AddDatabase();
-
+        services.AddDatabase(serverMode);
+        services.AddBrowser(serverMode);
         services.AddTransient<ITestService, TestService>();
-
-        var files = Directory
-            .EnumerateFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                $"{Constants.AppName}.*.dll",
-                SearchOption.AllDirectories)
-            .ToList();
-        var assemblies = files.Select(Assembly.LoadFrom).ToList();
-        assemblies.Add(Assembly.GetExecutingAssembly());
-        services.AddMediatR(assemblies.ToArray());
-        services.AddCourier(assemblies.ToArray());
+        services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddCourier(AppDomain.CurrentDomain.GetAssemblies());
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
