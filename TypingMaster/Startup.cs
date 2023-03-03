@@ -6,6 +6,7 @@ using Blazorise.Icons.FontAwesome;
 using MediatR;
 using MediatR.Courier.DependencyInjection;
 using NLog.Extensions.Logging;
+using TypingMaster.Browser;
 using TypingMaster.Database;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Options;
@@ -44,6 +45,8 @@ public class Startup
         services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
 
         services.AddDatabase(isPortable);
+        services.AddBrowser(isPortable);
+        
 
         services.AddTransient<ITestService, TestService>();
 
