@@ -37,7 +37,7 @@
     private TestStatistic _testStatistic;
     private int _testRanking;
     private Test? _test;
-    
+
 
     [Parameter]
     [EditorRequired]
@@ -47,7 +47,7 @@
         set
         {
             _test = value;
-            if(_test is not null)
+            if (_test is not null)
                 _ = Refresh();
         }
     }
@@ -58,4 +58,5 @@
         _testRanking = await TestStore.GetTestRanking(_test.Id);
         _ = InvokeAsync(StateHasChanged);
     }
+
 }

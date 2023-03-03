@@ -1,18 +1,15 @@
-﻿using System.Diagnostics;
-using System.Net;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace TypingMaster.Browser;
 
 public static class Registration
 {
-    public static IServiceCollection AddBrowser(this IServiceCollection services, bool isPortable)
+    public static IServiceCollection AddBrowser(this IServiceCollection services, bool serverMode)
     {
         services.AddTransient<IBrowserManager, BrowserManager>();
 
-        if (!isPortable)
+        if (!serverMode)
         {
             var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
             var url = configuration.GetRequiredSection("Urls").Value.Replace("0.0.0.0", "localhost");
@@ -21,39 +18,5 @@ public static class Registration
         }
 
         return services;
-    }
-}
-
-public interface IBrowserManager
-{
-    Task StartBrowser(string url);
-}
-
-public class BrowserManager : IBrowserManager
-{
-    private readonly ILogger<BrowserManager> _logger;
-
-    public BrowserManager(ILogger<BrowserManager> logger)
-    {
-        _logger = logger;
-    }
-
-    public Task StartBrowser(string url)
-    {
-        try
-        {           
-            _logger.LogInformation("StartBrowser | {Url}", url);
-            Process.Start(new ProcessStartInfo
-            {
-                UseShellExecute = true,
-                FileName = url,
-            }).Start();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, nameof(StartBrowser));
-        }
-
-        return Task.CompletedTask;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using TypingMaster.Domain.Extensions;
 using TypingMaster.Domain.Models;
 
 namespace TypingMaster.Domain;
@@ -11,12 +10,6 @@ public class TestService : ITestService
     public TestService(ILogger<TestService> logger)
     {
         _logger = logger;
-    }
-
-    public Test TestInProgressEnd(TestInProgress testInProgress, string executorName)
-    {
-        var newtest = testInProgress.EndTest(executorName);
-        return newtest;
     }
 
     public TestStatistic GetTestStatistic(Test test)
@@ -42,7 +35,7 @@ public class TestService : ITestService
             TypingTestType.Verylong => 1.2,
             _ => 1
         };
-        return (int) (result * multiplier);
+        return (int)(result * multiplier);
     }
 
     private static double GetClickPerMinute(Test test)

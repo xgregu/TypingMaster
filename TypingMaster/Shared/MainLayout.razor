@@ -5,12 +5,12 @@
 
 <Layout>
     <LayoutHeader>
-        <NavMenu/>
+        <div class="p-2 d-flex justify-content-center">
+            <Image src="logo.png" Style="height: 5vh; min-height: 40px"/>
+        </div>
     </LayoutHeader>
-    <LayoutContent>
-        <Div Class="Container" Height="Height.Is100" Width="Width.Is100">
-            @Body
-        </Div>
+    <LayoutContent Class="Container" Height="Height.Is100" Width="Width.Is100">
+        @Body
     </LayoutContent>
     <LayoutFooter TextAlignment="TextAlignment.Center">
         <Text TextColor="TextColor.Secondary" TextAlignment="TextAlignment.Center">
