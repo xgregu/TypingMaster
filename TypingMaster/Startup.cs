@@ -23,6 +23,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var isPortable = Environment.GetCommandLineArgs().Contains("-portable");
+
         services.AddBlazorise()
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();
@@ -41,7 +43,7 @@ public class Startup
 
         services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
 
-        services.AddDatabase();
+        services.AddDatabase(isPortable);
 
         services.AddTransient<ITestService, TestService>();
 

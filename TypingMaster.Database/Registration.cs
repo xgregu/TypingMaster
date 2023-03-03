@@ -7,15 +7,21 @@ namespace TypingMaster.Database;
 
 public static class Registration
 {
-    public static IServiceCollection AddDatabase(this IServiceCollection services)
+    private const string DbName = "LocalDb";
+
+    public static IServiceCollection AddDatabase(this IServiceCollection services, bool isPortable)
     {
         services.AddDbContext<TestDbContext>((sp, options) =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
-            options.UseSqlite(configuration.GetConnectionString("LocalDb"));
+            if (isPortable)
+                options.UseInMemoryDatabase(DbName);
+            else
+                options.UseSqlite(configuration.GetConnectionString(DbName));
         });
         services.AddSingleton<ITestStore, TestStore>();
-        services.BuildServiceProvider().GetRequiredService<TestDbContext>().Database.MigrateAsync();
+        if (!isPortable)
+            services.BuildServiceProvider().GetRequiredService<TestDbContext>().Database.MigrateAsync();
         return services;
     }
 }
