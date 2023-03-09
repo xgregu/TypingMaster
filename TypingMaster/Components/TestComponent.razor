@@ -4,8 +4,36 @@
 @inject INotificationService NotificationService
 @inject ITestStore TestStore
 
-<Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100">
+<style>
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #adb5bd;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #000;
+}
+
+.separator:not(:empty)::before {
+  margin-right: .25em;
+  color: #adb5bd;
+}
+
+.separator:not(:empty)::after {
+  margin-left: .25em;
+  color: #adb5bd;
+
+}
+</style>
+
+<Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100" >
     <ModalContent Centered Style="background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 50%, #dcdcdc 100%)">
+
         <ModalHeader>
             <ModalTitle>Test @(_testInProgress.Type.AsString(EnumFormat.Description))</ModalTitle>
         </ModalHeader>
@@ -14,10 +42,11 @@
             {
                 <Highlighter Class="my-2" Style="@StyleHighlighter" Text="@_testInProgress.TextToRewritten" HighlightedText="@_inputText" CaseSensitive/>
                 <MemoEdit Background="Background.Transparent" TextColor="@_currentTextColor" Placeholder="@Placeholder" Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
-                <Divider DividerType="DividerType.TextContent" Text="@_testInProgress.CurrentTestTime.Humanize()"/>
-                <Divider DividerType="DividerType.TextContent" Text="@_testInProgress.CurrentTestTime.ToString()"/>
-                <Progress Value="_testInProgress.CompletionPercentage" Animated Striped></Progress>
-                <Divider DividerType="DividerType.TextContent" Text="@(_testInProgress.CompletionPercentage + "%")"/>
+                <Progress>
+                    <ProgressBar Value="_testInProgress.CompletionPercentage" Animated Striped/>
+                </Progress>
+
+                <div class="separator">@_testInProgress.CurrentTestTime.ToString()</div>
             }
             <Validation Validator="ValidateExecutorName">
                 <TextEdit Background="Background.Transparent" Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted"/>
@@ -28,6 +57,7 @@
             <Button Color="Color.Secondary" Clicked="@Hide">Zamknij test</Button>
         </ModalFooter>
     </ModalContent>
+   
 </Modal>
 <PleaseWaitPopup @ref="_pleaseWaitPopupRef"/>
 <TestStatisticModalComponent @ref="_testStatisticModalRef"/>
@@ -35,7 +65,7 @@
 @code {
         private const int RequiredExecutorNameLenght = 2;
         private const string StyleHighlighter = "background-color: #80bdff; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;";
-    
+
     private string Placeholder => _testInProgress.IsStarted ? string.Empty : "Zacznij pisać aby rozpocząć test...";
     private PleaseWaitPopup _pleaseWaitPopupRef;
     private TestStatisticModalComponent _testStatisticModalRef;
