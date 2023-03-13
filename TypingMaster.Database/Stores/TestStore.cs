@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using TypingMaster.Database.Entities;
+using TypingMaster.Database.Extensions;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Events;
 using TypingMaster.Domain.Models;

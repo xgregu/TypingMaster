@@ -9,7 +9,7 @@
         <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
     </Div>
     <Div Flex="Flex.AlignItems.Center.JustifyContent.Center.OnFullHD.AlignItems.Center.JustifyContent.Center.OnMobile.Wrap" Padding="Padding.Is1.OnX">
-        @foreach (var type in (TypingTestType[]) Enum.GetValues(typeof(TypingTestType)))
+        @foreach (var type in (TypingTestType[])Enum.GetValues(typeof(TypingTestType)))
         {
             @GetButton(type)
         }

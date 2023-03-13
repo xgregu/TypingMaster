@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using BrowserApp.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
-using WebViewApp.Views;
 
-namespace WebViewApp;
+namespace BrowserApp;
 
 public partial class App : Application
 {
     private readonly ILogger<App> _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly string _webViewAppId;
-
 
     public App()
     {
@@ -34,8 +32,9 @@ public partial class App : Application
     private void ConfigureServices(IServiceCollection services)
     {
         services.AddLogging();
-        services.AddSingleton<WebViewWindow>();
+        services.AddSingleton<BrowserWindow>();
         services.AddSingleton<ModuleSignalRConnectivity>();
+        services.AddTransient<IBrowserManager, BrowserManager>();
     }
 
     protected override void OnStartup(StartupEventArgs e)
@@ -54,7 +53,7 @@ public partial class App : Application
 
     private void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
     {
-        _logger.LogCritical((Exception) e.ExceptionObject, "Fatal exit application");
+        _logger.LogCritical((Exception)e.ExceptionObject, "Fatal exit application");
         Environment.Exit(1);
     }
 

@@ -7,9 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Update="Constants.cs">
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </Compile>
+        <Compile Update="Constants.cs">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MediatR.Contracts" Version="1.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0"/>
     </ItemGroup>
 
 </Project>

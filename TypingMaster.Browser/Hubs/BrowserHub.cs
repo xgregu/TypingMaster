@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using TypingMaster.Domain.Events;
+using TypingMaster.Browser.Events;
 using TypingMaster.Shared;
 
-namespace Wkp.Navigation.Hubs;
+namespace TypingMaster.Browser.Hubs;
 
 public class BrowserHub : Hub<IWebAppHubClient>
 {
@@ -22,16 +22,18 @@ public class BrowserHub : Hub<IWebAppHubClient>
 
     public override Task OnConnectedAsync()
     {
-        _logger.LogInformation("WebViewApp Connected: {ContextConnectionId}", Context.ConnectionId);
+        _logger.LogInformation("BrowserApp Connected: {ContextConnectionId}", Context.ConnectionId);
+
         Clients.All.Title(Constants.AppFriendlyName);
         Clients.All.Navigate(_url);
+
         return base.OnConnectedAsync();
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        _logger.LogInformation("WebViewApp disconnected: {ContextConnectionId}", Context.ConnectionId);
-        await _mediator.Publish(new WebViewAppDisconected());
+        _logger.LogInformation("BrowserApp disconnected: {ContextConnectionId}", Context.ConnectionId);
+        await _mediator.Publish(new BrowserAppDisconected());
         await base.OnDisconnectedAsync(exception);
     }
 }

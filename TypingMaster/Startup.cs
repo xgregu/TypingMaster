@@ -6,10 +6,10 @@ using MediatR;
 using MediatR.Courier.DependencyInjection;
 using NLog.Extensions.Logging;
 using TypingMaster.Browser;
+using TypingMaster.Browser.Hubs;
 using TypingMaster.Database;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Options;
-using Wkp.Navigation.Hubs;
 
 namespace TypingMaster;
 
@@ -45,16 +45,17 @@ public class Startup
         services.AddSignalR();
 
         services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
-        services.AddTransient<ITestService, TestService>();
+
         services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
         services.AddCourier(AppDomain.CurrentDomain.GetAssemblies());
 
-
         services.AddDatabase(serverMode);
         services.AddBrowser(serverMode);
+        services.AddDomain();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
+        IHostApplicationLifetime applicationLifetime)
     {
         if (env.IsDevelopment())
         {

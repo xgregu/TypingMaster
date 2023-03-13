@@ -24,7 +24,7 @@ public class Program
 
     private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
-        LogManager.GetCurrentClassLogger().Fatal((Exception) e.Exception);
+        LogManager.GetCurrentClassLogger().Fatal((Exception)e.Exception);
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)

@@ -10,20 +10,16 @@ public static class Registration
         if (serverMode)
             return services;
 
-        if (OperatingSystem.IsWindows())
-            services.AddTransient<IBrowserManager, WindowsBrowserManager>();
-        else
-            services.AddTransient<IBrowserManager, BrowserManager>();
+        services.AddSingleton<IBrowserManager, WindowsBrowserManager>();
 
         StartBrowser(services);
-
         return services;
     }
 
     private static void StartBrowser(IServiceCollection services)
     {
-        var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-        var url = configuration.GetRequiredSection("Urls").Value.Replace("0.0.0.0", "localhost");
+        var url = services.BuildServiceProvider().GetRequiredService<IConfiguration>().GetRequiredSection("Urls").Value
+            .Replace("0.0.0.0", "localhost");
         var browserManager = services.BuildServiceProvider().GetRequiredService<IBrowserManager>();
         browserManager.StartBrowser(url);
     }

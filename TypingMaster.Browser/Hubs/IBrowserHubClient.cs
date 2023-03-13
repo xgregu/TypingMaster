@@ -1,4 +1,4 @@
-﻿namespace Wkp.Navigation.Hubs;
+﻿namespace TypingMaster.Browser.Hubs;
 
 public interface IWebAppHubClient
 {

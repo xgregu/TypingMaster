@@ -7,19 +7,19 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 
-namespace WebViewApp.Views;
+namespace BrowserApp.Views;
 
-public partial class WebViewWindow : INotifyPropertyChanged
+public partial class BrowserWindow : INotifyPropertyChanged
 {
     private static readonly string BaseDir = AppDomain.CurrentDomain.BaseDirectory;
     private static readonly string WebView2Dir = Path.Combine(BaseDir, "WebView2");
     private static readonly string UserDataFolder = Path.Combine(WebView2Dir, "UserData");
 
-    private readonly ILogger<WebViewWindow> _logger;
+    private readonly ILogger<BrowserWindow> _logger;
     private Uri _webViewSource = new("about:blank");
     private string _webViewTitle = string.Empty;
 
-    public WebViewWindow(ILogger<WebViewWindow> logger)
+    public BrowserWindow(ILogger<BrowserWindow> logger)
     {
         _logger = logger;
         DataContext = this;
@@ -30,7 +30,7 @@ public partial class WebViewWindow : INotifyPropertyChanged
 
         Left = int.MinValue;
         Top = int.MinValue;
-        
+
         Show();
     }
 
@@ -59,8 +59,8 @@ public partial class WebViewWindow : INotifyPropertyChanged
     {
         _logger.LogInformation("Initialize WebView");
 
-        _logger.LogInformation("WebViewWindow: InitializeWebView. BrowserExecutableFolder: {WebView2Dir}", WebView2Dir);
-        _logger.LogInformation("WebViewWindow: InitializeWebView. UserDataFolder: {UserDataFolder}", UserDataFolder);
+        _logger.LogInformation("BrowserWindow: InitializeWebView. BrowserExecutableFolder: {WebView2Dir}", WebView2Dir);
+        _logger.LogInformation("BrowserWindow: InitializeWebView. UserDataFolder: {UserDataFolder}", UserDataFolder);
 
         try
         {
@@ -129,7 +129,7 @@ public partial class WebViewWindow : INotifyPropertyChanged
         };
         WebView.SetBinding(WebView2.SourceProperty, sourceBinding);
     }
-    
+
     private void CenterWindowOnScreen()
     {
         Dispatcher.Invoke(() =>
