@@ -1,19 +1,18 @@
 ﻿<Window x:Class="WebViewApp.Views.WebViewWindow"
-         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-         xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-         Padding="0"
-         Title="WebViewApp"
-         WindowState="Normal"
-         ResizeMode="NoResize"
-         mc:Ignorable="d"
-         Focusable="True"
-         Topmost="True"
-         Background="#061426"
-         Height="768"
-         Width="1366">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Padding="0"
+        Title="WebViewApp"
+        WindowState="Normal"
+        ResizeMode="NoResize"
+        mc:Ignorable="d"
+        Focusable="True"
+        Background="#061426"
+        Height="768"
+        Width="1366">
     <Grid Margin="0">
         <wpf:WebView2 x:Name="WebView" Margin="0" DefaultBackgroundColor="#061426" />
     </Grid>

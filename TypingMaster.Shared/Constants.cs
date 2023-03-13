@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace TypingMaster;
+namespace TypingMaster.Shared;
 
 public static class Constants
 {

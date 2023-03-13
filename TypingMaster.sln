@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypingMaster.Browser", "Typ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebViewApp", "WebViewApp\WebViewApp.csproj", "{EF116789-586E-43A6-9268-8F998BB4A8A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypingMaster.Shared", "TypingMaster.Shared\TypingMaster.Shared.csproj", "{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{EF116789-586E-43A6-9268-8F998BB4A8A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF116789-586E-43A6-9268-8F998BB4A8A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF116789-586E-43A6-9268-8F998BB4A8A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

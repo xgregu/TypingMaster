@@ -9,6 +9,7 @@ using TypingMaster.Browser;
 using TypingMaster.Database;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Options;
+using Wkp.Navigation.Hubs;
 
 namespace TypingMaster;
 
@@ -41,13 +42,16 @@ public class Startup
             .AddJsonFile("appsettings.json", true, true)
             .Build());
 
-        services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
+        services.AddSignalR();
 
-        services.AddDatabase(serverMode);
-        services.AddBrowser(serverMode);
+        services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
         services.AddTransient<ITestService, TestService>();
         services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
         services.AddCourier(AppDomain.CurrentDomain.GetAssemblies());
+
+
+        services.AddDatabase(serverMode);
+        services.AddBrowser(serverMode);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -69,6 +73,7 @@ public class Startup
         {
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
+            endpoints.MapHub<BrowserHub>("/BrowserHub");
         });
     }
 }

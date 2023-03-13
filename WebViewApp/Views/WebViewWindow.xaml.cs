@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Windows;
 using System.Windows.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Web.WebView2.Core;
@@ -16,6 +17,7 @@ public partial class WebViewWindow : INotifyPropertyChanged
 
     private readonly ILogger<WebViewWindow> _logger;
     private Uri _webViewSource = new("about:blank");
+    private string _webViewTitle = string.Empty;
 
     public WebViewWindow(ILogger<WebViewWindow> logger)
     {
@@ -24,6 +26,10 @@ public partial class WebViewWindow : INotifyPropertyChanged
 
         InitializeComponent();
         InitializeWebView();
+
+
+        Left = int.MinValue;
+        Top = int.MinValue;
         
         Show();
     }
@@ -38,8 +44,17 @@ public partial class WebViewWindow : INotifyPropertyChanged
         }
     }
 
+    public string WebViewTitle
+    {
+        set
+        {
+            _webViewTitle = value;
+            Dispatcher.Invoke(() => { Title = _webViewTitle; });
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
-    
+
     private async void InitializeWebView()
     {
         _logger.LogInformation("Initialize WebView");
@@ -74,10 +89,14 @@ public partial class WebViewWindow : INotifyPropertyChanged
             WebView.CoreWebView2.SourceChanged += (_, _) =>
                 _logger.LogInformation("CoreWebView2 source changed: {WebViewSource}", WebView.Source.ToString());
             WebView.CoreWebView2.NavigationStarting += (_, _) =>
-                _logger.LogInformation("CoreWebView2 navigation starting url: {WebViewSource}", WebView.Source.ToString());
+                _logger.LogInformation("CoreWebView2 navigation starting url: {WebViewSource}",
+                    WebView.Source.ToString());
             WebView.CoreWebView2.NavigationCompleted += (_, _) =>
-                _logger.LogInformation("CoreWebView2 navigation completed url: {WebViewSource}", WebView.Source.ToString());
-
+            {
+                _logger.LogInformation("CoreWebView2 navigation completed url: {WebViewSource}",
+                    WebView.Source.ToString());
+                CenterWindowOnScreen();
+            };
 
             WebView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
             WebView.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
@@ -89,13 +108,15 @@ public partial class WebViewWindow : INotifyPropertyChanged
             WebView.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
             WebView.AllowDrop = false;
             WebView.AllowExternalDrop = false;
-            
+
             SetUpSourceBinding();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "WebViewOnCoreWebView2InitializationCompleted");
         }
+
+        Dispatcher.Invoke(Hide);
     }
 
     private void SetUpSourceBinding()
@@ -107,5 +128,19 @@ public partial class WebViewWindow : INotifyPropertyChanged
             Source = DataContext
         };
         WebView.SetBinding(WebView2.SourceProperty, sourceBinding);
+    }
+    
+    private void CenterWindowOnScreen()
+    {
+        Dispatcher.Invoke(() =>
+        {
+            var screenWidth = SystemParameters.PrimaryScreenWidth;
+            var screenHeight = SystemParameters.PrimaryScreenHeight;
+            var windowWidth = Width;
+            var windowHeight = Height;
+            Left = screenWidth / 2 - windowWidth / 2;
+            Top = screenHeight / 2 - windowHeight / 2;
+            Show();
+        });
     }
 }

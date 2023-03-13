@@ -12,8 +12,8 @@ namespace WebViewApp;
 public partial class App : Application
 {
     private readonly ILogger<App> _logger;
-    private readonly string _webViewAppId;
     private readonly IServiceProvider _serviceProvider;
+    private readonly string _webViewAppId;
 
 
     public App()
@@ -35,17 +35,16 @@ public partial class App : Application
     {
         services.AddLogging();
         services.AddSingleton<WebViewWindow>();
-        services.AddTransient<IBrowserManager, BrowserManager>();
+        services.AddSingleton<ModuleSignalRConnectivity>();
     }
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
         _logger.LogInformation("Startup application");
-        _serviceProvider.GetRequiredService<IBrowserManager>()
-            .StartBrowser(e.Args);
-    }
 
+        _serviceProvider.GetRequiredService<ModuleSignalRConnectivity>();
+    }
 
     protected override void OnExit(ExitEventArgs e)
     {

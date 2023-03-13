@@ -16,7 +16,7 @@ public class BrowserManager : IBrowserManager
     {
         try
         {
-            _logger.LogInformation("StartBrowser | {Url}", url);
+            _logger.LogInformation("{StartBrowser} | {Url}", nameof(StartBrowser), url);
             Process.Start(new ProcessStartInfo
             {
                 UseShellExecute = true,

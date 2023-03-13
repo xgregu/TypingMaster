@@ -1,5 +1,6 @@
 using NLog;
 using NLog.Web;
+using TypingMaster.Shared;
 
 namespace TypingMaster;
 
@@ -12,6 +13,7 @@ public class Program
 
         LogManager.GetCurrentClassLogger().Info("Start program: {program}", Constants.AppFriendlyName);
         LogManager.GetCurrentClassLogger().Info("Version: {version}", Constants.Version);
+
         CreateHostBuilder(args).Build().Run();
     }
 
@@ -22,7 +24,7 @@ public class Program
 
     private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
-        LogManager.GetCurrentClassLogger().Fatal((Exception)e.Exception);
+        LogManager.GetCurrentClassLogger().Fatal((Exception) e.Exception);
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)

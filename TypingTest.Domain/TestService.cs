@@ -35,7 +35,7 @@ public class TestService : ITestService
             TypingTestType.Verylong => 1.2,
             _ => 1
         };
-        return (int)(result * multiplier);
+        return (int) (result * multiplier);
     }
 
     private static double GetClickPerMinute(Test test)
