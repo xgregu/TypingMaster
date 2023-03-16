@@ -1,8 +1,6 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using TypingMaster.Browser.Events;
 using TypingMaster.Shared;
 
 namespace TypingMaster.Browser.Hubs;
@@ -10,13 +8,11 @@ namespace TypingMaster.Browser.Hubs;
 public class BrowserHub : Hub<IWebAppHubClient>
 {
     private readonly ILogger<BrowserHub> _logger;
-    private readonly IMediator _mediator;
     private readonly string _url;
 
-    public BrowserHub(ILogger<BrowserHub> logger, IMediator mediator, IConfiguration configuration)
+    public BrowserHub(ILogger<BrowserHub> logger, IConfiguration configuration)
     {
         _logger = logger;
-        _mediator = mediator;
         _url = configuration.GetRequiredSection("Urls").Value.Replace("0.0.0.0", "127.0.0.1");
     }
 
@@ -33,7 +29,6 @@ public class BrowserHub : Hub<IWebAppHubClient>
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         _logger.LogInformation("BrowserApp disconnected: {ContextConnectionId}", Context.ConnectionId);
-        await _mediator.Publish(new BrowserAppDisconected());
         await base.OnDisconnectedAsync(exception);
     }
 }

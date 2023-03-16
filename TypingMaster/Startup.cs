@@ -15,17 +15,18 @@ namespace TypingMaster;
 
 public class Startup
 {
+    private readonly bool _serverMode;
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
+        _serverMode = Convert.ToBoolean(configuration.GetRequiredSection("ServerMode").Value);
     }
 
     public IConfiguration Configuration { get; }
 
     public void ConfigureServices(IServiceCollection services)
     {
-        var serverMode = Convert.ToBoolean(Configuration.GetRequiredSection("ServerMode").Value);
-
         services.AddBlazorise()
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();
@@ -49,9 +50,11 @@ public class Startup
         services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
         services.AddCourier(AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddDatabase(serverMode);
-        services.AddBrowser(serverMode);
+        services.AddDatabase(_serverMode);
+        services.AddBrowser(_serverMode);
         services.AddDomain();
+        
+        services.AddHostedService<Stopup>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env,

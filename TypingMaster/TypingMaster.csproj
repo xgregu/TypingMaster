@@ -7,34 +7,34 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="netlify.tom"/>
+        <None Remove="netlify.tom" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazorise.Bootstrap" Version="1.1.5"/>
-        <PackageReference Include="Blazorise.Components" Version="1.1.5"/>
-        <PackageReference Include="Blazorise.DataGrid" Version="1.1.5"/>
-        <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.1.5"/>
-        <PackageReference Include="Blazorise.Snackbar" Version="1.1.5"/>
-        <PackageReference Include="Enums.NET" Version="4.0.0"/>
-        <PackageReference Include="Humanizer.Core.pl" Version="2.14.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0"/>
+        <PackageReference Include="Blazorise.Bootstrap" Version="1.1.5" />
+        <PackageReference Include="Blazorise.Components" Version="1.1.5" />
+        <PackageReference Include="Blazorise.DataGrid" Version="1.1.5" />
+        <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.1.5" />
+        <PackageReference Include="Blazorise.Snackbar" Version="1.1.5" />
+        <PackageReference Include="Enums.NET" Version="4.0.0" />
+        <PackageReference Include="Humanizer.Core.pl" Version="2.14.1" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.0"/>
-        <PackageReference Include="MediatR" Version="11.1.0"/>
-        <PackageReference Include="MediatR.Courier" Version="5.0.0"/>
-        <PackageReference Include="MediatR.Courier.DependencyInjection" Version="5.0.0"/>
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.0" />
+        <PackageReference Include="MediatR" Version="11.1.0" />
+        <PackageReference Include="MediatR.Courier" Version="5.0.0" />
+        <PackageReference Include="MediatR.Courier.DependencyInjection" Version="5.0.0" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TypingMaster.Browser\TypingMaster.Browser.csproj"/>
-        <ProjectReference Include="..\TypingMaster.Database\TypingMaster.Database.csproj"/>
-        <ProjectReference Include="..\TypingMaster.Shared\TypingMaster.Shared.csproj"/>
-        <ProjectReference Include="..\TypingTest.Domain\TypingMaster.Domain.csproj"/>
+        <ProjectReference Include="..\TypingMaster.Browser\TypingMaster.Browser.csproj" />
+        <ProjectReference Include="..\TypingMaster.Database\TypingMaster.Database.csproj" />
+        <ProjectReference Include="..\TypingMaster.Shared\TypingMaster.Shared.csproj" />
+        <ProjectReference Include="..\TypingTest.Domain\TypingMaster.Domain.csproj" />
     </ItemGroup>
 
 </Project>

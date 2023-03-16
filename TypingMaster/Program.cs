@@ -6,7 +6,7 @@ namespace TypingMaster;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
@@ -14,7 +14,10 @@ public class Program
         LogManager.GetCurrentClassLogger().Info("Start program: {program}", Constants.AppFriendlyName);
         LogManager.GetCurrentClassLogger().Info("Version: {version}", Constants.Version);
 
-        CreateHostBuilder(args).Build().Run();
+        var host = CreateHostBuilder(args).Build();
+
+        await host.RunAsync();
+        host.Dispose();
     }
 
     private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)

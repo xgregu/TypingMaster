@@ -2,4 +2,4 @@
 
 namespace TypingMaster.Browser.Events;
 
-public record BrowserAppDisconected : INotification;
+public record BrowserAppClosed : INotification;
