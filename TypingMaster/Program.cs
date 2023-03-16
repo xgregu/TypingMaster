@@ -4,8 +4,10 @@ using TypingMaster.Shared;
 
 namespace TypingMaster;
 
-public class Program
+public static class Program
 {
+    private const string appGuid = "d805eda3-817f-42f5-8a41-ede8847b1ec6";
+
     public static async Task Main(string[] args)
     {
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
@@ -14,8 +16,13 @@ public class Program
         LogManager.GetCurrentClassLogger().Info("Start program: {program}", Constants.AppFriendlyName);
         LogManager.GetCurrentClassLogger().Info("Version: {version}", Constants.Version);
 
+        if (!new SingleInstanceProtector(appGuid).CheckOneInstanceRunning())
+        {
+            LogManager.GetCurrentClassLogger().Error("{AppName} already running", Constants.AppFriendlyName);
+            return;
+        }
+        
         var host = CreateHostBuilder(args).Build();
-
         await host.RunAsync();
         host.Dispose();
     }
@@ -27,7 +34,8 @@ public class Program
 
     private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
-        LogManager.GetCurrentClassLogger().Fatal((Exception)e.Exception);
+        foreach (var error in e.Exception.Flatten().InnerExceptions)
+            LogManager.GetCurrentClassLogger().Fatal(error);
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args)

@@ -8,8 +8,10 @@ namespace TypingMaster.Browser;
 public class WindowsBrowserManager : IBrowserManager
 {
     private const string BrowserAppName = "BrowserApp.exe";
+    
     private readonly ILogger<WindowsBrowserManager> _logger;
     private readonly IMediator _mediator;
+    
     private Process? _browserProcess;
 
     public WindowsBrowserManager(ILogger<WindowsBrowserManager> logger, IMediator mediator)
@@ -42,7 +44,7 @@ public class WindowsBrowserManager : IBrowserManager
     private async Task<Process?> StartBrowserApp()
     {
         _logger.LogInformation("StartBrowserApp");
-        return await InternalStart("BrowserApp.exe");
+        return await InternalStart(BrowserAppName);
     }
 
     private async Task<Process?> StartDefaultBrowser(string url)
@@ -64,6 +66,7 @@ public class WindowsBrowserManager : IBrowserManager
             };
 
             process.Exited += ObBrowserAppExited;
+            
             _unsubscribeProcessExitedEvent = () =>
             {
                 if (process is not null)
@@ -82,9 +85,9 @@ public class WindowsBrowserManager : IBrowserManager
         }
     }
 
-    private void ObBrowserAppExited(object? sender, EventArgs e)
+    private async void ObBrowserAppExited(object? sender, EventArgs e)
     {
         _logger.LogInformation("StartWatcher | Browser app was closed");
-        _mediator.Publish(new BrowserAppClosed());
+        await _mediator.Publish(new BrowserAppClosed());
     }
 }

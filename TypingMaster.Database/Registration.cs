@@ -23,6 +23,7 @@ public static class Registration
                 options.UseInMemoryDatabase(DbName);
             }
         });
+        
         if (serverMode)
             services.BuildServiceProvider().GetRequiredService<TestDbContext>().Database.MigrateAsync();
 
