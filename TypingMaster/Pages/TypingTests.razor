@@ -70,13 +70,16 @@
                </Button>;
     }
 
-    private static Color GetColor(TypingTestType type) => type switch
+    private static Color GetColor(TypingTestType type)
     {
-        TypingTestType.Minimalistic => Color.Primary,
-        TypingTestType.Short => Color.Secondary,
-        TypingTestType.Average => Color.Success,
-        TypingTestType.Long => Color.Warning,
-        TypingTestType.Verylong => Color.Danger,
-        _ => Color.Primary
-        };
+        return type switch
+        {
+            TypingTestType.Minimalistic => Color.Primary,
+            TypingTestType.Short => Color.Secondary,
+            TypingTestType.Average => Color.Success,
+            TypingTestType.Long => Color.Warning,
+            TypingTestType.Verylong => Color.Danger,
+            _ => Color.Primary
+            };
+    }
 }

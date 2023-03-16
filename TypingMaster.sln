@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypingMaster.Database", "Ty
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypingMaster.Browser", "TypingMaster.Browser\TypingMaster.Browser.csproj", "{123F9735-BF41-4FED-9730-AECA2B5BD4F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrowserApp", "BrowserApp\BrowserApp.csproj", "{EF116789-586E-43A6-9268-8F998BB4A8A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypingMaster.Shared", "TypingMaster.Shared\TypingMaster.Shared.csproj", "{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{123F9735-BF41-4FED-9730-AECA2B5BD4F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{123F9735-BF41-4FED-9730-AECA2B5BD4F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{123F9735-BF41-4FED-9730-AECA2B5BD4F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF116789-586E-43A6-9268-8F998BB4A8A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF116789-586E-43A6-9268-8F998BB4A8A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF116789-586E-43A6-9268-8F998BB4A8A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF116789-586E-43A6-9268-8F998BB4A8A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCF0F619-9741-4EBA-8EFA-A88AC57185F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

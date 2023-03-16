@@ -3,4 +3,5 @@
 public interface IBrowserManager
 {
     Task StartBrowser(string url);
+    Task CloseBrowser();
 }

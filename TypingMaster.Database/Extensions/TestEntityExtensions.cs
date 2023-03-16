@@ -1,6 +1,7 @@
-﻿using TypingMaster.Domain.Models;
+﻿using TypingMaster.Database.Entities;
+using TypingMaster.Domain.Models;
 
-namespace TypingMaster.Database.Entities;
+namespace TypingMaster.Database.Extensions;
 
 internal static class TestEntityExtensions
 {

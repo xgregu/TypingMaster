@@ -7,16 +7,20 @@ public static class Registration
 {
     public static IServiceCollection AddBrowser(this IServiceCollection services, bool serverMode)
     {
-        services.AddTransient<IBrowserManager, BrowserManager>();
+        if (serverMode)
+            return services;
 
-        if (!serverMode)
-        {
-            var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-            var url = configuration.GetRequiredSection("Urls").Value.Replace("0.0.0.0", "localhost");
-            var browserManager = services.BuildServiceProvider().GetRequiredService<IBrowserManager>();
-            browserManager.StartBrowser(url);
-        }
+        services.AddSingleton<IBrowserManager, WindowsBrowserManager>();
 
+        StartBrowser(services);
         return services;
+    }
+
+    private static void StartBrowser(IServiceCollection services)
+    {
+        var url = services.BuildServiceProvider().GetRequiredService<IConfiguration>().GetRequiredSection("Urls").Value
+            .Replace("0.0.0.0", "localhost");
+        var browserManager = services.BuildServiceProvider().GetRequiredService<IBrowserManager>();
+        browserManager.StartBrowser(url);
     }
 }
