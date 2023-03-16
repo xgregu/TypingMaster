@@ -37,7 +37,12 @@ public class Startup
         services.AddServerSideBlazor();
 
         services.AddLogging(x => { x.AddNLog(); });
-        
+
+        services.AddSingleton<IConfiguration>(_ => new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .AddJsonFile("appsettings.json", false, true)
+            .Build());
+
         services.AddSignalR();
 
         services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
