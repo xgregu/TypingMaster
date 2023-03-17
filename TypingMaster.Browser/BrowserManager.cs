@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using TypingMaster.Browser.Events;
+using TypingMaster.Browser.Extensions;
+using TypingMaster.Shared.Events;
 
 namespace TypingMaster.Browser;
 
@@ -55,39 +56,33 @@ public class WindowsBrowserManager : IBrowserManager
 
     private async Task<Process?> InternalStart(string fileName)
     {
-        Action? _unsubscribeProcessExitedEvent = null;
-
         try
         {
-            var process = new Process
+             var process = new Process
             {
                 StartInfo = {UseShellExecute = true, FileName = fileName},
                 EnableRaisingEvents = true
             };
-
-            process.Exited += ObBrowserAppExited;
-            
-            _unsubscribeProcessExitedEvent = () =>
-            {
-                if (process is not null)
-                    process.Exited -= ObBrowserAppExited;
-            };
-
             process.Start();
-
+            _ = Task.Run(() =>
+            {
+                StartBrowserWatcher(process);
+            });
             return process;
         }
         catch (Exception e)
         {
             _logger.LogError(e, nameof(InternalStart));
-            _unsubscribeProcessExitedEvent.Invoke();
             return null;
         }
     }
 
-    private async void ObBrowserAppExited(object? sender, EventArgs e)
+    private async Task StartBrowserWatcher(Process process)
     {
-        _logger.LogInformation("StartWatcher | Browser app was closed");
+        while (process.IsProcessRunning())
+        {
+            await Task.Delay(500);
+        }
         await _mediator.Publish(new BrowserAppClosed());
     }
 }

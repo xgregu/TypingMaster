@@ -10,6 +10,8 @@ public static class Program
 
     public static async Task Main(string[] args)
     {
+        
+        AppDomain.CurrentDomain.ProcessExit += OnProcessExit; 
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
 
@@ -26,6 +28,8 @@ public static class Program
         await host.RunAsync();
         host.Dispose();
     }
+
+   
 
     private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
     {

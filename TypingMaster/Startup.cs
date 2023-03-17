@@ -53,8 +53,6 @@ public class Startup
         services.AddDatabase(_serverMode);
         services.AddBrowser(_serverMode);
         services.AddDomain();
-        
-        services.AddHostedService<Stopup>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env,

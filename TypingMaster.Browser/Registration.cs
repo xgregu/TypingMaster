@@ -11,7 +11,6 @@ public static class Registration
             return services;
 
         services.AddSingleton<IBrowserManager, WindowsBrowserManager>();
-
         StartBrowser(services);
         return services;
     }
