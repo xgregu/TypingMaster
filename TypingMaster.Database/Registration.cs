@@ -9,23 +9,15 @@ public static class Registration
 {
     private const string DbName = "LocalDb";
 
-    public static IServiceCollection AddDatabase(this IServiceCollection services, bool serverMode)
+    public static IServiceCollection AddDatabase(this IServiceCollection services)
     {
         services.AddDbContext<TestDbContext>((sp, options) =>
         {
-            if (serverMode)
-            {
-                var configuration = sp.GetRequiredService<IConfiguration>();
-                options.UseSqlite(configuration.GetConnectionString(DbName));
-            }
-            else
-            {
-                options.UseInMemoryDatabase(DbName);
-            }
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            options.UseSqlite(configuration.GetConnectionString(DbName));
         });
-        
-        if (serverMode)
-            services.BuildServiceProvider().GetRequiredService<TestDbContext>().Database.MigrateAsync();
+
+        services.BuildServiceProvider().GetRequiredService<TestDbContext>().Database.MigrateAsync();
 
         services.AddSingleton<ITestStore, TestStore>();
         return services;

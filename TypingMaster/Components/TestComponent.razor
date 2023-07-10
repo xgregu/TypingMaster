@@ -4,6 +4,7 @@
 @inject INotificationService NotificationService
 @inject ITestStore TestStore
 
+
 <style>
 .separator {
   display: flex;
@@ -33,7 +34,6 @@
 
 <Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100">
     <ModalContent Centered Style="background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 50%, #dcdcdc 100%)">
-
         <ModalHeader>
             <ModalTitle>Test @(_testInProgress.Type.AsString(EnumFormat.Description))</ModalTitle>
         </ModalHeader>

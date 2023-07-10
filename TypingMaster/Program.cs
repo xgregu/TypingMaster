@@ -11,12 +11,11 @@ public static class Program
     public static async Task Main(string[] args)
     {
         
-        AppDomain.CurrentDomain.ProcessExit += OnProcessExit; 
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
 
-        LogManager.GetCurrentClassLogger().Info("Start program: {program}", Constants.AppFriendlyName);
-        LogManager.GetCurrentClassLogger().Info("Version: {version}", Constants.Version);
+        LogManager.GetCurrentClassLogger().Info("Start program: {Program}", Constants.AppFriendlyName);
+        LogManager.GetCurrentClassLogger().Info("Version: {Version}", Constants.Version);
 
         if (!new SingleInstanceProtector(appGuid).CheckOneInstanceRunning())
         {

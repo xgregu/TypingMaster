@@ -31,7 +31,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TypingMaster.Browser\TypingMaster.Browser.csproj" />
         <ProjectReference Include="..\TypingMaster.Database\TypingMaster.Database.csproj" />
         <ProjectReference Include="..\TypingMaster.Shared\TypingMaster.Shared.csproj" />
         <ProjectReference Include="..\TypingTest.Domain\TypingMaster.Domain.csproj" />
