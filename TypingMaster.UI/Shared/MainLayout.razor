@@ -1,0 +1,21 @@
+﻿@using Constants = TypingMaster.Shared.Constants
+@inherits LayoutComponentBase
+
+<PageTitle>@Constants.AppFriendlyName</PageTitle>
+
+<Layout>
+    <LayoutHeader>
+        <div class="p-2 d-flex justify-content-center">
+            <Image src="logo.png" Style="height: 5vh; min-height: 40px"/>
+        </div>
+    </LayoutHeader>
+    <LayoutContent Class="Container" Height="Height.Is100" Width="Width.Is100">
+        @Body
+    </LayoutContent>
+    <LayoutFooter TextAlignment="TextAlignment.Center">
+        <Text TextColor="TextColor.Secondary" TextAlignment="TextAlignment.Center">
+            <Divider TextColor="TextColor.Secondary"/>
+            Copyright © @DateTime.Today.Year KorTym
+        </Text>
+    </LayoutFooter>
+</Layout>

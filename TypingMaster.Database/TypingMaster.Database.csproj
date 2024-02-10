@@ -1,31 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
-
+    
     <ItemGroup>
-        <PackageReference Include="Blazorise.DataGrid" Version="1.0.6"/>
-        <PackageReference Include="Blazorise.SpinKit" Version="1.0.6"/>
-        <PackageReference Include="Humanizer.Core.pl" Version="2.14.1"/>
-        <PackageReference Include="MediatR" Version="11.1.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.8"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.19"/>
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     </ItemGroup>
-
+    
     <ItemGroup>
-        <ProjectReference Include="..\TypingTest.Domain\TypingMaster.Domain.csproj"/>
+      <ProjectReference Include="..\TypingMaster.Application\TypingMaster.Application.csproj" />
+      <ProjectReference Include="..\TypingMaster.Domain\TypingMaster.Domain.csproj" />
     </ItemGroup>
-
 </Project>

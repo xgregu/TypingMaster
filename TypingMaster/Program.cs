@@ -6,54 +6,49 @@ namespace TypingMaster;
 
 public static class Program
 {
-    private const string appGuid = "d805eda3-817f-42f5-8a41-ede8847b1ec6";
-
-    public static async Task Main(string[] args)
+    private const string AppId = "d805eda3-817f-42f5-8b41-ede8847b1ec6";
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    
+    public static void Main(string[] args)
     {
-        
+        AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
-
+        
         LogManager.GetCurrentClassLogger().Info("Start program: {Program}", Constants.AppFriendlyName);
         LogManager.GetCurrentClassLogger().Info("Version: {Version}", Constants.Version);
-
-        if (!new SingleInstanceProtector(appGuid).CheckOneInstanceRunning())
+        
+        if (!new SingleInstanceProtector(AppId).CheckOneInstanceRunning())
         {
             LogManager.GetCurrentClassLogger().Error("{AppName} already running", Constants.AppFriendlyName);
             return;
         }
         
-        var host = CreateHostBuilder(args).Build();
-        await host.RunAsync();
-        host.Dispose();
+        CreateHostBuilder(args).Build().Run();
     }
 
-   
-
+    private static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .UseNLog(NLogAspNetCoreOptions.Default)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+                webBuilder.UseNLog();
+            });
+    
     private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
     {
-        LogManager.GetCurrentClassLogger().Fatal(e.ExceptionObject);
+        Logger.Fatal(e.ExceptionObject);
     }
 
     private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
         foreach (var error in e.Exception.Flatten().InnerExceptions)
-            LogManager.GetCurrentClassLogger().Fatal(error);
+            Logger.Fatal(error);
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args)
+    private static void OnProcessExit(object? sender, EventArgs e)
     {
-        return Host.CreateDefaultBuilder(args)
-            .UseNLog(NLogAspNetCoreOptions.Default)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-                webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
-                webBuilder.UseKestrel(options => options.Limits.MaxRequestBodySize = null);
-#if DEBUG
-                webBuilder.UseWebRoot("wwwroot");
-                webBuilder.UseStaticWebAssets();
-#endif
-            });
+        Logger.Info("Exit program");
     }
 }
