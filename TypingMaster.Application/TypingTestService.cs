@@ -29,7 +29,7 @@ public class TestStatisticsCalculator(ILogger<TestStatisticsCalculator> logger, 
         {
             EffectivenessPercentage = effectiveness,
             ClickPerMinute = clickPerMinute,
-            CompletionTimeSecond = (long)completionTime.TotalSeconds,
+            CompletionTimeMilliseconds = (long)completionTime.TotalMilliseconds,
             TotalClicks = createTest.TotalClicks,
             MistakesClicks = createTest.TotalClicks - textLenght,
             OverallRating = overallRating,
@@ -44,9 +44,10 @@ public class TestStatisticsCalculator(ILogger<TestStatisticsCalculator> logger, 
 
     private double GetClickPerMinute(CreateTestRequest createTest)
     {
-        var completionTime = GetCompletionTime(createTest);
-        var clickPerMinute = createTest.TotalClicks / completionTime.TotalMinutes;
-        return Math.Round(clickPerMinute, 2);
+        var completionTimeMilliseconds = GetCompletionTime(createTest).TotalMilliseconds;
+        var clicksPerMillisecond = createTest.TotalClicks / completionTimeMilliseconds;
+        var clicksPerMinute = clicksPerMillisecond * 60000;
+        return Math.Round(clicksPerMinute, 2);
     }
 
     private long GetEffectiveness(long textLenght, long totalCLicks) => textLenght * 100 / totalCLicks;

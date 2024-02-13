@@ -22,7 +22,7 @@ public static class TypingTestDtoExtensions
 public static class TypingTestStatisticsDtoDtoExtensions
 {
     public static TypingTestStatisticsDto ToDto(this TypingTestStatisticsEntity entity) =>
-        new(entity.Id, entity.EffectivenessPercentage, entity.ClickPerMinute, entity.CompletionTimeSecond, entity.TotalClicks, entity.MistakesClicks, entity.OverallRating);
+        new(entity.Id, entity.EffectivenessPercentage, entity.ClickPerMinute, entity.CompletionTimeMilliseconds, entity.TotalClicks, entity.MistakesClicks, entity.OverallRating);
 
     public static IEnumerable<TypingTestStatisticsDto> ToDto(this IEnumerable<TypingTestStatisticsEntity> entities) =>
         entities.Select(entity => entity.ToDto());

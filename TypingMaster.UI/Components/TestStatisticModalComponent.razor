@@ -1,11 +1,12 @@
-﻿
+﻿@inject ApiClient ApiClient
+
 <Modal @ref="_modalRef" Shadow="Shadow.Default">
     <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>@_title</ModalTitle>
         </ModalHeader>
         <ModalBody>
-            <TestStatisticTableComponent Test="_test"/>
+            <TestStatisticTableComponent Test="_test" TestRanking="_testRanking"/>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="@Hide">Zamknij</Button>
@@ -14,9 +15,11 @@
 </Modal>
 
 @code {
-    private Modal? _modalRef;
+    private Modal _modalRef = default!;
     private TypingTestDto? _test;
     private string _title = string.Empty;
+    private long _testRanking;
+
 
     public async Task Show(TypingTestDto? test)
     {
@@ -24,15 +27,11 @@
             return;
 
         _test = test;
+        _testRanking = await ApiClient.GetTestRanking(test.Id);
         _title = $"Gratulacje {_test.ExecutorName}! Twoje statystki:";
         await InvokeAsync(StateHasChanged);
-        _modalRef?.Show();
+        await _modalRef.Show();
     }
 
-    public Task Hide()
-    {
-        _modalRef?.Hide();
-        return Task.CompletedTask;
-    }
-
+    public async Task Hide() => await _modalRef.Hide();
 }

@@ -107,6 +107,7 @@
         await Clear();
         _cancelClose = false;
         _modalRef?.Hide();
+        await _pleaseWaitPopupRef.Hide();
     }
 
     private async Task Clear()
@@ -130,13 +131,19 @@
 
     private async Task EndTest()
     {
-        await _pleaseWaitPopupRef.Show();
-        var test = _testInProgress.EndTest(_executorName);
+        try
+        {
+            await _pleaseWaitPopupRef.Show();
+            var test = _testInProgress.EndTest(_executorName);
         
-        var createdTest = await ApiClient.CreateTest(test);
-        await _pleaseWaitPopupRef.Hide();
-        await _testStatisticModalRef.Show(createdTest);
-        _confirmationTask.SetResult();
+            var createdTest = await ApiClient.CreateTest(test);
+            await _pleaseWaitPopupRef.Hide();
+            await _testStatisticModalRef.Show(createdTest);
+        }
+        finally
+        {
+            _confirmationTask.SetResult();
+        }
     }
 
     private void ValidateExecutorName(ValidatorEventArgs e)

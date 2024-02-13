@@ -75,6 +75,9 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
             .Include(x => x.TypingTest)
             .AsNoTracking()
             .OrderByDescending(x => x.OverallRating)
+            .ThenByDescending(x => x.EffectivenessPercentage)
+            .ThenByDescending(x => x.ClickPerMinute)
+            .ThenByDescending(x => x.TypingTest.Text.Text.Length)
             .ToList()
             .FindIndex(x => x.TypingTest.Id == testId);
         

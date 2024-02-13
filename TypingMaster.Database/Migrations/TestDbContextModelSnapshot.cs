@@ -15,7 +15,7 @@ namespace TypingMaster.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
 
             modelBuilder.Entity("TypingMaster.Domain.Entities.TypingLevelEntity", b =>
                 {
@@ -48,7 +48,7 @@ namespace TypingMaster.Database.Migrations
                         {
                             Id = 1L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DifficultyCoefficient = 0.80000000000000004,
+                            DifficultyCoefficient = 0.59999999999999998,
                             DifficultyLevel = 1u,
                             LastChangeDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Minimalistyczny"
@@ -57,7 +57,7 @@ namespace TypingMaster.Database.Migrations
                         {
                             Id = 2L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DifficultyCoefficient = 0.90000000000000002,
+                            DifficultyCoefficient = 0.80000000000000004,
                             DifficultyLevel = 2u,
                             LastChangeDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Krótki"
@@ -75,7 +75,7 @@ namespace TypingMaster.Database.Migrations
                         {
                             Id = 4L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DifficultyCoefficient = 1.1000000000000001,
+                            DifficultyCoefficient = 1.2,
                             DifficultyLevel = 4u,
                             LastChangeDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Długi"
@@ -84,7 +84,7 @@ namespace TypingMaster.Database.Migrations
                         {
                             Id = 5L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DifficultyCoefficient = 1.2,
+                            DifficultyCoefficient = 1.3999999999999999,
                             DifficultyLevel = 5u,
                             LastChangeDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Name = "Bardzo długi"
@@ -138,7 +138,7 @@ namespace TypingMaster.Database.Migrations
                     b.Property<double>("ClickPerMinute")
                         .HasColumnType("REAL");
 
-                    b.Property<long>("CompletionTimeSecond")
+                    b.Property<long>("CompletionTimeMilliseconds")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset>("CreatedDate")

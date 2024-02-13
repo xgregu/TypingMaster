@@ -77,7 +77,11 @@
     private async Task UpdateTests()
     {
         var allTest = await ApiClient.GetAllTests();
-        _testList = allTest?.Select(TestTableModel.WithTypingTestDto).OrderByDescending(x => x.Points).ToList() ?? new List<TestTableModel>();
+        _testList = allTest?.Select(TestTableModel.WithTypingTestDto)
+            .OrderByDescending(x => x.Points)
+            .ThenByDescending(x => x.EffectivenessPercentage)
+            .ThenByDescending(x => x.ClickPerinute)
+            .ToList() ?? new List<TestTableModel>();
     }
 
     private int GetIndex(long testId)
@@ -88,6 +92,6 @@
     private async Task OnSelectedRowChanged(TestTableModel arg)
     {
         var test = await ApiClient.GetTest(arg.Id);
-        await _testStatisticModalRef.Show(test);
+        await _testStatisticModalRef.Show(test.Value);
     }
 }

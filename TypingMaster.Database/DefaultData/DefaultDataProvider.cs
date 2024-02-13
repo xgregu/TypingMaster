@@ -8,11 +8,11 @@ internal static class DefaultDataProvider
     internal static IEnumerable<TypingLevelEntity> GetTypingLevels() =>
         new List<TypingLevelEntity>
         {
-            new() {Id = 1, DifficultyLevel = 1, Name = "Minimalistyczny", DifficultyCoefficient = 0.8},
-            new() {Id = 2, DifficultyLevel = 2, Name = "Krótki", DifficultyCoefficient = 0.9},
+            new() {Id = 1, DifficultyLevel = 1, Name = "Minimalistyczny", DifficultyCoefficient = 0.6},
+            new() {Id = 2, DifficultyLevel = 2, Name = "Krótki", DifficultyCoefficient = 0.8},
             new() {Id = 3, DifficultyLevel = 3, Name = "Standardowy", DifficultyCoefficient = 1.0},
-            new() {Id = 4, DifficultyLevel = 4, Name = "Długi", DifficultyCoefficient = 1.1},
-            new() {Id = 5, DifficultyLevel = 5, Name = "Bardzo długi", DifficultyCoefficient = 1.2},
+            new() {Id = 4, DifficultyLevel = 4, Name = "Długi", DifficultyCoefficient = 1.2},
+            new() {Id = 5, DifficultyLevel = 5, Name = "Bardzo długi", DifficultyCoefficient = 1.4},
         };
 
     internal static IEnumerable<TypingTextEntity> GetTypingTexts() =>

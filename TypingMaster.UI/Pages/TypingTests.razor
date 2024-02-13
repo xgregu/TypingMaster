@@ -25,6 +25,8 @@
 
     <Heading Size="HeadingSize.Is5" Class="mt-3">Ranking</Heading>
     <TestTableComponent @ref="_testTableComponent"/>
+
+
     <TestComponent @ref="_testModalRef"/>
     <PleaseWaitPopup @ref="_pleaseWaitPopupRef"/>
 </Div>
@@ -37,15 +39,10 @@
     private PleaseWaitPopup _pleaseWaitPopupRef = default!;
     private TestTableComponent _testTableComponent = default!;
 
-    protected override async Task OnInitializedAsync()
-    {
-        _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
-        await base.OnInitializedAsync();
-    }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    /*protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
             _ = DoUsuniecia();
 
         return base.OnAfterRenderAsync(firstRender);
@@ -55,17 +52,40 @@
     {
         while (true)
         {
-            var startDate = DateTimeOffset.Now;
-            var endDate = DateTimeOffset.Now.AddMinutes(new Random().Next(1,10));
-            var level = (uint) new Random().Next(1, 5);
-            var texts = await ApiClient.GetAllTypingTypingTextByDifficultyLevel(level);
-            var text = texts.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
-            var textLenght = text.Text.Length;
-            
-            
-            var test = new CreateTestRequest("Automat", startDate, endDate, new Random().Next(text.Text.Length, text.Text.Length + 20), text.Id);
-            await ApiClient.CreateTest(test);
+            try
+            {
+                var httpClient = new HttpClient();
+
+                var response = await httpClient.GetAsync("https://api.namefake.com/");
+                if (!response.IsSuccessStatusCode)
+                    continue;
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var fakePerson =  JsonSerializer.Deserialize<FakePerson>(responseContent);
+                
+                var startDate = DateTimeOffset.Now;
+                var endDate = DateTimeOffset.Now.AddSeconds(new Random().Next(5, 240));
+                var level = (uint) new Random().Next(1, 5);
+                var texts = await ApiClient.GetAllTypingTypingTextByDifficultyLevel(level);
+                var text = texts.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                var textLenght = text.Text.Length;
+                var maxTotalCLicks = textLenght + (textLenght * 25 / 100);
+                var totalClicks = new Random().Next(textLenght, maxTotalCLicks);
+
+                var test = new CreateTestRequest(fakePerson.name, startDate, endDate, totalClicks, text.Id);
+                await ApiClient.CreateTest(test);
+            }
+            catch
+                (Exception e)
+            {
+            }
         }
+    }*/
+
+    protected override async Task OnInitializedAsync()
+    {
+        _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
+        await base.OnInitializedAsync();
     }
 
     private async void StartTest(TypingLevelDto typingLevel)
@@ -100,4 +120,7 @@
             _ => Color.Primary
             };
     }
+    
+}
+
 }

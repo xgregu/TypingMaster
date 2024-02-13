@@ -8,7 +8,7 @@ public class TypingTestStatisticsEntity : BaseEntity
 {
     public long EffectivenessPercentage { get; set; }
     public double ClickPerMinute { get; set; }
-    public long CompletionTimeSecond { get; set; }
+    public long CompletionTimeMilliseconds { get; set; }
     public long TotalClicks { get; set; }
     public long MistakesClicks { get; set; }
     public long OverallRating { get; set; }
@@ -24,7 +24,7 @@ public partial class TypingTextEntityConfiguration : IEntityTypeConfiguration<Ty
         
         builder.Property(x => x.EffectivenessPercentage)
             .IsRequired();
-        builder.Property(x => x.CompletionTimeSecond)
+        builder.Property(x => x.CompletionTimeMilliseconds)
             .IsRequired();
         builder.Property(x => x.MistakesClicks)
             .IsRequired();

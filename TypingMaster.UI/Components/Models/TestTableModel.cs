@@ -13,7 +13,7 @@ public class TestTableModel
     public DateTime EndTime { get; init; }
     public int TestLenght { get; init; }
     public long EffectivenessPercentage { get; init; }
-    public double ClickPerSecond { get; init; }
+    public double ClickPerinute { get; init; }
     public TimeSpan CompletionTime { get; init; }
     public long Mistakes { get; set; }
     public long Points { get; set; }
@@ -30,8 +30,8 @@ public class TestTableModel
             EndTime = typingTestDto.EndTime.DateTime,
             TestLenght = typingTestDto.Text.Text.Length,
             EffectivenessPercentage = typingTestDto.Statistics.EffectivenessPercentage,
-            ClickPerSecond = typingTestDto.Statistics.ClickPerSecond,
-            CompletionTime = TimeSpan.FromSeconds(typingTestDto.Statistics.CompletionTimeSecond),
+            ClickPerinute = typingTestDto.Statistics.ClickPerMinute,
+            CompletionTime = TimeSpan.FromSeconds(typingTestDto.Statistics.CompletionTimeMilliseconds),
             Mistakes = typingTestDto.Statistics.MistakesClicks,
             Points = typingTestDto.Statistics.OverallRating
         };

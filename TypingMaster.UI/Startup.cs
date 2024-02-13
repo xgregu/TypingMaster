@@ -17,6 +17,8 @@ public class Startup(IConfiguration configuration)
         
         services.AddRazorComponents()
             .AddInteractiveServerComponents();
+
+        services.AddRazorPages();
         
         services.AddLogging(x => { x.AddNLog(); });
 

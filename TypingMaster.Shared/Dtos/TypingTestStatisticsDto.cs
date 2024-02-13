@@ -3,8 +3,8 @@
 public record TypingTestStatisticsDto(
     long Id,
     long EffectivenessPercentage,
-    double ClickPerSecond,
-    long CompletionTimeSecond,
+    double ClickPerMinute,
+    long CompletionTimeMilliseconds,
     long TotalClicks,
     long MistakesClicks,
     long OverallRating
