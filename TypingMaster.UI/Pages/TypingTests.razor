@@ -1,0 +1,126 @@
+﻿@page "/TypingTests"
+@page "/"
+
+@inject ApiClient ApiClient
+
+<PageTitle>Test</PageTitle>
+<Div Flex="Flex.JustifyContent.Center.Column.AlignItems.Stretch" Width="Width.Is100">
+    <Div Flex="Flex.JustifyContent.Center">
+        <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
+    </Div>
+    <Div Flex="Flex.AlignItems.Center.JustifyContent.Center.OnFullHD.AlignItems.Center.JustifyContent.Center.OnMobile.Wrap" Padding="Padding.Is1.OnX">
+        @foreach (var typingLevel in _typingLevels)
+        {
+            @GetButton(typingLevel)
+        }
+    </Div>
+    <Div Flex="Flex.JustifyContent.Center">
+        <Text TextColor="TextColor.Danger" Margin="Margin.Is1.OnX">
+            Uwaga!
+        </Text>
+        <Text TextColor="TextColor.Secondary">
+            Długość testu wpływa na jego poziom trudności
+        </Text>
+    </Div>
+
+    <Heading Size="HeadingSize.Is5" Class="mt-3">Ranking</Heading>
+    <TestTableComponent @ref="_testTableComponent"/>
+
+
+    <TestComponent @ref="_testModalRef"/>
+    <PleaseWaitPopup @ref="_pleaseWaitPopupRef"/>
+</Div>
+
+@code
+{
+    private ICollection<TypingLevelDto> _typingLevels = new List<TypingLevelDto>();
+
+    private TestComponent _testModalRef = default!;
+    private PleaseWaitPopup _pleaseWaitPopupRef = default!;
+    private TestTableComponent _testTableComponent = default!;
+
+
+    /*protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            _ = DoUsuniecia();
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task DoUsuniecia()
+    {
+        while (true)
+        {
+            try
+            {
+                var httpClient = new HttpClient();
+
+                var response = await httpClient.GetAsync("https://api.namefake.com/");
+                if (!response.IsSuccessStatusCode)
+                    continue;
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var fakePerson =  JsonSerializer.Deserialize<FakePerson>(responseContent);
+                
+                var startDate = DateTimeOffset.Now;
+                var endDate = DateTimeOffset.Now.AddSeconds(new Random().Next(5, 240));
+                var level = (uint) new Random().Next(1, 5);
+                var texts = await ApiClient.GetAllTypingTypingTextByDifficultyLevel(level);
+                var text = texts.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                var textLenght = text.Text.Length;
+                var maxTotalCLicks = textLenght + (textLenght * 25 / 100);
+                var totalClicks = new Random().Next(textLenght, maxTotalCLicks);
+
+                var test = new CreateTestRequest(fakePerson.name, startDate, endDate, totalClicks, text.Id);
+                await ApiClient.CreateTest(test);
+            }
+            catch
+                (Exception e)
+            {
+            }
+        }
+    }*/
+
+    protected override async Task OnInitializedAsync()
+    {
+        _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
+        await base.OnInitializedAsync();
+    }
+
+    private async void StartTest(TypingLevelDto typingLevel)
+    {
+        await _testModalRef.ShowAndWaitForResult(typingLevel);
+        await _testTableComponent.Refresh();
+    }
+
+    private RenderFragment GetButton(TypingLevelDto typingLevel)
+    {
+        var text = typingLevel.Name;
+        var color = GetColor(typingLevel);
+
+        return @<Button
+                    Color="color"
+                    Margin="Margin.Is1"
+                    Clicked="() => StartTest(typingLevel)"
+                    @key="typingLevel">
+                   @text
+               </Button>;
+    }
+
+    private static Color GetColor(TypingLevelDto type)
+    {
+        return type.DifficultyLevel switch
+        {
+            1 => Color.Primary,
+            2 => Color.Secondary,
+            3 => Color.Success,
+            4 => Color.Warning,
+            5 => Color.Danger,
+            _ => Color.Primary
+            };
+    }
+    
+}
+
+}

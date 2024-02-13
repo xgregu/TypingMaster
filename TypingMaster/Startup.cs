@@ -1,74 +1,86 @@
-﻿using System.Text.Json.Serialization;
-using Blazorise;
-using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
-using MediatR;
-using MediatR.Courier.DependencyInjection;
-using NLog.Extensions.Logging;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
+using TypingMaster.Application;
 using TypingMaster.Database;
 using TypingMaster.Domain;
-using TypingMaster.Domain.Options;
 
 namespace TypingMaster;
 
 public class Startup
 {
-
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
-    public IConfiguration Configuration { get; }
-
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddBlazorise()
-            .AddBootstrapProviders()
-            .AddFontAwesomeIcons();
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Version = "v1",
+                Title = "Typing master API",
+            });
 
-        services.AddControllers()
-            .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-        services.AddRazorPages();
-        services.AddServerSideBlazor();
-        services.AddLogging(x => { x.AddNLog(); });
+        });
+        
+        services.AddControllers();
+        
+        services.AddCors(x => x.AddDefaultPolicy(new CorsPolicyBuilder()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .SetIsOriginAllowed(_ => true)
+            .Build()));
+        
+        services.AddMediatR(cfg =>
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => 
+                {
+                    var name = a.GetName().Name;
+                    return name != null && name.StartsWith("TypingMaster.");
+                });
+            cfg.RegisterServicesFromAssemblies(assemblies.ToArray());
+        });
 
-        services.AddSingleton<IConfiguration>(_ => new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .AddJsonFile("appsettings.json", false, true)
-            .Build());
-
-        services.AddSignalR();
-
-        services.AddOptions<TypingTestOptions>().Bind(Configuration.GetSection(TypingTestOptions.SectionKey));
-
-        services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-        services.AddCourier(AppDomain.CurrentDomain.GetAssemblies());
-
+        services.AddApplication();
+        services.AddCore(); 
         services.AddDatabase();
-        services.AddDomain();
+        
+        services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = false;
+            })
+            .AddEntityFrameworkStores<TestDbContext>()
+            .AddDefaultTokenProviders();
     }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
-        IHostApplicationLifetime applicationLifetime)
+    
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
-        else
-        {
-            app.UseExceptionHandler("/Error");
-            app.UseHsts();
-        }
 
-        app.UseStaticFiles();
+        app.UseHttpsRedirection();
         app.UseRouting();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Typing master API");
+        });
+
+
+        app.UseCors();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapBlazorHub();
-            endpoints.MapFallbackToPage("/_Host");
+            endpoints.MapControllers();
         });
+        
+        app.UseAuthentication();
+        
+        AppInitializer.Initialize(app.ApplicationServices).Wait();
     }
 }

@@ -1,0 +1,97 @@
+﻿@inject ILogger<TestTableComponent> Logger
+@inject ApiClient ApiClient
+
+<Div Flex="Flex.JustifyContent.Center.Column">
+    <DataGrid @ref="_tableRef"
+              TItem="TestTableModel"
+              Data="@_testList"
+              Responsive
+              Sortable="false"
+              Filterable="false"
+              Virtualize
+              VirtualizeOptions="@(new VirtualizeOptions { DataGridHeight = "100%" })"
+              SelectedRowChanged="OnSelectedRowChanged"
+              Striped>
+        <DataGridColumns>
+            <DataGridCommandColumn/>
+            <DataGridColumn Field="@nameof(TestTableModel.Id)" Caption="#">
+                <DisplayTemplate>
+                    @{
+                        var id = (context as TestTableModel)?.Id;
+                        if (id != 0 && id != null)
+                            @(GetIndex(id.Value))
+                    }
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn Field="@nameof(TestTableModel.StartTime)" Caption="Data">
+                <DisplayTemplate>
+                    @{
+                        var dateTime = (context as TestTableModel)?.StartTime;
+                        if (dateTime != null)
+                            @(dateTime.Value.ToString("dd.MM.yyyy HH:mm"))
+                    }
+                </DisplayTemplate>
+            </DataGridColumn>
+            <DataGridColumn Field="@nameof(TestTableModel.ExecutorName)" Caption="Imię" Editable/>
+            <DataGridColumn Field="@nameof(TestTableModel.Points)" Caption="Punkty" Editable/>
+        </DataGridColumns>
+        <EmptyTemplate>
+            <Paragraph>Nikt nie wykonał jeszcze testu. Bądź pierwszy!</Paragraph>
+        </EmptyTemplate>
+        <LoadingTemplate>
+            <SpinKit Type="SpinKitType.Fold" Size="1rem" Centered="true"/>
+        </LoadingTemplate>
+    </DataGrid>
+
+    <Div Flex="Flex.JustifyContent.Center">
+        <Text TextColor="TextColor.Success">
+            <Icon Name="IconName.Lightbulb" Margin="Margin.Is1.OnX"/>
+        </Text>
+        <Text TextColor="TextColor.Secondary">
+            Wybierz test aby wyświetlić szczegółowe statysyki
+        </Text>
+    </Div>
+</Div>
+<TestStatisticModalComponent @ref="_testStatisticModalRef"/>
+
+@code{
+
+    private TestStatisticModalComponent _testStatisticModalRef;
+    private DataGrid<TestTableModel> _tableRef;
+    private IReadOnlyList<TestTableModel> _testList;
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateTests();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task Refresh()
+    {
+        await UpdateTests();
+        await _tableRef.Reload();
+        await _tableRef.Refresh();
+        await InvokeAsync(StateHasChanged);
+    }
+    private async Task UpdateTests()
+    {
+        var allTest = await ApiClient.GetAllTests();
+        _testList = allTest?.Select(TestTableModel.WithTypingTestDto)
+            .OrderByDescending(x => x.Points)
+            .ThenByDescending(x => x.EffectivenessPercentage)
+            .ThenByDescending(x => x.ClickPerinute)
+            .ToList() ?? new List<TestTableModel>();
+    }
+
+    private int GetIndex(long testId)
+    {
+        return _testList.ToList().FindIndex(x => x.Id == testId) + 1;
+    }
+
+    private async Task OnSelectedRowChanged(TestTableModel arg)
+    {
+        var test = await ApiClient.GetTest(arg.Id);
+        await _testStatisticModalRef.Show(test.Value);
+    }
+}

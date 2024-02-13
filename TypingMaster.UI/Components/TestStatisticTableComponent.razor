@@ -1,0 +1,46 @@
+﻿@inject ApiClient ApiClient
+
+@if (Test is not null)
+{
+    <Table Striped Responsive>
+        <TableBody>
+            <TableRow>
+                <TableRowCell>Ranking</TableRowCell>
+                <TableRowCell>@TestRanking</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Punkty</TableRowCell>
+                <TableRowCell>@Test.Statistics?.OverallRating</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Typ</TableRowCell>
+                <TableRowCell>@Test.Text.Level.Name</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Czas trwania</TableRowCell>
+                <TableRowCell>@CompletionTime.Humanize() (@CompletionTime)</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Kliknięć na minutę</TableRowCell>
+                <TableRowCell>@Test.Statistics.ClickPerMinute</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Skuteczność</TableRowCell>
+                <TableRowCell>@(Test.Statistics.EffectivenessPercentage)%</TableRowCell>
+            </TableRow>
+        </TableBody>
+    </Table>
+}
+
+@code {
+    private TimeSpan CompletionTime => TimeSpan.FromMilliseconds(Test?.Statistics.CompletionTimeMilliseconds ?? 0);
+
+    
+    [Parameter]
+    [EditorRequired]
+    public TypingTestDto? Test { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public long TestRanking { get; set; }
+}
