@@ -1,4 +1,4 @@
-﻿namespace TypingMaster.UI.Dtos;
+﻿namespace TypingMaster.Shared.Dtos;
 
 public record TypingTestStatisticsDto(
     long Id,
@@ -9,3 +9,4 @@ public record TypingTestStatisticsDto(
     long MistakesClicks,
     long OverallRating
 );
+

@@ -1,7 +1,8 @@
 ﻿using MediatR;
-using TypingMaster.Application.Dtos;
+using TypingMaster.Application.Extensions;
 using TypingMaster.Application.Functions.Common;
 using TypingMaster.Application.Interfaces;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Functions.Tests.Queries.GetAllTests;
 public record GetAllTestsQuery : IRequest<GetAllTestResponse>;
@@ -24,20 +25,13 @@ public class GetAllTestResponse : Response<IEnumerable<TypingTestDto>>
     public static GetAllTestResponse Failure(ResponseStatus status, string message = "") => new(status, message);
 }
 
-public class GetAllTestQueryHandler : IRequestHandler<GetAllTestsQuery, GetAllTestResponse>
+public class GetAllTestQueryHandler(ITypingTestStore typingTestStore) : IRequestHandler<GetAllTestsQuery, GetAllTestResponse>
 {
-    private readonly ITypingTestStore _typingTestStore;
-
-    public GetAllTestQueryHandler(ITypingTestStore typingTestStore)
-    {
-        _typingTestStore = typingTestStore;
-    }
-
     public async Task<GetAllTestResponse> Handle(GetAllTestsQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            var tests = await _typingTestStore.GetAllAsync();
+            var tests = await typingTestStore.GetAllAsync();
            return GetAllTestResponse.Success(tests.ToDto());
         }
         catch (Exception e)

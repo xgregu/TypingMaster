@@ -1,6 +1,7 @@
-﻿@*@page "/TypingTests"
+﻿@page "/TypingTests"
 @page "/"
 
+@inject ApiClient ApiClient
 
 <PageTitle>Test</PageTitle>
 <Div Flex="Flex.JustifyContent.Center.Column.AlignItems.Stretch" Width="Width.Is100">
@@ -8,9 +9,9 @@
         <Heading Size="HeadingSize.Is5">Wybierz test</Heading>
     </Div>
     <Div Flex="Flex.AlignItems.Center.JustifyContent.Center.OnFullHD.AlignItems.Center.JustifyContent.Center.OnMobile.Wrap" Padding="Padding.Is1.OnX">
-        @foreach (var type in (TypingTestType[])Enum.GetValues(typeof(TypingTestType)))
+        @foreach (var typingLevel in _typingLevels)
         {
-            @GetButton(type)
+            @GetButton(typingLevel)
         }
     </Div>
     <Div Flex="Flex.JustifyContent.Center">
@@ -23,62 +24,80 @@
     </Div>
 
     <Heading Size="HeadingSize.Is5" Class="mt-3">Ranking</Heading>
-    <TestTableComponent @ref="_testTableComponent"></TestTableComponent>
-    <TestComponent @ref="_testModalRef"></TestComponent>
+    <TestTableComponent @ref="_testTableComponent"/>
+    <TestComponent @ref="_testModalRef"/>
+    <PleaseWaitPopup @ref="_pleaseWaitPopupRef"/>
 </Div>
 
 @code
 {
-    private TestComponent _testModalRef;
-    private TestTableComponent _testTableComponent;
-    private TypingTestTextOptions[] _typingTestTexts;
+    private ICollection<TypingLevelDto> _typingLevels = new List<TypingLevelDto>();
 
-    protected override Task OnInitializedAsync()
+    private TestComponent _testModalRef = default!;
+    private PleaseWaitPopup _pleaseWaitPopupRef = default!;
+    private TestTableComponent _testTableComponent = default!;
+
+    protected override async Task OnInitializedAsync()
     {
-        _typingTestTexts = Options.Value.TypingTestTexts;
-        return base.OnInitializedAsync();
+        _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
+        await base.OnInitializedAsync();
     }
 
-    private async void StartTest(TypingTestType testType)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        var testText = GetTypingTestText(testType);
-        _ = await _testModalRef.ShowAndWaitForResult(testType, testText);
+        if(firstRender)
+            _ = DoUsuniecia();
+
+        return base.OnAfterRenderAsync(firstRender);
     }
 
-    private string GetTypingTestText(TypingTestType type)
+    private async Task DoUsuniecia()
     {
-        return _typingTestTexts
-            .Where(x => x.Type == type)
-            .MinBy(x => Guid.NewGuid())?.Text ?? "ERROR";
+        while (true)
+        {
+            var startDate = DateTimeOffset.Now;
+            var endDate = DateTimeOffset.Now.AddMinutes(new Random().Next(1,10));
+            var level = (uint) new Random().Next(1, 5);
+            var texts = await ApiClient.GetAllTypingTypingTextByDifficultyLevel(level);
+            var text = texts.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+            var textLenght = text.Text.Length;
+            
+            
+            var test = new CreateTestRequest("Automat", startDate, endDate, new Random().Next(text.Text.Length, text.Text.Length + 20), text.Id);
+            await ApiClient.CreateTest(test);
+        }
     }
 
-    private RenderFragment GetButton(TypingTestType type)
+    private async void StartTest(TypingLevelDto typingLevel)
     {
-        var text = type.AsString(EnumFormat.Description);
-        var testAvaiable = _typingTestTexts.Any(x => x.Type == type);
-        var color = GetColor(type);
+        await _testModalRef.ShowAndWaitForResult(typingLevel);
+        await _testTableComponent.Refresh();
+    }
+
+    private RenderFragment GetButton(TypingLevelDto typingLevel)
+    {
+        var text = typingLevel.Name;
+        var color = GetColor(typingLevel);
 
         return @<Button
                     Color="color"
                     Margin="Margin.Is1"
-                    Clicked="() => StartTest(type)"
-                    Disabled="!testAvaiable"
-                    Outline="!testAvaiable"
-                    @key="type">
+                    Clicked="() => StartTest(typingLevel)"
+                    @key="typingLevel">
                    @text
                </Button>;
     }
 
-    private static Color GetColor(TypingTestType type)
+    private static Color GetColor(TypingLevelDto type)
     {
-        return type switch
+        return type.DifficultyLevel switch
         {
-            TypingTestType.Minimalistic => Color.Primary,
-            TypingTestType.Short => Color.Secondary,
-            TypingTestType.Average => Color.Success,
-            TypingTestType.Long => Color.Warning,
-            TypingTestType.Verylong => Color.Danger,
+            1 => Color.Primary,
+            2 => Color.Secondary,
+            3 => Color.Success,
+            4 => Color.Warning,
+            5 => Color.Danger,
             _ => Color.Primary
             };
     }
-}*@
+}

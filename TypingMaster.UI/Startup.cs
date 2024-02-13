@@ -1,31 +1,23 @@
-﻿using System.Text.Json.Serialization;
-using Blazorise;
+﻿using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using NLog.Extensions.Logging;
 
 namespace TypingMaster.UI;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
-    public IConfiguration Configuration { get; }
+    private IConfiguration Configuration { get; } = configuration;
 
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddBlazorise()
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();
-
-        services.AddControllers()
-            .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-        services.AddRazorPages();
-        services.AddServerSideBlazor();
+        
+        services.AddRazorComponents()
+            .AddInteractiveServerComponents();
+        
         services.AddLogging(x => { x.AddNLog(); });
 
         services.AddSingleton<IConfiguration>(_ => new ConfigurationBuilder()
@@ -33,13 +25,16 @@ public class Startup
             .AddJsonFile("appsettings.json", false, true)
             .Build());
 
-        services.AddSignalR();
         
         services.AddHttpClient<ApiClient>("ApiClient", client =>
         {
-            client.BaseAddress = new Uri("http://localhost:5004/api/");
+            var backendSettings = Configuration.GetSection(BackendSettings.SectionName).Get<BackendSettings>();
+            if (backendSettings?.ApiGateway != null) 
+                client.BaseAddress = new Uri(backendSettings.ApiGateway);
         });
         services.AddTransient<ApiClient>();
+        
+        services.AddMemoryCache();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env,

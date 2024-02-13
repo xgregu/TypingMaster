@@ -1,22 +1,39 @@
-﻿/*namespace TypingMaster.UI.Components.Models;
+﻿using TypingMaster.Shared.Dtos;
+
+namespace TypingMaster.UI.Components.Models;
 
 public class TestTableModel
 {
-    public Guid Id { get; init; }
-    public TypingTestType TestType { get; init; }
-    public string TestTypeName => TestType.Humanize();
-    public string TextToRewritten { get; init; }
+    public long Id { get; init; }
     public string ExecutorName { get; init; }
-    public DateTime TestDate { get; init; }
-    public int CorrectClicks => TotalClicks - InorrectClicks;
-    public int InorrectClicks { get; init; }
-    public int TotalClicks { get; init; }
+    public TypingTextDto Text { get; init; }
+    public long InorrectClicks { get; init; }
+    public long TotalClicks { get; init; }
     public DateTime StartTime { get; init; }
     public DateTime EndTime { get; init; }
     public int TestLenght { get; init; }
-    public int EffectivenessPercentage { get; init; }
+    public long EffectivenessPercentage { get; init; }
     public double ClickPerSecond { get; init; }
     public TimeSpan CompletionTime { get; init; }
-    public int Mistakes { get; set; }
-    public int Points { get; set; }
-}*/
+    public long Mistakes { get; set; }
+    public long Points { get; set; }
+
+    public static TestTableModel WithTypingTestDto(TypingTestDto typingTestDto)
+    {
+        return new TestTableModel
+        {
+            Id = typingTestDto.Id,
+            Text = typingTestDto.Text,
+            ExecutorName = typingTestDto.ExecutorName,
+            TotalClicks = typingTestDto.Statistics.TotalClicks,
+            StartTime = typingTestDto.StartTime.DateTime,
+            EndTime = typingTestDto.EndTime.DateTime,
+            TestLenght = typingTestDto.Text.Text.Length,
+            EffectivenessPercentage = typingTestDto.Statistics.EffectivenessPercentage,
+            ClickPerSecond = typingTestDto.Statistics.ClickPerSecond,
+            CompletionTime = TimeSpan.FromSeconds(typingTestDto.Statistics.CompletionTimeSecond),
+            Mistakes = typingTestDto.Statistics.MistakesClicks,
+            Points = typingTestDto.Statistics.OverallRating
+        };
+    }
+}

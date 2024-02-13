@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using TypingMaster.Application.Dtos;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Functions.Tests.Commands.CreateTest;
 
-public record CreatedTestCommand(TestRequest TestRequest) : IRequest<CreatedTestCommandResponse>;
+public record CreatedTestCommand(CreateTestRequest CreateTestRequest) : IRequest<CreatedTestCommandResponse>;

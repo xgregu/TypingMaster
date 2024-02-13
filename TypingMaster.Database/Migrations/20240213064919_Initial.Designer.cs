@@ -11,7 +11,7 @@ using TypingMaster.Database;
 namespace TypingMaster.Database.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20240209114130_Initial")]
+    [Migration("20240213064919_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -164,7 +164,7 @@ namespace TypingMaster.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TypingTestStatisticsEntity");
+                    b.ToTable("TypingTestStatistics");
                 });
 
             modelBuilder.Entity("TypingMaster.Domain.Entities.TypingTextEntity", b =>

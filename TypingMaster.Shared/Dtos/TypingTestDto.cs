@@ -1,4 +1,4 @@
-﻿namespace TypingMaster.UI.Dtos;
+﻿namespace TypingMaster.Shared.Dtos;
 
 public record TypingTestDto(
     long Id,
@@ -7,3 +7,4 @@ public record TypingTestDto(
     DateTimeOffset EndTime,
     TypingTextDto Text,
     TypingTestStatisticsDto Statistics);
+

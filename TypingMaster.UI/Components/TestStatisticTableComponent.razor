@@ -1,1 +1,59 @@
-﻿
+﻿@inject ApiClient ApiClient
+
+@if (_test is not null)
+{
+    <Table Striped Responsive>
+        <TableBody>
+            <TableRow>
+                <TableRowCell>Ranking</TableRowCell>
+                <TableRowCell>@_testRanking</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Punkty</TableRowCell>
+                <TableRowCell>@_test.Statistics?.OverallRating</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Typ</TableRowCell>
+                <TableRowCell>@_test.Text.Level.Name</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Czas trwania</TableRowCell>
+                <TableRowCell>@CompletionTime.Humanize() (@CompletionTime)</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Kliknięć na minutę</TableRowCell>
+                <TableRowCell>@_test.Statistics.ClickPerSecond</TableRowCell>
+            </TableRow>
+            <TableRow>
+                <TableRowCell>Skuteczność</TableRowCell>
+                <TableRowCell>@(_test.Statistics.EffectivenessPercentage)%</TableRowCell>
+            </TableRow>
+        </TableBody>
+    </Table>
+}
+
+@code {
+    private TimeSpan CompletionTime => TimeSpan.FromSeconds(_test?.Statistics.CompletionTimeSecond ?? 0);
+    private long _testRanking;
+    private TypingTestDto? _test;
+
+
+    [Parameter]
+    [EditorRequired]
+    public TypingTestDto? Test
+    {
+        get => _test;
+        set
+        {
+            _test = value;
+            if (_test is not null)
+                _ = Refresh();
+        }
+    }
+
+    private async Task Refresh()
+    {
+        _testRanking = await ApiClient.GetTestRanking(_test.Id);
+       await InvokeAsync(StateHasChanged);
+    }
+}

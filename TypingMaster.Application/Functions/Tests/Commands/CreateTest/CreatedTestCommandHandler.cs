@@ -1,23 +1,15 @@
 ﻿using FluentValidation.Results;
 using MediatR;
-using TypingMaster.Application.Dtos;
+using TypingMaster.Application.Extensions;
 using TypingMaster.Application.Functions.Common;
 using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
 
 namespace TypingMaster.Application.Functions.Tests.Commands.CreateTest;
 
-public class CreatedTestCommandHandler : IRequestHandler<CreatedTestCommand, CreatedTestCommandResponse>
+public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestStatisticsCalculator statisticsCalculator)
+    : IRequestHandler<CreatedTestCommand, CreatedTestCommandResponse>
 {
-    private readonly ITypingTestStore _typingTestStore;
-    private readonly ITestStatisticsCalculator _statisticsCalculator;
-
-    public CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestStatisticsCalculator statisticsCalculator)
-    {
-        _typingTestStore = typingTestStore;
-        _statisticsCalculator = statisticsCalculator;
-    }
-    
     public async Task<CreatedTestCommandResponse> Handle(CreatedTestCommand request, CancellationToken cancellationToken)
     {
         try
@@ -27,17 +19,17 @@ public class CreatedTestCommandHandler : IRequestHandler<CreatedTestCommand, Cre
             if (!validatorResult.IsValid)
                 return CreatedTestCommandResponse.Failure(ResponseStatus.Failed, string.Join(", ", validatorResult.Errors));
 
-            var testStatistisc = await _statisticsCalculator.GetTestStatistic(request.TestRequest);
+            var testStatistisc = await statisticsCalculator.GetTestStatistic(request.CreateTestRequest);
             var testEntity = new TypingTestEntity
             {
-                ExecutorName = request.TestRequest.ExecutorName,
-                StartTime = request.TestRequest.StartTime,
-                EndTime = request.TestRequest.EndTime,
-                TextId = request.TestRequest.TextId,
+                ExecutorName = request.CreateTestRequest.ExecutorName,
+                StartTime = request.CreateTestRequest.StartTime,
+                EndTime = request.CreateTestRequest.EndTime,
+                TextId = request.CreateTestRequest.TextId,
                 Statistics = testStatistisc,
             };
 
-            var createdTest = await _typingTestStore.AddAsync(testEntity);
+            var createdTest = await typingTestStore.AddAsync(testEntity);
             return CreatedTestCommandResponse.Success(createdTest.ToDto());
         }
         catch (Exception e)

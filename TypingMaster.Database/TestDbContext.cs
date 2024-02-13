@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TypingMaster.Database.DefaultData;
 using TypingMaster.Domain.Entities;
@@ -6,23 +10,17 @@ using TypingMaster.Domain.Entities.Common;
 
 namespace TypingMaster.Database;
 
-public class TestDbContext : DbContext
+public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactory) : DbContext(options)
 {
-    private readonly ILoggerFactory _loggerFactory;
-
-    public TestDbContext(DbContextOptions options, ILoggerFactory loggerFactory) : base(options)
-    {
-        _loggerFactory = loggerFactory;
-    }
-
     public DbSet<TypingTestEntity> TypingTests { get; set; }
     public DbSet<TypingLevelEntity> TypingLevels { get; set; }
     public DbSet<TypingTextEntity> TypingTexts { get; set; }
+    public DbSet<TypingTestStatisticsEntity> TypingTestStatistics { get; set; }
 
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseLoggerFactory(_loggerFactory);
+        optionsBuilder.UseLoggerFactory(loggerFactory);
 
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             optionsBuilder.EnableSensitiveDataLogging();

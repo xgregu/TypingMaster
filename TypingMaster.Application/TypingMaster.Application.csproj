@@ -15,6 +15,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\TypingMaster.Domain\TypingMaster.Domain.csproj" />
+      <ProjectReference Include="..\TypingMaster.Shared\TypingMaster.Shared.csproj" />
     </ItemGroup>
     
 </Project>

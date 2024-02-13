@@ -1,24 +1,34 @@
 ﻿using System.Text.Json;
-using TypingMaster.UI.Dtos;
+using Microsoft.Extensions.Caching.Memory;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.UI;
 
-public class ApiClient
+public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache)
 {
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _httpClient = httpClientFactory.CreateClient("ApiClient");
+
     private const string TestApiUrl = "Test";
-    
-    public ApiClient(IHttpClientFactory httpClientFactory)
-    {
-        _httpClient = httpClientFactory.CreateClient("ApiClient");
-        _ = CreateTest(new TestRequest("test", DateTimeOffset.Now.AddMinutes(-1), DateTimeOffset.Now, 21453, 1));
-    }
+    private const string TypingLevelApiUrl = "TypingLevel";
+    private const string TypingTextApiUrl = "TypingText";
 
     public async Task<TypingTestDto?> GetTest(long testId)
     {
+        var cacheKey = $"GetTest-{testId}";
+        if (memoryCache.TryGetValue(cacheKey, out TypingTestDto? cachedData))
+            return cachedData;
+
         var response = await _httpClient.GetAsync($"{TestApiUrl}/{testId}");
         var typingTestDto = await HandleResponse<TypingTestDto>(response);
+        memoryCache.Set(cacheKey, typingTestDto, TimeSpan.FromMinutes(1));
         return typingTestDto;
+    }
+
+    public async Task<long> GetTestRanking(long testId)
+    {
+        var response = await _httpClient.GetAsync($"{TestApiUrl}/{testId}/ranking");
+        var ranking = await HandleResponse<long>(response);
+        return ranking;
     }
 
     public async Task<ICollection<TypingTestDto>?> GetAllTests()
@@ -28,25 +38,48 @@ public class ApiClient
         return typingTestDto;
     }
 
-    public async Task<TypingTestDto?> CreateTest(TestRequest testRequest)
+    public async Task<ICollection<TypingTextDto>?> GetAllTypingTypingTextByDifficultyLevel(uint difficultyLevel)
     {
-        var response = await _httpClient.PostAsJsonAsync(TestApiUrl, testRequest);
+        var cacheKey = $"TypingTextByDifficulty-{difficultyLevel}";
+        if (memoryCache.TryGetValue(cacheKey, out ICollection<TypingTextDto>? cachedData))
+            return cachedData;
+
+        var response = await _httpClient.GetAsync($"{TypingTextApiUrl}/{difficultyLevel}");
+        var typingTextDtos = await HandleResponse<TypingTextDto[]>(response);
+        memoryCache.Set(cacheKey, typingTextDtos, TimeSpan.FromMinutes(1));
+        return typingTextDtos;
+    }
+
+    public async Task<ICollection<TypingLevelDto>?> GetAllTypingLevels()
+    {
+        const string cacheKey = "AllTypingLevels";
+        if (memoryCache.TryGetValue(cacheKey, out ICollection<TypingLevelDto>? cachedData))
+            return cachedData;
+
+        var response = await _httpClient.GetAsync(TypingLevelApiUrl);
+        var typingLevelDtos = await HandleResponse<TypingLevelDto[]>(response);
+        memoryCache.Set(cacheKey, typingLevelDtos, TimeSpan.FromMinutes(1));
+        return typingLevelDtos;
+    }
+
+    public async Task<TypingTestDto?> CreateTest(CreateTestRequest createTestRequest)
+    {
+        var response = await _httpClient.PostAsJsonAsync(TestApiUrl, createTestRequest);
         var typingTestDto = await HandleResponse<TypingTestDto>(response);
         return typingTestDto;
     }
-    
-    private static async Task<TDto?> HandleResponse<TDto>(HttpResponseMessage response)
+
+    private async Task<TDto?> HandleResponse<TDto>(HttpResponseMessage response)
     {
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
         using var doc = JsonDocument.Parse(responseContent);
-        var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true};
+        var jsonOptions = new JsonSerializerOptions {PropertyNameCaseInsensitive = true};
 
-        return doc.RootElement.TryGetProperty("item", out var itemElement) 
-            ? JsonSerializer.Deserialize<TDto>(itemElement.GetRawText(), jsonOptions) 
+        return doc.RootElement.TryGetProperty("item", out var itemElement)
+            ? JsonSerializer.Deserialize<TDto>(itemElement.GetRawText(), jsonOptions)
             : default;
     }
-    
 }

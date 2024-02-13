@@ -1,4 +1,5 @@
-﻿using TypingMaster.Domain.Entities;
+﻿using System.Collections.Generic;
+using TypingMaster.Domain.Entities;
 
 namespace TypingMaster.Database.DefaultData;
 

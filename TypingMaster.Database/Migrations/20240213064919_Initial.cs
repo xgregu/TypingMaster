@@ -31,7 +31,7 @@ namespace TypingMaster.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TypingTestStatisticsEntity",
+                name: "TypingTestStatistics",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
@@ -47,7 +47,7 @@ namespace TypingMaster.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TypingTestStatisticsEntity", x => x.Id);
+                    table.PrimaryKey("PK_TypingTestStatistics", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,9 +90,9 @@ namespace TypingMaster.Database.Migrations
                 {
                     table.PrimaryKey("PK_TypingTests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TypingTests_TypingTestStatisticsEntity_StatisticsId",
+                        name: "FK_TypingTests_TypingTestStatistics_StatisticsId",
                         column: x => x.StatisticsId,
-                        principalTable: "TypingTestStatisticsEntity",
+                        principalTable: "TypingTestStatistics",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -171,7 +171,7 @@ namespace TypingMaster.Database.Migrations
                 name: "TypingTests");
 
             migrationBuilder.DropTable(
-                name: "TypingTestStatisticsEntity");
+                name: "TypingTestStatistics");
 
             migrationBuilder.DropTable(
                 name: "TypingTexts");

@@ -88,11 +88,11 @@
         private const string DefaultColor = "#0b5ed7";
 
     [Parameter]
-    public string PleaseWaitText { get; set; }
+    public string PleaseWaitText { get; set; } = default!;
 
     private string _color = DefaultColor;
     private bool _isVisible;
-    private string _customPleaseWaitText;
+    private string _customPleaseWaitText = string.Empty;
 
     public async Task Show(string color = DefaultColor)
     {
@@ -101,7 +101,7 @@
 
         _isVisible = true;
         _color = color;
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
         await Task.Delay(500);
     }
 
@@ -112,7 +112,7 @@
 
         _isVisible = false;
         _customPleaseWaitText = string.Empty;
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     public void SetPleaseWaitText(string text)
@@ -123,7 +123,6 @@
 
     public void Dispose()
     {
-        Hide();
+        _ = Hide();
     }
-
 }

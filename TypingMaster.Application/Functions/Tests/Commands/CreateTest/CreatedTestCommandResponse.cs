@@ -1,5 +1,5 @@
-﻿using TypingMaster.Application.Dtos;
-using TypingMaster.Application.Functions.Common;
+﻿using TypingMaster.Application.Functions.Common;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Functions.Tests.Commands.CreateTest;
 

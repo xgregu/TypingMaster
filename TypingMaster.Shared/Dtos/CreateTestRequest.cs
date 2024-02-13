@@ -1,6 +1,6 @@
-﻿namespace TypingMaster.UI.Dtos;
+﻿namespace TypingMaster.Shared.Dtos;
 
-public record TestRequest(
+public record CreateTestRequest(
     string ExecutorName,
     DateTimeOffset StartTime,
     DateTimeOffset EndTime,

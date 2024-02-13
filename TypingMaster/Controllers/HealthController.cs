@@ -7,19 +7,12 @@ namespace TypingMaster.Controllers;
 [ApiController]
 [AllowAnonymous]
 [Route("api/[controller]")]
-public class HealthController : Controller
+public class HealthController(IServiceProvider serviceProvider) : Controller
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public HealthController(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-    
     [HttpGet]
     public async Task<ActionResult> CheckHealth()
     {
-        await using var context = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         if (!await context.Database.CanConnectAsync())
             return StatusCode(StatusCodes.Status503ServiceUnavailable, $"{DateTimeOffset.Now} 👎 - Database connection failed");
         

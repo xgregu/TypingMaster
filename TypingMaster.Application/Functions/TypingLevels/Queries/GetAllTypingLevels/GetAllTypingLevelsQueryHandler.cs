@@ -1,7 +1,8 @@
 ﻿using MediatR;
-using TypingMaster.Application.Dtos;
+using TypingMaster.Application.Extensions;
 using TypingMaster.Application.Functions.Common;
 using TypingMaster.Application.Interfaces;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Functions.TypingLevels.Queries.GetAllTypingLevels;
 public record GetAllTypingLevelsQuery: IRequest<GetAllTypingLevelsResponse>;
@@ -24,20 +25,13 @@ public class GetAllTypingLevelsResponse : Response<IEnumerable<TypingLevelDto>>
     public static GetAllTypingLevelsResponse Failure(ResponseStatus status, string message = "") => new(status, message);
 }
 
-public class GetAllTypingLevelsQueryHandler : IRequestHandler<GetAllTypingLevelsQuery, GetAllTypingLevelsResponse>
+public class GetAllTypingLevelsQueryHandler(ITypingLevelsStore typingLevelsStore) : IRequestHandler<GetAllTypingLevelsQuery, GetAllTypingLevelsResponse>
 {
-    private readonly ITypingLevelsStore _typingLevelsStore;
-
-    public GetAllTypingLevelsQueryHandler(ITypingLevelsStore typingLevelsStore)
-    {
-        _typingLevelsStore = typingLevelsStore;
-    }
-    
     public async Task<GetAllTypingLevelsResponse> Handle(GetAllTypingLevelsQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            var typingLevelEntities = await _typingLevelsStore.GetAllAsync();
+            var typingLevelEntities = await typingLevelsStore.GetAllAsync();
             return GetAllTypingLevelsResponse.Success(typingLevelEntities.ToDto());
         }
         catch (Exception e)

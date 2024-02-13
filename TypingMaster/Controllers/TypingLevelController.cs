@@ -1,29 +1,21 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TypingMaster.Application.Dtos;
 using TypingMaster.Application.Functions.Common;
 using TypingMaster.Application.Functions.TypingLevels.Queries.GetAllTypingLevels;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Controllers;
 
 [ApiController]
 [AllowAnonymous]
 [Route("api/[controller]")]
-public class TypingLevelController : ControllerBase
+public class TypingLevelController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public TypingLevelController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-    
-    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TypingLevelDto>>> GetAllLevels()
     {
-        var reponse = await _mediator.Send(new GetAllTypingLevelsQuery());
+        var reponse = await mediator.Send(new GetAllTypingLevelsQuery());
         return HandleResponse<IEnumerable<TypingLevelDto>, GetAllTypingLevelsResponse>(reponse);
     }
 

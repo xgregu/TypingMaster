@@ -1,44 +1,37 @@
 ﻿using Microsoft.Extensions.Logging;
-using TypingMaster.Application.Dtos;
 using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application;
 
 public interface ITestStatisticsCalculator
 {
-    Task<TypingTestStatisticsEntity> GetTestStatistic(TestRequest test);
+    Task<TypingTestStatisticsEntity> GetTestStatistic(CreateTestRequest createTest);
 }
 
-public class TestStatisticsCalculator : ITestStatisticsCalculator
+public class TestStatisticsCalculator(ILogger<TestStatisticsCalculator> logger, ITypingTextsStore typingTextsStore)
+    : ITestStatisticsCalculator
 {
-    private readonly ILogger<TestStatisticsCalculator> _logger;
-    private readonly ITypingTextsStore _typingTextsStore;
+    private readonly ILogger<TestStatisticsCalculator> _logger = logger;
 
-    public TestStatisticsCalculator(ILogger<TestStatisticsCalculator> logger, ITypingTextsStore typingTextsStore)
+    public async Task<TypingTestStatisticsEntity> GetTestStatistic(CreateTestRequest createTest)
     {
-        _logger = logger;
-        _typingTextsStore = typingTextsStore;
-    }
-    
-    public async Task<TypingTestStatisticsEntity> GetTestStatistic(TestRequest test)
-    {
-        var textEntity = await _typingTextsStore.GetByIdAsync(test.TextId);
+        var textEntity = await typingTextsStore.GetByIdAsync(createTest.TextId);
         var textLenght = textEntity.Text.Length;
         
-        
-        var effectiveness = GetEffectiveness(textLenght, test.TotalClicks);
-        var clickPerMinute = GetClickPerMinute(test);
-        var completionTime = GetCompletionTime(test);
+        var effectiveness = GetEffectiveness(textLenght, createTest.TotalClicks);
+        var clickPerMinute = GetClickPerMinute(createTest);
+        var completionTime = GetCompletionTime(createTest);
         var overallRating = GetOverallRating(effectiveness, clickPerMinute, textEntity.DifficultyLevel.DifficultyCoefficient);
         
         return new TypingTestStatisticsEntity
         {
             EffectivenessPercentage = effectiveness,
             ClickPerMinute = clickPerMinute,
-            CompletionTimeSecond = completionTime.Seconds,
-            TotalClicks = test.TotalClicks,
-            MistakesClicks = test.TotalClicks - textLenght,
+            CompletionTimeSecond = (long)completionTime.TotalSeconds,
+            TotalClicks = createTest.TotalClicks,
+            MistakesClicks = createTest.TotalClicks - textLenght,
             OverallRating = overallRating,
         };
     }
@@ -49,13 +42,13 @@ public class TestStatisticsCalculator : ITestStatisticsCalculator
         return(long)(points * difficultyCoefficient);
     }
 
-    private double GetClickPerMinute(TestRequest test)
+    private double GetClickPerMinute(CreateTestRequest createTest)
     {
-        var completionTime = GetCompletionTime(test);
-        var clickPerMinute = test.TotalClicks / completionTime.TotalMinutes;
+        var completionTime = GetCompletionTime(createTest);
+        var clickPerMinute = createTest.TotalClicks / completionTime.TotalMinutes;
         return Math.Round(clickPerMinute, 2);
     }
 
     private long GetEffectiveness(long textLenght, long totalCLicks) => textLenght * 100 / totalCLicks;
-    private TimeSpan GetCompletionTime(TestRequest test) => test.EndTime - test.StartTime;
+    private TimeSpan GetCompletionTime(CreateTestRequest createTest) => createTest.EndTime - createTest.StartTime;
 }

@@ -161,7 +161,7 @@ namespace TypingMaster.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TypingTestStatisticsEntity");
+                    b.ToTable("TypingTestStatistics");
                 });
 
             modelBuilder.Entity("TypingMaster.Domain.Entities.TypingTextEntity", b =>
