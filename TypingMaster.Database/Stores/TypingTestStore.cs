@@ -35,7 +35,7 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
             .Include(x => x.Statistics)
             .ToListAsync();
     }
-    
+
     public override async Task<TypingTestEntity> GetByIdAsync(long id)
     {
         logger.LogInformation("GetByIdAsync | Id={id}", id);
@@ -64,7 +64,7 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
 
         return entity;
     }
-    
+
     public async Task<long> GetTestRanking(long testId)
     {
         logger.LogInformation("GetPages | TestId={testId}", testId);
@@ -79,7 +79,7 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
             .ThenByDescending(x => x.TypingTest.Text.Text.Length)
             .ToList()
             .FindIndex(x => x.TypingTest.Id == testId);
-        
+
         return index + 1;
     }
 
@@ -92,9 +92,12 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
             .Include(x => x.Text)
             .ThenInclude(x => x.DifficultyLevel)
             .Include(x => x.Statistics)
-            .OrderBy(x => x.Id)
-            .Skip((int)startIndex)
-            .Take((int)count)
+            .OrderByDescending(x => x.Statistics.OverallRating)
+            .ThenByDescending(x => x.Statistics.EffectivenessPercentage)
+            .ThenByDescending(x => x.Statistics.ClickPerMinute)
+            .ThenByDescending(x => x.Text.Text.Length)
+            .Skip((int) startIndex)
+            .Take((int) count)
             .ToListAsync();
     }
 

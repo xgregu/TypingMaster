@@ -1,46 +1,62 @@
 ﻿@inject ApiClient ApiClient
 
-<div class="d-flex justify-content-center flex-column">
-    <h5 class="mt-3">Ranking</h5>
-    <tbody style="height: 100%; display: flex; flex-direction: column">
-        <Virtualize ItemsProvider="GetTests" Context="test">
+<div class="w-100" style="max-height: 70vh; height: 70vh; overflow-y: auto">
+    <div class="d-flex justify-content-between">
+        <span class="text-primary text-start mx-2">
+            Ranking
+        </span>
+        <span class="text-secondary text-end mx-2">
+            Wybierz test, aby wyświetlić szczegółowe statystyki
+        </span>
+    </div>
+
+    <table class="table table-hover table-striped w-100">
+        <thead class="table-active">
+        <th class="w-25" scope="col">Data</th>
+        <th class="w-50" scope="col">Imię</th>
+        <th class="w-25" scope="col">Punkty</th>
+        </thead>
+        <tbody class="table-group-divider">
+        <Virtualize ItemsProvider="GetTests" Context="test"  OverscanCount="20">
             <ItemContent>
-                <tr>
-                    <td style="display: flex; align-items: center">
-                        @test.ExecutorName
-                    </td>
+                <tr @onclick="() => OnTestClicked(test)">
+                    <td class="w-25">@test.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td class="w-50">@test.ExecutorName</td>
+                    <td class="w-25">@test.Statistics.OverallRating</td>
                 </tr>
             </ItemContent>
             <Placeholder>
                 <tr>
-                    <td>
-                        Loading tests...
-                    </td>
+                    <td colspan="3" class="text-center">Ładuje dane...</td>
                 </tr>
             </Placeholder>
         </Virtualize>
-    </tbody>
+        </tbody>
+
+    </table>
+
 </div>
+<TestStatisticModalComponent @ref="_testStatisticModalRef"/>
 
 @code{
 
-    protected override Task OnInitializedAsync()
-    {
-        Console.WriteLine("OnInitializedAsync called");
-        return base.OnInitializedAsync();
-    }
-
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        Console.WriteLine("OnAfterRenderAsync called");
-        return base.OnAfterRenderAsync(firstRender);
-    }
+    private TestStatisticModalComponent _testStatisticModalRef = default!;
 
     private async ValueTask<ItemsProviderResult<TypingTestDto>> GetTests(ItemsProviderRequest request)
     {
-        var total = await ApiClient.GetTestCount();
-        var tests = await ApiClient.GetTestPage(request.StartIndex, request.Count) ?? new List<TypingTestDto>();
+        var getTestCountTask = ApiClient.GetTestCount();
+        var getTestPageTask = ApiClient.GetTestPage(request.StartIndex, request.Count);
+
+        await Task.WhenAll(getTestPageTask, getTestPageTask);
+
+        var total = getTestCountTask.Result;
+        var tests = getTestPageTask.Result ?? new List<TypingTestDto>();
         return new ItemsProviderResult<TypingTestDto>(tests, (int) total);
+    }
+
+    private async Task OnTestClicked(TypingTestDto test)
+    {
+        await _testStatisticModalRef.Show(test);
     }
 
 }
