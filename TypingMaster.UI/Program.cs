@@ -10,7 +10,6 @@ public static class Program
 
     public static async Task Main(string[] args)
     {
-        
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
         TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
 

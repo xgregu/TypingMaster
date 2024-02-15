@@ -10,12 +10,9 @@ using TypingMaster.Domain.Entities;
 
 namespace TypingMaster.Database.Stores;
 
-public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider serviceProvider,
-        ITypingTextsStore typingTextsStore)
+public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider serviceProvider)
     : BaseRepository<TypingTestEntity>(logger, serviceProvider), ITypingTestStore
 {
-    private readonly ITypingTextsStore _typingTextsStore = typingTextsStore;
-
     public async Task<TypingTestEntity> AddAsync(TypingTestEntity entity)
     {
         logger.LogInformation("AddAsync | {@entity}", entity);
@@ -70,6 +67,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
     
     public async Task<long> GetTestRanking(long testId)
     {
+        logger.LogInformation("GetPages | TestId={testId}", testId);
+
         await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         var index = context.TypingTestStatistics
             .Include(x => x.TypingTest)
@@ -83,5 +82,28 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
         
         return index + 1;
     }
-    
+
+    public async Task<IEnumerable<TypingTestEntity>> GetPages(long startIndex, long count)
+    {
+        logger.LogInformation("GetPages | StartIndex={start}, Count={count}", startIndex, count);
+        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        return await context.TypingTests
+            .AsNoTracking()
+            .Include(x => x.Text)
+            .ThenInclude(x => x.DifficultyLevel)
+            .Include(x => x.Statistics)
+            .OrderBy(x => x.Id)
+            .Skip((int)startIndex)
+            .Take((int)count)
+            .ToListAsync();
+    }
+
+    public async Task<long> GetCount()
+    {
+        logger.LogInformation("GetCount");
+        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        return context.TypingTests
+            .AsNoTracking()
+            .Count();
+    }
 }

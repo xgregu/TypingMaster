@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using TypingMaster.Application.Functions.Common;
 using TypingMaster.Application.Functions.Tests.Commands.CreateTest;
 using TypingMaster.Application.Functions.Tests.Queries.GetAllTests;
+using TypingMaster.Application.Functions.Tests.Queries.GetCountTestsQuery;
+using TypingMaster.Application.Functions.Tests.Queries.GetPagedTestsQuery;
 using TypingMaster.Application.Functions.Tests.Queries.GetTest;
 using TypingMaster.Application.Functions.Tests.Queries.GetTestRanking;
 using TypingMaster.Shared.Dtos;
@@ -42,6 +44,20 @@ public class TestController(IMediator mediator) : ControllerBase
     {
         var response = await mediator.Send(new CreatedTestCommand(createTest));
         return HandleResponse<TypingTestDto, CreatedTestCommandResponse>(response);
+    }
+    
+    [HttpGet("paged")]
+    public async Task<ActionResult<IEnumerable<TypingTestDto>>> GetPagedTests([FromQuery] long startIndex, [FromQuery] long count)
+    {
+        var response = await mediator.Send(new GetPagedTestsQuery(startIndex, count));
+        return HandleResponse<IEnumerable<TypingTestDto>, GetPagedTestsResponse>(response);
+    }
+    
+    [HttpGet("count")]
+    public async Task<ActionResult<long>> GetPagedTests()
+    {
+        var response = await mediator.Send(new GetCountTestsQuery());
+        return HandleResponse<long, GetCountTestsResponse>(response);
     }
     
     private ActionResult<T1> HandleResponse<T1, T2>(T2 response) where T2: Response<T1>

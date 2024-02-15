@@ -1,0 +1,46 @@
+﻿@inject ApiClient ApiClient
+
+<div class="d-flex justify-content-center flex-column">
+    <h5 class="mt-3">Ranking</h5>
+    <tbody style="height: 100%; display: flex; flex-direction: column">
+        <Virtualize ItemsProvider="GetTests" Context="test">
+            <ItemContent>
+                <tr>
+                    <td style="display: flex; align-items: center">
+                        @test.ExecutorName
+                    </td>
+                </tr>
+            </ItemContent>
+            <Placeholder>
+                <tr>
+                    <td>
+                        Loading tests...
+                    </td>
+                </tr>
+            </Placeholder>
+        </Virtualize>
+    </tbody>
+</div>
+
+@code{
+
+    protected override Task OnInitializedAsync()
+    {
+        Console.WriteLine("OnInitializedAsync called");
+        return base.OnInitializedAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("OnAfterRenderAsync called");
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async ValueTask<ItemsProviderResult<TypingTestDto>> GetTests(ItemsProviderRequest request)
+    {
+        var total = await ApiClient.GetTestCount();
+        var tests = await ApiClient.GetTestPage(request.StartIndex, request.Count) ?? new List<TypingTestDto>();
+        return new ItemsProviderResult<TypingTestDto>(tests, (int) total);
+    }
+
+}

@@ -34,8 +34,8 @@ public class Startup(IConfiguration configuration)
             if (backendSettings?.ApiGateway != null) 
                 client.BaseAddress = new Uri(backendSettings.ApiGateway);
         });
-        services.AddTransient<ApiClient>();
         
+        services.AddTransient<ApiClient>();
         services.AddMemoryCache();
     }
 

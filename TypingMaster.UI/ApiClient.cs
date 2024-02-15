@@ -9,8 +9,14 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("ApiClient");
 
     private const string TestApiUrl = "Test";
+    private static string GetTestUrl(long testId) => $"{TestApiUrl}/{testId}";
+    private static string GetTestRankingUrl(long testId) => $"{TestApiUrl}/{testId}/ranking";
+    private static string GetTestPageUrl(long startIndex, long count) => $"{TestApiUrl}/paged?startIndex={startIndex}&count={count}";
+    private static string GetTestCountUrl() => $"{TestApiUrl}/count";
+
     private const string TypingLevelApiUrl = "TypingLevel";
     private const string TypingTextApiUrl = "TypingText";
+    private static string GetTypingTextByDifficultyLevelUrl(uint difficultyLevel) => $"{TypingTextApiUrl}/{difficultyLevel}";
 
     public async Task<TypingTestDto?> GetTest(long testId)
     {
@@ -18,7 +24,7 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         if (memoryCache.TryGetValue(cacheKey, out TypingTestDto? cachedData))
             return cachedData;
 
-        var response = await _httpClient.GetAsync($"{TestApiUrl}/{testId}");
+        var response = await _httpClient.GetAsync(GetTestUrl(testId));
         var typingTestDto = await HandleResponse<TypingTestDto>(response);
         memoryCache.Set(cacheKey, typingTestDto, TimeSpan.FromMinutes(1));
         return typingTestDto;
@@ -26,7 +32,14 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
 
     public async Task<long> GetTestRanking(long testId)
     {
-        var response = await _httpClient.GetAsync($"{TestApiUrl}/{testId}/ranking");
+        var response = await _httpClient.GetAsync(GetTestRankingUrl(testId));
+        var ranking = await HandleResponse<long>(response);
+        return ranking;
+    }
+    
+    public async Task<long> GetTestCount()
+    {
+        var response = await _httpClient.GetAsync(GetTestCountUrl());
         var ranking = await HandleResponse<long>(response);
         return ranking;
     }
@@ -37,6 +50,13 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         var typingTestDto = await HandleResponse<TypingTestDto[]>(response);
         return typingTestDto;
     }
+    
+    public async Task<ICollection<TypingTestDto>?> GetTestPage(long startIndex, long count)
+    {
+        var response = await _httpClient.GetAsync(GetTestPageUrl(startIndex, count));
+        var typingTestDto = await HandleResponse<TypingTestDto[]>(response);
+        return typingTestDto;
+    }
 
     public async Task<ICollection<TypingTextDto>?> GetAllTypingTypingTextByDifficultyLevel(uint difficultyLevel)
     {
@@ -44,7 +64,7 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         if (memoryCache.TryGetValue(cacheKey, out ICollection<TypingTextDto>? cachedData))
             return cachedData;
 
-        var response = await _httpClient.GetAsync($"{TypingTextApiUrl}/{difficultyLevel}");
+        var response = await _httpClient.GetAsync(GetTypingTextByDifficultyLevelUrl(difficultyLevel));
         var typingTextDtos = await HandleResponse<TypingTextDto[]>(response);
         memoryCache.Set(cacheKey, typingTextDtos, TimeSpan.FromMinutes(1));
         return typingTextDtos;
@@ -69,7 +89,7 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         return typingTestDto;
     }
 
-    private async Task<TDto?> HandleResponse<TDto>(HttpResponseMessage response)
+    private static async Task<TDto?> HandleResponse<TDto>(HttpResponseMessage response)
     {
         response.EnsureSuccessStatusCode();
 
