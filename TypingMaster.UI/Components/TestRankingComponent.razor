@@ -1,7 +1,10 @@
 ﻿@inject ApiClient ApiClient
+@implements IDisposable
 
 <style>
    tbody tr {
+    max-height: 40px;
+    min-height: 40px;
     height: 40px;
     vertical-align: middle;
     }
@@ -24,7 +27,7 @@
         <th class="w-25" scope="col">Punkty</th>
         </thead>
         <tbody class="table-group-divider">
-        <Virtualize ItemsProvider="GetTests" Context="test" OverscanCount="20" ItemSize="50">
+        <Virtualize ItemsProvider="GetTests" Context="test" OverscanCount="100" ItemSize="40">
             <ItemContent>
                 <tr @onclick="() => OnTestClicked(test)">
                     <td class="w-25">@test.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
@@ -46,20 +49,38 @@
 @code{
 
     private TestStatisticModalComponent _testStatisticModalRef = default!;
+    private CancellationTokenSource _cts = new();
 
     private async ValueTask<ItemsProviderResult<TypingTestDto>> GetTests(ItemsProviderRequest request)
     {
-        await InvokeAsync(StateHasChanged);
-        var pagedResponse = await ApiClient.GetTestPage(request.StartIndex, request.Count);
-        if (pagedResponse is null)
-            return new ItemsProviderResult<TypingTestDto>(Array.Empty<TypingTestDto>(), 0);
+        try
+        {
+            await ResetCts();
 
-        return new ItemsProviderResult<TypingTestDto>(pagedResponse.Tests, (int) pagedResponse.TotalCount);
+            var pagedResponse = await ApiClient.GetTestPage(request.StartIndex, request.Count, _cts.Token);
+            if (pagedResponse is null)
+                return new ItemsProviderResult<TypingTestDto>(Array.Empty<TypingTestDto>(), 0);
+
+            return new ItemsProviderResult<TypingTestDto>(pagedResponse.Tests, (int) pagedResponse.TotalCount);
+        }
+        catch (OperationCanceledException)
+        {
+            return new ItemsProviderResult<TypingTestDto>(Array.Empty<TypingTestDto>(), 0);
+        }
     }
 
-    private async Task OnTestClicked(TypingTestDto test)
+    private async Task OnTestClicked(TypingTestDto test) => await _testStatisticModalRef.Show(test);
+
+    private async Task ResetCts()
     {
-        await _testStatisticModalRef.Show(test);
+        await _cts.CancelAsync();
+        _cts.Dispose();
+        _cts = new CancellationTokenSource();
+    }
+
+    public void Dispose()
+    {
+        _ = ResetCts();
     }
 
 }

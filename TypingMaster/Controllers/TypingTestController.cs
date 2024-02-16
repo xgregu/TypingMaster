@@ -31,12 +31,20 @@ public class TypingTestController(IMediator mediator) : ControllerBase
         var response = await mediator.Send(new GetTestQuery(testId));
         return HandleResponse<TypingTestDto, GetTestResponse>(response);
     }
-    
+
     [HttpGet("{testId:long}/ranking")]
-    public async Task<ActionResult<long>> GetTestRanking([Required] long testId)
+    public async Task<ActionResult<long>> GetTestRanking([Required] long testId, CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new GetTestRankingQuery(testId));
-        return HandleResponse<long, GetTestRankingResponse>(response);
+        try
+        {
+            var response = await mediator.Send(new GetTestRankingQuery(testId), cancellationToken);
+            return HandleResponse<long, GetTestRankingResponse>(response);
+        }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                $"{DateTimeOffset.Now} ❌ - Request cancelled");
+        }
     }
 
     [HttpPost]
@@ -45,22 +53,31 @@ public class TypingTestController(IMediator mediator) : ControllerBase
         var response = await mediator.Send(new CreatedTestCommand(createTest));
         return HandleResponse<TypingTestDto, CreatedTestCommandResponse>(response);
     }
-    
+
     [HttpGet("paged")]
-    public async Task<ActionResult<PagedTestResponse>> GetPagedTests([FromQuery] long startIndex, [FromQuery] long count)
+    public async Task<ActionResult<PagedTestResponse>> GetPagedTests([FromQuery] long startIndex,
+        [FromQuery] long count, CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(new GetPagedTestsQuery(startIndex, count));
-        return HandleResponse<PagedTestResponse, GetPagedTestsResponse>(response);
+        try
+        {
+            var response = await mediator.Send(new GetPagedTestsQuery(startIndex, count), cancellationToken);
+            return HandleResponse<PagedTestResponse, GetPagedTestsResponse>(response);
+        }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                $"{DateTimeOffset.Now} ❌ - Request cancelled");
+        }
     }
-    
+
     [HttpGet("count")]
     public async Task<ActionResult<long>> GetCountTests()
     {
         var response = await mediator.Send(new GetCountTestsQuery());
         return HandleResponse<long, GetCountTestsResponse>(response);
     }
-    
-    private ActionResult<T1> HandleResponse<T1, T2>(T2 response) where T2: Response<T1>
+
+    private ActionResult<T1> HandleResponse<T1, T2>(T2 response) where T2 : Response<T1>
     {
         return response.Status switch
         {

@@ -11,12 +11,17 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
     private const string TestApiUrl = "TypingTest";
     private static string GetTestUrl(long testId) => $"{TestApiUrl}/{testId}";
     private static string GetTestRankingUrl(long testId) => $"{TestApiUrl}/{testId}/ranking";
-    private static string GetTestPageUrl(long startIndex, long count) => $"{TestApiUrl}/paged?startIndex={startIndex}&count={count}";
+
+    private static string GetTestPageUrl(long startIndex, long count) =>
+        $"{TestApiUrl}/paged?startIndex={startIndex}&count={count}";
+
     private static string GetTestCountUrl() => $"{TestApiUrl}/count";
 
     private const string TypingLevelApiUrl = "TypingLevel";
     private const string TypingTextApiUrl = "TypingText";
-    private static string GetTypingTextByDifficultyLevelUrl(uint difficultyLevel) => $"{TypingTextApiUrl}/{difficultyLevel}";
+
+    private static string GetTypingTextByDifficultyLevelUrl(uint difficultyLevel) =>
+        $"{TypingTextApiUrl}/{difficultyLevel}";
 
     public async Task<TypingTestDto?> GetTest(long testId)
     {
@@ -30,11 +35,18 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         return typingTestDto;
     }
 
-    public async Task<long> GetTestRanking(long testId)
+    public async Task<long?> GetTestRanking(long testId, CancellationToken cancellationToken = default)
     {
-        var response = await _httpClient.GetAsync(GetTestRankingUrl(testId));
-        var ranking = await HandleResponse<long>(response);
-        return ranking;
+        try
+        {
+            var response = await _httpClient.GetAsync(GetTestRankingUrl(testId), cancellationToken);
+            var ranking = await HandleResponse<long>(response);
+            return ranking;
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
     }
 
     public async Task<ICollection<TypingTestDto>?> GetAllTests()
@@ -43,12 +55,20 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         var typingTestDto = await HandleResponse<TypingTestDto[]>(response);
         return typingTestDto;
     }
-    
-    public async Task<PagedTestResponse?> GetTestPage(long startIndex, long count)
+
+    public async Task<PagedTestResponse?> GetTestPage(long startIndex, long count,
+        CancellationToken cancellationToken = default)
     {
-        var response = await _httpClient.GetAsync(GetTestPageUrl(startIndex, count));
-        var typingTestDto = await HandleResponse<PagedTestResponse>(response);
-        return typingTestDto;
+        try
+        {
+            var response = await _httpClient.GetAsync(GetTestPageUrl(startIndex, count), cancellationToken);
+            var typingTestDto = await HandleResponse<PagedTestResponse>(response);
+            return typingTestDto;
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
     }
 
     public async Task<ICollection<TypingTextDto>?> GetAllTypingTypingTextByDifficultyLevel(uint difficultyLevel)

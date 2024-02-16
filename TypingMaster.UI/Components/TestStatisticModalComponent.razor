@@ -1,5 +1,6 @@
 ﻿@inject ApiClient ApiClient
-<Modal @ref="_modalRef" Shadow="Shadow.Default" Closed="@OnClosed">
+
+<Modal @ref="_modalRef" Shadow="Shadow.Default" Closed="Deinitialize">
     <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>
@@ -7,10 +8,10 @@
             </ModalTitle>
         </ModalHeader>
         <ModalBody>
-            <TestStatisticTableComponent Test="_test"/>
+            <TestStatisticTableComponent Test="_test" TestRanking="_testRanking"/>
         </ModalBody>
         <ModalFooter>
-            <Button Color="@Color.Primary" Clicked="@Hide">Zamknij</Button>
+            <Button Color="@Color.Primary" Clicked="@(() => _modalRef.Hide())">Zamknij</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -20,26 +21,47 @@
     private Modal _modalRef = default!;
     private TypingTestDto? _test;
     private string _title = string.Empty;
+    private CancellationTokenSource _cts = new();
+    private long? _testRanking;
 
     public async Task Show(TypingTestDto? test)
     {
         if (test == null)
             return;
-        
+
+        await Initialize(test);
+    }
+
+    private async Task Initialize(TypingTestDto test)
+    {
         _test = test;
+        _ = UpdateRanking();
         
         await _modalRef.Show();
     }
 
-    public async Task Hide()
-    {
-        await _modalRef.Hide();
-    }
-
-    private async Task OnClosed()
-    {
-        _title = string.Empty;
-        _test = null;
+    private async Task UpdateRanking()
+    {        
+        _testRanking = await ApiClient.GetTestRanking(_test!.Id, _cts.Token);
         await InvokeAsync(StateHasChanged);
+    }
+    
+    private async Task ResetCts()
+    {
+        await _cts.CancelAsync();
+        _cts.Dispose();
+        _cts = new CancellationTokenSource();
+    }
+    
+    private async Task Deinitialize()
+    {
+        await ResetCts();
+        _test = null;
+        _testRanking = null;
+    }
+    
+    public void Dispose()
+    {
+        _ = Deinitialize();
     }
 }

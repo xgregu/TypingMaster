@@ -7,13 +7,13 @@
             <TableRow>
                 <TableRowCell>Ranking</TableRowCell>
                 <TableRowCell>
-                    @if (_testRanking is null)
+                    @if (TestRanking is null)
                     {
                         <div class="spinner-border spinner-border-sm" role="status"></div>
                     }
                     else
                     {
-                        @_testRanking
+                        @TestRanking
                     }
                 </TableRowCell>
             </TableRow>
@@ -42,37 +42,15 @@
 }
 
 @code {
-    private TypingTestDto? _test;
-    private long? _testRanking;
     private TimeSpan CompletionTime => TimeSpan.FromMilliseconds(Test?.Statistics.CompletionTimeMilliseconds ?? 0);
-
+    private CancellationTokenSource _cts = new();
 
     [Parameter]
     [EditorRequired]
-    public TypingTestDto? Test
-    {
-        get => _test;
-        set
-        {
-            if(_test?.Id == value?.Id)
-                return;
-            
-            _test = value;
-            
-            if (_test is null)
-            {
-                _testRanking = null;
-            }
-            else
-            {
-                _ = UpdateRanking();
-            }
-        }
-    }
+    public long? TestRanking { get; set; }
 
-    private async Task UpdateRanking()
-    {
-        _testRanking = await ApiClient.GetTestRanking(_test!.Id);
-        await InvokeAsync(StateHasChanged);
-    }
+    [Parameter]
+    [EditorRequired]
+    public TypingTestDto? Test { get; set; }
+    
 }
