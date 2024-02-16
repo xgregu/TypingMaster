@@ -7,11 +7,11 @@ using TypingMaster.Shared.Dtos;
 namespace TypingMaster.Application.Functions.Tests.Queries.GetPagedTestsQuery;
 public record GetPagedTestsQuery(long StartIndex, long Count) : IRequest<GetPagedTestsResponse>;
 
-public class GetPagedTestsResponse : Response<IEnumerable<TypingTestDto>>
+public class GetPagedTestsResponse : Response<PagedTestResponse>
 {
-    private GetPagedTestsResponse(IEnumerable<TypingTestDto> typingTests)
+    private GetPagedTestsResponse(IEnumerable<TypingTestDto> typingTests, long totalCount)
     {
-        Item = typingTests;
+        Item = new PagedTestResponse(typingTests.ToArray(), totalCount);
         Status = ResponseStatus.Success;
     }
     
@@ -21,7 +21,7 @@ public class GetPagedTestsResponse : Response<IEnumerable<TypingTestDto>>
         Message = message;
     }
 
-    public static GetPagedTestsResponse Success(IEnumerable<TypingTestDto> typingTests) => new(typingTests);
+    public static GetPagedTestsResponse Success(IEnumerable<TypingTestDto> typingTests, long totalCount) => new(typingTests, totalCount);
     public static GetPagedTestsResponse Failure(ResponseStatus status, string message = "") => new(status, message);
 }
 
@@ -31,8 +31,8 @@ public class GetPagedTestsQueryHandler(ITypingTestStore typingTestStore) : IRequ
     {
         try
         {
-            var tests = await typingTestStore.GetPages(request.StartIndex, request.Count);
-            return GetPagedTestsResponse.Success(tests.ToDto());
+            var paged = await typingTestStore.GetPages(request.StartIndex, request.Count);
+            return GetPagedTestsResponse.Success(paged.tests.ToDto(), paged.totalCount);
         }
         catch (Exception e)
         {

@@ -8,7 +8,7 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
 {
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("ApiClient");
 
-    private const string TestApiUrl = "Test";
+    private const string TestApiUrl = "TypingTest";
     private static string GetTestUrl(long testId) => $"{TestApiUrl}/{testId}";
     private static string GetTestRankingUrl(long testId) => $"{TestApiUrl}/{testId}/ranking";
     private static string GetTestPageUrl(long startIndex, long count) => $"{TestApiUrl}/paged?startIndex={startIndex}&count={count}";
@@ -36,13 +36,6 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         var ranking = await HandleResponse<long>(response);
         return ranking;
     }
-    
-    public async Task<long> GetTestCount()
-    {
-        var response = await _httpClient.GetAsync(GetTestCountUrl());
-        var ranking = await HandleResponse<long>(response);
-        return ranking;
-    }
 
     public async Task<ICollection<TypingTestDto>?> GetAllTests()
     {
@@ -51,10 +44,10 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
         return typingTestDto;
     }
     
-    public async Task<ICollection<TypingTestDto>?> GetTestPage(long startIndex, long count)
+    public async Task<PagedTestResponse?> GetTestPage(long startIndex, long count)
     {
         var response = await _httpClient.GetAsync(GetTestPageUrl(startIndex, count));
-        var typingTestDto = await HandleResponse<TypingTestDto[]>(response);
+        var typingTestDto = await HandleResponse<PagedTestResponse>(response);
         return typingTestDto;
     }
 

@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TypingMaster.Application.Functions.Tests.Queries.GetPagedTestsQuery;
 using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Database.Stores;
 
@@ -83,11 +85,13 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
         return index + 1;
     }
 
-    public async Task<IEnumerable<TypingTestEntity>> GetPages(long startIndex, long count)
+    public async Task<(ICollection<TypingTestEntity> tests, long totalCount)> GetPages(long startIndex, long count)
     {
         logger.LogInformation("GetPages | StartIndex={start}, Count={count}", startIndex, count);
+
         await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
-        return await context.TypingTests
+
+        var testsQuery = context.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
             .ThenInclude(x => x.DifficultyLevel)
@@ -95,10 +99,16 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
             .OrderByDescending(x => x.Statistics.OverallRating)
             .ThenByDescending(x => x.Statistics.EffectivenessPercentage)
             .ThenByDescending(x => x.Statistics.ClickPerMinute)
-            .ThenByDescending(x => x.Text.Text.Length)
-            .Skip((int) startIndex)
-            .Take((int) count)
-            .ToListAsync();
+            .ThenByDescending(x => x.Text.Text.Length);
+
+        var totalCount = await testsQuery.CountAsync();
+
+        var tests = await testsQuery
+            .Skip((int)startIndex)
+            .Take((int)count)
+            .ToArrayAsync();
+
+        return (tests, totalCount);
     }
 
     public async Task<long> GetCount()

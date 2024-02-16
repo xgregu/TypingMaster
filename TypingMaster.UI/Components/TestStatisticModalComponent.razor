@@ -1,39 +1,25 @@
 ﻿@inject ApiClient ApiClient
-
-<style>
-  .EnableBlur>* {
-    filter: blur(5px);
-  }
-  
-  .DisableBlur {
-    filter: blur(0);
-  }
-</style>
-<Modal @ref="_modalRef" Shadow="Shadow.Default" Closed="@OnClosed" Opened="OnOpened">
+<Modal @ref="_modalRef" Shadow="Shadow.Default" Closed="@OnClosed">
     <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>
                    @_test?.ExecutorName
             </ModalTitle>
         </ModalHeader>
-        <ModalBody Class="@BlurClass">
-            <TestStatisticTableComponent Test="_test" TestRanking="_testRanking"/>
+        <ModalBody>
+            <TestStatisticTableComponent Test="_test"/>
         </ModalBody>
         <ModalFooter>
-            <Button Color="@(_isLoading ? Color.Secondary : Color.Primary)" Clicked="@Hide" Loading="_isLoading" Disabled="@_isLoading">@(_isLoading ? "  Ładowanie statystyk" : "Zamknij")</Button>
+            <Button Color="@Color.Primary" Clicked="@Hide">Zamknij</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
 
 @code {
 
-    private string BlurClass => _isLoading ? "EnableBlur" : "DisableBlur";
-
     private Modal _modalRef = default!;
     private TypingTestDto? _test;
     private string _title = string.Empty;
-    private long _testRanking;
-    private bool _isLoading = true;
 
     public async Task Show(TypingTestDto? test)
     {
@@ -44,25 +30,16 @@
         
         await _modalRef.Show();
     }
-    
-    private async Task OnOpened()
-    {
-        _testRanking = await ApiClient.GetTestRanking(_test!.Id);
-        _isLoading = false;
-        
-        await InvokeAsync(StateHasChanged);
-    }
 
     public async Task Hide()
     {
         await _modalRef.Hide();
     }
 
-    private void OnClosed()
+    private async Task OnClosed()
     {
         _title = string.Empty;
         _test = null;
-        _testRanking = -1;
-        _isLoading = true;
+        await InvokeAsync(StateHasChanged);
     }
 }

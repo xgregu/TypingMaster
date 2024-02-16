@@ -6,7 +6,16 @@
         <TableBody>
             <TableRow>
                 <TableRowCell>Ranking</TableRowCell>
-                <TableRowCell>@TestRanking</TableRowCell>
+                <TableRowCell>
+                    @if (_testRanking is null)
+                    {
+                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                    }
+                    else
+                    {
+                        @_testRanking
+                    }
+                </TableRowCell>
             </TableRow>
             <TableRow>
                 <TableRowCell>Punkty</TableRowCell>
@@ -33,14 +42,37 @@
 }
 
 @code {
+    private TypingTestDto? _test;
+    private long? _testRanking;
     private TimeSpan CompletionTime => TimeSpan.FromMilliseconds(Test?.Statistics.CompletionTimeMilliseconds ?? 0);
 
-    
-    [Parameter]
-    [EditorRequired]
-    public TypingTestDto? Test { get; set; }
 
     [Parameter]
     [EditorRequired]
-    public long TestRanking { get; set; }
+    public TypingTestDto? Test
+    {
+        get => _test;
+        set
+        {
+            if(_test?.Id == value?.Id)
+                return;
+            
+            _test = value;
+            
+            if (_test is null)
+            {
+                _testRanking = null;
+            }
+            else
+            {
+                _ = UpdateRanking();
+            }
+        }
+    }
+
+    private async Task UpdateRanking()
+    {
+        _testRanking = await ApiClient.GetTestRanking(_test!.Id);
+        await InvokeAsync(StateHasChanged);
+    }
 }

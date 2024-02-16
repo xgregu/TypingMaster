@@ -1,5 +1,12 @@
 ﻿@inject ApiClient ApiClient
 
+<style>
+   tbody tr {
+    height: 40px;
+    vertical-align: middle;
+    }
+</style>
+
 <div class="w-100" style="max-height: 70vh; height: 70vh; overflow-y: auto">
     <div class="d-flex justify-content-between">
         <span class="text-primary text-start mx-2">
@@ -17,7 +24,7 @@
         <th class="w-25" scope="col">Punkty</th>
         </thead>
         <tbody class="table-group-divider">
-        <Virtualize ItemsProvider="GetTests" Context="test"  OverscanCount="20">
+        <Virtualize ItemsProvider="GetTests" Context="test" OverscanCount="20" ItemSize="50">
             <ItemContent>
                 <tr @onclick="() => OnTestClicked(test)">
                     <td class="w-25">@test.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
@@ -32,9 +39,7 @@
             </Placeholder>
         </Virtualize>
         </tbody>
-
     </table>
-
 </div>
 <TestStatisticModalComponent @ref="_testStatisticModalRef"/>
 
@@ -44,14 +49,12 @@
 
     private async ValueTask<ItemsProviderResult<TypingTestDto>> GetTests(ItemsProviderRequest request)
     {
-        var getTestCountTask = ApiClient.GetTestCount();
-        var getTestPageTask = ApiClient.GetTestPage(request.StartIndex, request.Count);
+        await InvokeAsync(StateHasChanged);
+        var pagedResponse = await ApiClient.GetTestPage(request.StartIndex, request.Count);
+        if (pagedResponse is null)
+            return new ItemsProviderResult<TypingTestDto>(Array.Empty<TypingTestDto>(), 0);
 
-        await Task.WhenAll(getTestPageTask, getTestPageTask);
-
-        var total = getTestCountTask.Result;
-        var tests = getTestPageTask.Result ?? new List<TypingTestDto>();
-        return new ItemsProviderResult<TypingTestDto>(tests, (int) total);
+        return new ItemsProviderResult<TypingTestDto>(pagedResponse.Tests, (int) pagedResponse.TotalCount);
     }
 
     private async Task OnTestClicked(TypingTestDto test)

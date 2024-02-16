@@ -4,47 +4,67 @@
 @inject ApiClient ApiClient
 <PageTitle>Test</PageTitle>
 
-<div class="container-fluid d-flex flex-column align-items-center">
-    <div class="d-flex justify-content-center">
-        <h5>Wybierz test</h5>
+@if (_initializing)
+{
+    <PleaseWaitPopup IsVisible PleaseWaitText="Inicjalizacja"/>
+}
+else
+{
+    <div class="container-fluid d-flex flex-column align-items-center">
+        <div class="d-flex justify-content-center">
+            <h5>Wybierz test</h5>
+        </div>
+        <div class="d-flex align-items-center justify-content-center flex-wrap p-1">
+            @foreach (var typingLevel in _typingLevels)
+            {
+                @GetButton(typingLevel)
+            }
+        </div>
+        <div class="d-flex justify-content-center">
+            <p class="text-danger mx-1">Uwaga!</p>
+            <p class="text-secondary mx-1">Długość testu wpływa na jego poziom trudności</p>
+        </div>
+        <div class="container-fluid d-flex justify-content-center">
+            <TestRankingComponent @ref="_testRankingComponent"/>
+        </div>
     </div>
-    <div class="d-flex align-items-center justify-content-center flex-wrap p-1">
-        @foreach (var typingLevel in _typingLevels)
-        {
-            @GetButton(typingLevel)
-        }
-    </div>
-    <div class="d-flex justify-content-center">
-        <p class="text-danger mx-1">Uwaga!</p>
-        <p class="text-secondary mx-1">Długość testu wpływa na jego poziom trudności</p>
-    </div>
-    <div class="container-fluid d-flex justify-content-center">
-        <TestRankingComponent @ref="_testRankingComponent"/>
-    </div>
-</div>
-
-<TestComponent @ref="_testModalRef"/>
-<PleaseWaitPopup @ref="_pleaseWaitPopupRef"/>
+    
+    <TestComponent @ref="_testModalRef"/>
+}
 
 @code
 {
     private ICollection<TypingLevelDto> _typingLevels = new List<TypingLevelDto>();
 
     private TestComponent _testModalRef = default!;
-    private PleaseWaitPopup _pleaseWaitPopupRef = default!;
     private TestRankingComponent _testRankingComponent = default!;
+    private bool _initializing = true;
 
     protected override async Task OnInitializedAsync()
     {
-        _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
+        _ = Initialize();
         await base.OnInitializedAsync();
     }
 
-    private async Task StartTest(TypingLevelDto typingLevel)
+    private async Task Initialize()
     {
-        await _testModalRef.ShowAndWaitForResult(typingLevel);
-    //await _testTableComponent.Refresh();
+        while (!_typingLevels.Any())
+        {
+            try
+            {
+                _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+        
+        _initializing = false;
+        await InvokeAsync(StateHasChanged);
     }
+
+    private async Task StartTest(TypingLevelDto typingLevel) => await _testModalRef.ShowAndWaitForResult(typingLevel);
 
     private RenderFragment GetButton(TypingLevelDto typingLevel) =>
         @<button
