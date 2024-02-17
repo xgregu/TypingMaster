@@ -2,6 +2,7 @@
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using NLog.Extensions.Logging;
+using TypingMaster.UI.Components.PleaseWait;
 
 namespace TypingMaster.UI;
 
@@ -37,6 +38,8 @@ public class Startup(IConfiguration configuration)
         
         services.AddTransient<ApiClient>();
         services.AddMemoryCache();
+
+        services.AddScoped<IPleaseWaitService, PleaseWaitService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env,

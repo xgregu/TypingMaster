@@ -1,6 +1,6 @@
 ﻿using TypingMaster.Shared.Dtos;
 
-namespace TypingMaster.UI.Components.Models;
+namespace TypingMaster.UI.Components.Tests.Models;
 
 public class TestInProgress
 {
@@ -13,7 +13,6 @@ public class TestInProgress
     public string CurrentText { get; private set; }
     public int CompletionPercentage { get; private set; }
     public bool IsStarted { get; private set; }
-    public int CorrectClicks => TotalClicks - InorrectClicks;
     public int InorrectClicks { get; private set; }
     public int TotalClicks { get; private set; }
     public DateTime StartTime { get; private set; }

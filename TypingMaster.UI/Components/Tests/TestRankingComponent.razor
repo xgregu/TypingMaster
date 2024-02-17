@@ -44,11 +44,11 @@
         </tbody>
     </table>
 </div>
-<TestStatisticModalComponent @ref="_testStatisticModalRef"/>
+<TestDetailsModal @ref="_testDetailsModalRef"/>
 
 @code{
 
-    private TestStatisticModalComponent _testStatisticModalRef = default!;
+    private TestDetailsModal _testDetailsModalRef = default!;
     private CancellationTokenSource _cts = new();
 
     private async ValueTask<ItemsProviderResult<TypingTestDto>> GetTests(ItemsProviderRequest request)
@@ -69,7 +69,7 @@
         }
     }
 
-    private async Task OnTestClicked(TypingTestDto test) => await _testStatisticModalRef.Show(test);
+    private async Task OnTestClicked(TypingTestDto test) => await _testDetailsModalRef.Show(test);
 
     private async Task ResetCts()
     {

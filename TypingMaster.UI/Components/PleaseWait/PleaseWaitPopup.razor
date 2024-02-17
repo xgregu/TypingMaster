@@ -1,0 +1,61 @@
+﻿@inject IPleaseWaitService PleaseWaitService;
+@implements IDisposable
+
+<style>
+    div.Modal {
+    position: fixed; 
+    left: 0px; 
+    top: 0px; 
+    z-index: calc(9e999); 
+    width: 100%; 
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(00, 00, 00, 0.5);
+    backdrop-filter: blur(4px)
+    }     
+</style>
+
+@if (_isVisible)
+{
+    <div class="Modal">
+        <Loader Color="@Color"/>
+        @if (!string.IsNullOrWhiteSpace(PleaseWaitService.Text))
+        {
+            <div style="max-height: 30vh; max-width: 85vw; overflow-y: auto; overflow: hidden">
+                <p class="my-5" style="color: @Color; font-size: 2rem">@(PleaseWaitService.Text)</p>
+            </div>
+        }
+    </div>
+}
+
+@code {
+        private const string DefaultColor = "#ec4c4c";
+
+    private string Color => string.IsNullOrWhiteSpace(PleaseWaitService.Color) ? DefaultColor : PleaseWaitService.Color;
+    
+    private bool _isVisible = false;
+
+    protected override Task OnInitializedAsync()
+    {
+        PleaseWaitService.VisibilityChanged += OnVisibilityChanged;
+        return base.OnInitializedAsync();
+    }
+
+    private async void OnVisibilityChanged(object? sender, bool isVisible)
+    {
+        await InvokeAsync(() =>
+        {
+            _isVisible = isVisible;
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        PleaseWaitService.VisibilityChanged -= OnVisibilityChanged;
+    }
+
+}

@@ -1,0 +1,40 @@
+﻿<style>
+    .loader {
+            position: relative;
+            width:  @Size;
+            height: @Size;
+            background: @Color;
+            transform: rotateX(65deg) rotate(45deg);
+            color: #fff;
+            animation: layers1 1s linear infinite alternate;
+          }
+          .loader:after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.7);
+            animation: layerTr 1s linear infinite alternate;
+          }
+    
+    @@keyframes layers1 {
+         0% { box-shadow: 0 0 0 0  }
+        90% , 100% { box-shadow: 20px 20px 0 -4px  }
+       }
+       @@keyframes layerTr {
+         0% { transform:  translate(0, 0) scale(1) }
+         100% {  transform: translate(-25px, -25px) scale(1) }
+       }
+     
+</style>
+
+<span class="loader"></span>
+
+@code {
+
+    [EditorRequired]
+    [Parameter]
+    public string Color { get; set; } = "black";
+
+    [Parameter]
+    public string Size { get; set; } = "5rem";
+}

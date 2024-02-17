@@ -1,24 +1,20 @@
 ﻿@inject ApiClient ApiClient
 
-<Modal @ref="_modalRef" Shadow="Shadow.Default" Closed="Deinitialize">
-    <ModalContent Centered>
-        <ModalHeader>
-            <ModalTitle>
-                   @_test?.ExecutorName
-            </ModalTitle>
-        </ModalHeader>
-        <ModalBody>
-            <TestStatisticTableComponent Test="_test" TestRanking="_testRanking"/>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="@Color.Primary" Clicked="@(() => _modalRef.Hide())">Zamknij</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+<ModalBase @ref="_modalBaseRef">
+    <Title>
+        @_test?.ExecutorName
+    </Title>
+    <Body>
+    <TestDetailsTable Test="_test" TestRanking="_testRanking"/>
+    </Body>
+    <Footer>
+        <Button Color="@Color.Primary" Clicked="Deinitialize">Zamknij</Button>
+    </Footer>
+</ModalBase>
 
 @code {
 
-    private Modal _modalRef = default!;
+    private ModalBase _modalBaseRef = default!;
     private TypingTestDto? _test;
     private string _title = string.Empty;
     private CancellationTokenSource _cts = new();
@@ -36,16 +32,16 @@
     {
         _test = test;
         _ = UpdateRanking();
-        
-        await _modalRef.Show();
+
+        await _modalBaseRef.Show();
     }
 
     private async Task UpdateRanking()
-    {        
+    {
         _testRanking = await ApiClient.GetTestRanking(_test!.Id, _cts.Token);
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private async Task ResetCts()
     {
         await _cts.CancelAsync();
@@ -58,10 +54,13 @@
         await ResetCts();
         _test = null;
         _testRanking = null;
+        await _modalBaseRef.Hide();
     }
-    
+
     public void Dispose()
     {
         _ = Deinitialize();
     }
+    
+
 }

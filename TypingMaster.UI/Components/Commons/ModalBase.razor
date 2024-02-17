@@ -1,0 +1,52 @@
+﻿@if (_isShown)
+{
+    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; overflow-y: auto;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @Title
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    @Body
+                </div>
+                <div class="modal-footer">
+                    @Footer
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+
+    private bool _isShown = false;
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment Title { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment Body { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment Footer { get; set; }
+
+
+    public async Task Show()
+    {
+        _isShown = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task Hide()
+    {
+        _isShown = false;
+        await InvokeAsync(StateHasChanged);
+    }
+}

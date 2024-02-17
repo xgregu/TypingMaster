@@ -1,7 +1,9 @@
-﻿@using TypingMaster.UI.Components.Models
+﻿@using TypingMaster.UI.Components.Tests.Models
+
 @inject IMessageService MessageService
 @inject INotificationService NotificationService
 @inject ApiClient ApiClient
+@inject IPleaseWaitService PleaseWaitService
 
 <style>
 .separator {
@@ -30,7 +32,7 @@
 }
 </style>
 
-<Modal @ref="_modalRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100">
+<Modal @ref="_modalBaseRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100">
     <ModalContent Centered Style="background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 50%, #dcdcdc 100%)">
         <ModalHeader>
             <ModalTitle>Test @(_testInProgress.Text.Level.Name)</ModalTitle>
@@ -57,17 +59,15 @@
     </ModalContent>
 
 </Modal>
-<PleaseWaitPopup @ref="_pleaseWaitPopupRef"/>
-<TestStatisticModalComponent @ref="_testStatisticModalRef"/>
+<TestDetailsModal @ref="_testDetailsModalRef"/>
 
 @code {
         private const int RequiredExecutorNameLenght = 2;
         private const string StyleHighlighter = "background-color: #80bdff; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;";
 
     private string Placeholder => _testInProgress.IsStarted ? string.Empty : "Zacznij pisać aby rozpocząć test...";
-    private PleaseWaitPopup _pleaseWaitPopupRef = default!;
-    private TestStatisticModalComponent _testStatisticModalRef = default!;
-    private Modal _modalRef = default!;
+    private TestDetailsModal _testDetailsModalRef = default!;
+    private Modal _modalBaseRef = default!;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
     private string _executorName = string.Empty;
@@ -77,7 +77,7 @@
     private TestInProgress _testInProgress = TestInProgress.EmptyTest();
 
     private TaskCompletionSource _confirmationTask;
-    private string _inputText;
+    private string? _inputText;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,7 +93,7 @@
             _testInProgress = TestInProgress.InitializeTest(texts.MinBy(x => Guid.NewGuid()));
             _confirmationTask = new TaskCompletionSource();
             _cancelClose = true;
-            _modalRef?.Show();
+            _modalBaseRef?.Show();
             await _confirmationTask.Task;
         }
         finally
@@ -106,8 +106,8 @@
     {
         await Clear();
         _cancelClose = false;
-        _modalRef?.Hide();
-        await _pleaseWaitPopupRef.Hide();
+        _modalBaseRef?.Hide();
+        PleaseWaitService.Hide();
     }
 
     private async Task Clear()
@@ -117,7 +117,7 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnDestinationChanged(string value)
+    private async Task OnDestinationChanged(string? value)
     {
         if (!string.IsNullOrWhiteSpace(value) && !_testInProgress.IsStarted)
             _testInProgress.StartTest();
@@ -133,12 +133,12 @@
     {
         try
         {
-            await _pleaseWaitPopupRef.Show();
+            await PleaseWaitService.Show();
             var test = _testInProgress.EndTest(_executorName);
         
             var createdTest = await ApiClient.CreateTest(test);
-            await _pleaseWaitPopupRef.Hide();
-            await _testStatisticModalRef.Show(createdTest);
+            PleaseWaitService.Hide();
+            await _testDetailsModalRef.Show(createdTest);
         }
         finally
         {
