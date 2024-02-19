@@ -32,33 +32,31 @@
 }
 </style>
 
-<Modal @ref="_modalBaseRef" Closing="e => Task.FromResult(e.Cancel = _cancelClose)" Shadow="Shadow.Default" Width="Width.Max100">
-    <ModalContent Centered Style="background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 50%, #dcdcdc 100%)">
-        <ModalHeader>
-            <ModalTitle>Test @(_testInProgress.Text.Level.Name)</ModalTitle>
-        </ModalHeader>
-        <ModalBody>
-            @if (_executorNameIsValid)
-            {
-                <Highlighter Class="my-2" Style="@StyleHighlighter" Text="@_testInProgress.Text.Text" HighlightedText="@_inputText" CaseSensitive/>
-                <MemoEdit Background="Background.Transparent" TextColor="@_currentTextColor" Placeholder="@Placeholder" Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
-                <Progress>
-                    <ProgressBar Value="_testInProgress.CompletionPercentage" Animated Striped/>
-                </Progress>
+<ModalBase @ref="_modalBaseRef" IsCentered>
+    <Title>
+        Test @(_testInProgress.Text.Level.Name)
+    </Title>
+    <Body>
+    @if (_executorNameIsValid)
+    {
+        <Highlighter Class="my-2" Style="@StyleHighlighter" Text="@_testInProgress.Text.Text" HighlightedText="@_inputText" CaseSensitive/>
+        <MemoEdit Background="Background.Transparent" TextColor="@_currentTextColor" Placeholder="@Placeholder" Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
 
-                <div class="separator">@_testInProgress.CurrentTestTime.ToString()</div>
-            }
-            <Validation Validator="ValidateExecutorName">
-                <TextEdit Background="Background.Transparent" Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted"/>
-            </Validation>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="@Clear" Disabled="@(!_testInProgress.IsStarted)">Rozpocznij od nowa</Button>
-            <Button Color="Color.Secondary" Clicked="@Hide">Zamknij test</Button>
-        </ModalFooter>
-    </ModalContent>
+        <div class="progress" role="progressbar" aria-valuenow="@_testInProgress.CompletionPercentage" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: @_testInProgress.CompletionPercentage%">@_testInProgress.CompletionPercentage%</div>
+        </div>
 
-</Modal>
+        <div class="separator">@_testInProgress.CurrentTestTime.ToString()</div>
+    }
+    <Validation Validator="ValidateExecutorName">
+        <TextEdit Background="Background.Transparent" Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted"/>
+    </Validation>
+    </Body>
+    <Footer>
+        <Button Color="Color.Primary" Clicked="@Clear" Disabled="@(!_testInProgress.IsStarted)">Rozpocznij od nowa</Button>
+        <Button Color="Color.Secondary" Clicked="@Hide">Zamknij test</Button>
+    </Footer>
+</ModalBase>
 <TestDetailsModal @ref="_testDetailsModalRef"/>
 
 @code {
@@ -67,7 +65,7 @@
 
     private string Placeholder => _testInProgress.IsStarted ? string.Empty : "Zacznij pisać aby rozpocząć test...";
     private TestDetailsModal _testDetailsModalRef = default!;
-    private Modal _modalBaseRef = default!;
+    private ModalBase? _modalBaseRef = default!;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
     private string _executorName = string.Empty;
@@ -93,7 +91,7 @@
             _testInProgress = TestInProgress.InitializeTest(texts.MinBy(x => Guid.NewGuid()));
             _confirmationTask = new TaskCompletionSource();
             _cancelClose = true;
-            _modalBaseRef?.Show();
+            await _modalBaseRef?.Show()!;
             await _confirmationTask.Task;
         }
         finally
@@ -133,9 +131,12 @@
     {
         try
         {
-            await PleaseWaitService.Show();
+            await PleaseWaitService.Show(new PleaseWaitParameters()
+            {
+                Color = "#0b5ed7"
+            });
             var test = _testInProgress.EndTest(_executorName);
-        
+
             var createdTest = await ApiClient.CreateTest(test);
             PleaseWaitService.Hide();
             await _testDetailsModalRef.Show(createdTest);

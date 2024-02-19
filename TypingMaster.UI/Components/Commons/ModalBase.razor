@@ -1,7 +1,8 @@
-﻿@if (_isShown)
+﻿@using System.Text
+@if (_isShown)
 {
-    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; overflow-y: auto;">
-        <div class="modal-dialog" role="document">
+    <div class="@ClassModal" tabindex="-1" role="dialog" style="display: block; overflow-y: auto;">
+        <div class="@ClassModalDialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
@@ -22,8 +23,13 @@
 
 @code {
 
+    private string ClassModal => "modal fade show";
+    private string ClassModalDialog => $"modal-dialog {(IsCentered ? "modal-dialog-centered" : string.Empty)}";
 
     private bool _isShown = false;
+
+    [Parameter]
+    public bool IsCentered { get; set; }
 
     [Parameter]
     [EditorRequired]

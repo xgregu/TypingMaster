@@ -1,0 +1,93 @@
+@implements IDisposable
+
+<style>
+
+.visible {
+    opacity: 1;
+    @($"animation: fadein {AnimationDurationSeconds}s linear");
+}
+
+@@keyframes fadein {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.hidden {
+    opacity: 0;
+    @($"animation: fadeout {AnimationDurationSeconds}s linear");
+}
+
+@@keyframes fadeout {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+</style>
+
+<p class="@($"{_visibilityClass} d-none d-sm-inline")" style="color: black; display: inline;">@_currentText</p><i class="bi bi-globe ms-2" style="display: inline;"></i>
+
+
+@code {
+
+        private const int AnimationDurationSeconds = 1;
+        private const int ShowTextDurationSeconds = 1;
+
+    private string _currentText = string.Empty;
+    private string _visibilityClass = "visible";
+    private string[] _selectLanguageTexts = Array.Empty<string>();
+    private CancellationTokenSource _cts = new();
+
+
+    protected override void OnInitialized()
+    {
+        _selectLanguageTexts = Localizer.GetTranslationsForRecord("SelectLanguage").ToArray();
+        _currentText = _selectLanguageTexts.FirstOrDefault() ?? string.Empty;
+
+        if (_selectLanguageTexts.Length > 1)
+            _ = Task.Run(AnimationLoop);
+    }
+
+    private async Task AnimationLoop()
+    {
+        while (!_cts.IsCancellationRequested)
+        {
+            foreach (var tekst in _selectLanguageTexts)
+            {
+                if (tekst == _currentText)
+                    continue;
+
+                await HideText();
+                await ChangeText(tekst);
+                await ShowText();
+                await Task.Delay(TimeSpan.FromSeconds(ShowTextDurationSeconds));
+            }
+        }
+    }
+
+    private async Task HideText()
+    {
+        _visibilityClass = "hidden";
+        await InvokeAsync(StateHasChanged);
+        await Task.Delay(TimeSpan.FromSeconds(AnimationDurationSeconds));
+    }
+
+    private async Task ShowText()
+    {
+        _visibilityClass = "visible";
+        await InvokeAsync(StateHasChanged);
+        await Task.Delay(TimeSpan.FromSeconds(AnimationDurationSeconds));
+    }
+
+    private async Task ChangeText(string newText)
+    {
+        _currentText = newText;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+
+}

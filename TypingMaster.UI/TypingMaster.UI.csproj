@@ -11,6 +11,7 @@
         <PackageReference Include="Blazorise.Components" Version="1.4.2" />
         <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.4.2" />
         <PackageReference Include="Blazorise.Snackbar" Version="1.4.2" />
+        <PackageReference Include="bootstrap" Version="5.3.2" />
         <PackageReference Include="Humanizer.Core.pl" Version="2.14.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.2" />
         <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
@@ -18,5 +19,29 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TypingMaster.Shared\TypingMaster.Shared.csproj" />
+      <ProjectReference Include="..\TypingMaster.UI.Localizations\TypingMaster.UI.Localizations.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.bundle.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.bundle.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.bundle.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.bundle.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.esm.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.esm.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.esm.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.esm.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\js\bootstrap.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap-grid.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap-grid.rtl.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap-reboot.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap-reboot.rtl.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap-utilities.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap-utilities.rtl.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.rtl.css" />
     </ItemGroup>
 </Project>

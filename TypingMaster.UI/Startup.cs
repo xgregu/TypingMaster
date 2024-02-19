@@ -3,6 +3,7 @@ using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using NLog.Extensions.Logging;
 using TypingMaster.UI.Components.PleaseWait;
+using TypingMaster.UI.Localizations;
 
 namespace TypingMaster.UI;
 
@@ -19,6 +20,9 @@ public class Startup(IConfiguration configuration)
         services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
+        services.AddControllers()
+            .AddControllersAsServices();
+        
         services.AddRazorPages();
         
         services.AddLogging(x => { x.AddNLog(); });
@@ -40,6 +44,8 @@ public class Startup(IConfiguration configuration)
         services.AddMemoryCache();
 
         services.AddScoped<IPleaseWaitService, PleaseWaitService>();
+
+        services.AddTypingMasterLocalizations();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
@@ -63,5 +69,14 @@ public class Startup(IConfiguration configuration)
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });
+        
+        var supportedCultures = CultureConstants.SupportedCultures.Select(x => x.Name).ToArray();
+
+        var localizationOptions = new RequestLocalizationOptions()
+            .SetDefaultCulture(CultureConstants.DefaultCulture.Name)
+            .AddSupportedCultures(supportedCultures)
+            .AddSupportedUICultures(supportedCultures);
+
+        app.UseRequestLocalization(localizationOptions);
     }
 }

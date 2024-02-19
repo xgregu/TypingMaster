@@ -1,0 +1,48 @@
+﻿@implements IDisposable
+@inject LanguageService LanguageService;
+
+
+<a class="dropdown-toggle mx-2 text-black d-inline" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+    <SelectLanguageAnimate/>
+</a>
+
+<ul class="dropdown-menu dropdown-menu-end text-black" aria-labelledby="dropdownMenuButton">
+    @foreach (var language in _avaiableCultures)
+    {
+        <li>
+            <a class="dropdown-item text-black" @onclick="() => SetLanguage(language.Name)">
+                <div class="@($"btn flag-icon flag-icon-{language.Name.Split('-')[1].ToLower()} m-2 h-75 w-25")"/> @(new RegionInfo(language.LCID).NativeName)
+            </a>
+        </li>
+    }
+</ul>
+
+@code{
+    private CultureInfo _currentCulture = default!;
+    private IEnumerable<CultureInfo> _avaiableCultures = default!;
+
+    private bool _isChanging = false;
+
+    protected override Task OnInitializedAsync()
+    {
+        _currentCulture = LanguageService.GetCurrentCulture();
+        _avaiableCultures = CultureConstants.SupportedCultures.Where(language => _currentCulture.Name != language.Name);
+
+        return base.OnInitializedAsync();
+    }
+
+    private async Task SetLanguage(string languageCountryCode)
+    {
+        if (_isChanging)
+            return;
+
+        _isChanging = true;
+        await InvokeAsync(async () => { await LanguageService.SetLanguage(languageCountryCode); });
+    }
+
+    public void Dispose()
+    {
+        _isChanging = false;
+    }
+
+}
