@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TypingMaster.Database.DefaultData;
 using TypingMaster.Domain.Entities;
 using TypingMaster.Domain.Entities.Common;
 
@@ -17,6 +12,8 @@ public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactor
     public DbSet<TypingTextEntity> TypingTexts { get; set; }
     public DbSet<TypingTestStatisticsEntity> TypingTestStatistics { get; set; }
     public DbSet<CultureEntity> Cultures { get; set; }
+    public DbSet<TranslationEntity> Translations { get; set; }
+    public DbSet<TranslationInLanguageEntity> TranslationInLanguages { get; set; }
 
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -29,6 +26,7 @@ public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactor
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }

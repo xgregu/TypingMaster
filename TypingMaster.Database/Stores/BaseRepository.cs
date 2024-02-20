@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TypingMaster.Application.Interfaces;
@@ -19,6 +16,14 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IServiceProvid
         await context.Set<T>().AddAsync(entity);
         await context.SaveChangesAsync();
         return entity;
+    }
+
+    public async Task AddRangeAsync(T[] entities)
+    {
+        logger.LogInformation("AddAsync | {@entities}", entities);
+        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        await context.Set<T>().AddRangeAsync(entities);
+        await context.SaveChangesAsync();
     }
 
     public virtual async Task DeleteAsync(T entity)

@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TypingMaster.Domain;
 
-namespace TypingMaster.Database;
+namespace TypingMaster.Database.Initializers;
 
 public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, TestDbContext context) : IInitializable
 {

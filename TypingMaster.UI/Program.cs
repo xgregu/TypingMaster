@@ -25,9 +25,7 @@ public static class Program
         await host.RunAsync();
         host.Dispose();
     }
-
-   
-
+    
     private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
     {
         LogManager.GetCurrentClassLogger().Fatal(e.ExceptionObject);

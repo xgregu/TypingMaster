@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TypingMaster.Application.Functions.Tests.Queries.GetPagedTestsQuery;
 using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
-using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Database.Stores;
 

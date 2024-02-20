@@ -27,6 +27,21 @@ namespace TypingMaster.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Translations",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Key = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    LastChangeDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Translations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TypingLevels",
                 columns: table => new
                 {
@@ -61,6 +76,35 @@ namespace TypingMaster.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TypingTestStatistics", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TranslationInLanguages",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Translation = table.Column<string>(type: "TEXT", nullable: false),
+                    CultureId = table.Column<long>(type: "INTEGER", nullable: false),
+                    TranslationEntityId = table.Column<long>(type: "INTEGER", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    LastChangeDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TranslationInLanguages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TranslationInLanguages_Cultures_CultureId",
+                        column: x => x.CultureId,
+                        principalTable: "Cultures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TranslationInLanguages_Translations_TranslationEntityId",
+                        column: x => x.TranslationEntityId,
+                        principalTable: "Translations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -124,6 +168,16 @@ namespace TypingMaster.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_TranslationInLanguages_CultureId",
+                table: "TranslationInLanguages",
+                column: "CultureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TranslationInLanguages_TranslationEntityId",
+                table: "TranslationInLanguages",
+                column: "TranslationEntityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TypingTests_StatisticsId",
                 table: "TypingTests",
                 column: "StatisticsId",
@@ -149,7 +203,13 @@ namespace TypingMaster.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "TranslationInLanguages");
+
+            migrationBuilder.DropTable(
                 name: "TypingTests");
+
+            migrationBuilder.DropTable(
+                name: "Translations");
 
             migrationBuilder.DropTable(
                 name: "TypingTestStatistics");

@@ -8,10 +8,11 @@ public class CultureEntity : BaseEntity
 {
     public string CultureCode { get; set; }
     public ICollection<TypingTextEntity> TypingTexts { get; set; } = new List<TypingTextEntity>();
+    public ICollection<TranslationInLanguageEntity> TranslationInLanguages { get; set; } = new List<TranslationInLanguageEntity>();
 
 }
 
-public partial class TypingLevelEntityConfiguration : IEntityTypeConfiguration<CultureEntity>
+public partial class CultureEntityConfiguration : IEntityTypeConfiguration<CultureEntity>
 {
     public void Configure(EntityTypeBuilder<CultureEntity> builder)
     {
