@@ -21,11 +21,12 @@ public static class Program
             LogManager.GetCurrentClassLogger().Error("{AppName} already running", Constants.AppFriendlyName);
             return;
         }
+
         var host = CreateHostBuilder(args).Build();
         await host.RunAsync();
         host.Dispose();
     }
-    
+
     private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
     {
         LogManager.GetCurrentClassLogger().Fatal(e.ExceptionObject);

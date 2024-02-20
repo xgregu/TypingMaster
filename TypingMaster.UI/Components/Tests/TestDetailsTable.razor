@@ -5,7 +5,7 @@
     <table class="table table-striped table-responsive">
         <tbody>
         <tr>
-            <td>Ranking</td>
+            <td>@Localizer["Ranking"]</td>
             <td>
                 @if (TestRanking is null)
                 {
@@ -18,23 +18,33 @@
             </td>
         </tr>
         <tr>
-            <td>Punkty</td>
+            <td>@Localizer["Points"]</td>
             <td>@Test.Statistics?.OverallRating</td>
         </tr>
         <tr>
-            <td>Typ</td>
-            <td>@Test.Text.Level.Name</td>
+            <td>@Localizer["Type"]</td>
+            <td>
+
+                @if (string.IsNullOrWhiteSpace(LevelName))
+                {
+                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                }
+                else
+                {
+                    @LevelName
+                }
+            </td>
         </tr>
         <tr>
-            <td>Czas trwania</td>
+            <td>@Localizer["Duration"]</td>
             <td>@CompletionTime.Humanize() (@CompletionTime)</td>
         </tr>
         <tr>
-            <td>Kliknięć na minutę</td>
+            <td>@Localizer["ClicksPerMinute"]</td>
             <td>@Test.Statistics.ClickPerMinute</td>
         </tr>
         <tr>
-            <td>Skuteczność</td>
+            <td>@Localizer["Effectiveness"]</td>
             <td>@(Test.Statistics.EffectivenessPercentage)%</td>
         </tr>
         </tbody>
@@ -44,6 +54,10 @@
 @code {
     private TimeSpan CompletionTime => TimeSpan.FromMilliseconds(Test?.Statistics.CompletionTimeMilliseconds ?? 0);
     private CancellationTokenSource _cts = new();
+
+    [Parameter]
+    [EditorRequired]
+    public string? LevelName { get; set; }
 
     [Parameter]
     [EditorRequired]

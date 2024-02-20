@@ -19,27 +19,28 @@ public class TestStatisticsCalculator(ILogger<TestStatisticsCalculator> logger, 
     {
         var textEntity = await typingTextsStore.GetByIdAsync(createTest.TextId);
         var textLenght = textEntity.Text.Length;
-        
+
         var effectiveness = GetEffectiveness(textLenght, createTest.TotalClicks);
         var clickPerMinute = GetClickPerMinute(createTest);
         var completionTime = GetCompletionTime(createTest);
-        var overallRating = GetOverallRating(effectiveness, clickPerMinute, textEntity.DifficultyLevel.DifficultyCoefficient);
-        
+        var overallRating =
+            GetOverallRating(effectiveness, clickPerMinute, textEntity.DifficultyLevel.DifficultyCoefficient);
+
         return new TypingTestStatisticsEntity
         {
             EffectivenessPercentage = effectiveness,
             ClickPerMinute = clickPerMinute,
-            CompletionTimeMilliseconds = (long)completionTime.TotalMilliseconds,
+            CompletionTimeMilliseconds = (long) completionTime.TotalMilliseconds,
             TotalClicks = createTest.TotalClicks,
             MistakesClicks = createTest.TotalClicks - textLenght,
-            OverallRating = overallRating,
+            OverallRating = overallRating
         };
     }
 
     private long GetOverallRating(long effectiveness, double clickPerMinute, double difficultyCoefficient)
     {
         var points = effectiveness * clickPerMinute;
-        return(long)(points * difficultyCoefficient);
+        return (long) (points * difficultyCoefficient);
     }
 
     private double GetClickPerMinute(CreateTestRequest createTest)
@@ -50,6 +51,13 @@ public class TestStatisticsCalculator(ILogger<TestStatisticsCalculator> logger, 
         return Math.Round(clicksPerMinute, 2);
     }
 
-    private long GetEffectiveness(long textLenght, long totalCLicks) => textLenght * 100 / totalCLicks;
-    private TimeSpan GetCompletionTime(CreateTestRequest createTest) => createTest.EndTime - createTest.StartTime;
+    private long GetEffectiveness(long textLenght, long totalCLicks)
+    {
+        return textLenght * 100 / totalCLicks;
+    }
+
+    private TimeSpan GetCompletionTime(CreateTestRequest createTest)
+    {
+        return createTest.EndTime - createTest.StartTime;
+    }
 }

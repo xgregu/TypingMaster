@@ -7,7 +7,6 @@ public abstract class Response<T>
     public string Message { get; protected set; } = string.Empty;
 }
 
-
 public enum ResponseStatus
 {
     Success = 0,

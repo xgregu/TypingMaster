@@ -16,10 +16,12 @@ public class HealthController(IServiceProvider serviceProvider) : Controller
         {
             await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
             if (cancellationToken.IsCancellationRequested)
-                return StatusCode(StatusCodes.Status500InternalServerError, $"{DateTimeOffset.Now} ❌ - Request cancelled");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"{DateTimeOffset.Now} ❌ - Request cancelled");
 
             if (!await context.Database.CanConnectAsync(cancellationToken))
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, $"{DateTimeOffset.Now} 👎 - Database connection failed");
+                return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                    $"{DateTimeOffset.Now} 👎 - Database connection failed");
 
             return Ok($"{DateTimeOffset.Now} 👍 - Connection healthy");
         }

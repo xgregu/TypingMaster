@@ -21,7 +21,7 @@ public partial class TypingTextEntityConfiguration : IEntityTypeConfiguration<Ty
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        
+
         builder.Property(x => x.EffectivenessPercentage)
             .IsRequired();
         builder.Property(x => x.CompletionTimeMilliseconds)

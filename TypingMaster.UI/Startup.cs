@@ -16,15 +16,15 @@ public class Startup(IConfiguration configuration)
         services.AddBlazorise()
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();
-        
+
         services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
         services.AddControllers()
             .AddControllersAsServices();
-        
+
         services.AddRazorPages();
-        
+
         services.AddLogging(x => { x.AddNLog(); });
 
         services.AddSingleton<IConfiguration>(_ => new ConfigurationBuilder()
@@ -32,14 +32,14 @@ public class Startup(IConfiguration configuration)
             .AddJsonFile("appsettings.json", false, true)
             .Build());
 
-        
+
         services.AddHttpClient<ApiClient>("ApiClient", client =>
         {
             var backendSettings = Configuration.GetSection(BackendSettings.SectionName).Get<BackendSettings>();
-            if (backendSettings?.ApiGateway != null) 
+            if (backendSettings?.ApiGateway != null)
                 client.BaseAddress = new Uri(backendSettings.ApiGateway);
         });
-        
+
         services.AddTransient<ApiClient>();
         services.AddMemoryCache();
 
@@ -70,7 +70,7 @@ public class Startup(IConfiguration configuration)
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });
-        
+
         var supportedCultures = CultureConstants.SupportedCultures.Select(x => x.Name).ToArray();
 
         var localizationOptions = new RequestLocalizationOptions()

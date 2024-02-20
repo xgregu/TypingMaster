@@ -16,24 +16,23 @@ public class Startup
             c.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "Typing master API",
+                Title = "Typing master API"
             });
-
         });
-        
+
         services.AddControllers();
-        
+
         services.AddCors(x => x.AddDefaultPolicy(new CorsPolicyBuilder()
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
             .SetIsOriginAllowed(_ => true)
             .Build()));
-        
+
         services.AddMediatR(cfg =>
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(a => 
+                .Where(a =>
                 {
                     var name = a.GetName().Name;
                     return name != null && name.StartsWith("TypingMaster.");
@@ -42,9 +41,9 @@ public class Startup
         });
 
         services.AddApplication();
-        services.AddCore(); 
+        services.AddCore();
         services.AddDatabase();
-        
+
         services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -54,33 +53,24 @@ public class Startup
             .AddEntityFrameworkStores<TestDbContext>()
             .AddDefaultTokenProviders();
     }
-    
+
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
         app.UseHttpsRedirection();
         app.UseRouting();
 
         app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Typing master API");
-        });
+        app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Typing master API"); });
 
 
         app.UseCors();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-        
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
         app.UseAuthentication();
-        
+
         AppInitializer.Initialize(app.ApplicationServices).Wait();
     }
 }

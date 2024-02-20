@@ -1,37 +1,49 @@
 ﻿using System.Text.Json;
-using Microsoft.Extensions.Caching.Memory;
 using TypingMaster.Shared.Dtos;
+using TypingMaster.UI.Localizations.Services;
 
 namespace TypingMaster.UI;
 
-public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memoryCache)
+public class ApiClient(IHttpClientFactory httpClientFactory, LanguageService languageService)
 {
-    private readonly HttpClient _httpClient = httpClientFactory.CreateClient("ApiClient");
-
     private const string TestApiUrl = "TypingTest";
-    private static string GetTestUrl(long testId) => $"{TestApiUrl}/{testId}";
-    private static string GetTestRankingUrl(long testId) => $"{TestApiUrl}/{testId}/ranking";
-
-    private static string GetTestPageUrl(long startIndex, long count) =>
-        $"{TestApiUrl}/paged?startIndex={startIndex}&count={count}";
-
-    private static string GetTestCountUrl() => $"{TestApiUrl}/count";
 
     private const string TypingLevelApiUrl = "TypingLevel";
-    private const string TypingTextApiUrl = "TypingText";
 
-    private static string GetTypingTextByDifficultyLevelUrl(uint difficultyLevel) =>
-        $"{TypingTextApiUrl}/{difficultyLevel}";
+    private const string TypingTextApiUrl = "TypingText";
+    private readonly HttpClient _httpClient = httpClientFactory.CreateClient("ApiClient");
+    private string CurrentCultureName => languageService.GetCurrentCulture().Name;
+    private string GetAllTypingLevelsUrl => $"{TypingLevelApiUrl}?cultureCode={CurrentCultureName}";
+
+    private static string GetTestUrl(long testId)
+    {
+        return $"{TestApiUrl}/{testId}";
+    }
+
+    private static string GetTestRankingUrl(long testId)
+    {
+        return $"{TestApiUrl}/{testId}/ranking";
+    }
+
+    private static string GetTestPageUrl(long startIndex, long count)
+    {
+        return $"{TestApiUrl}/paged?startIndex={startIndex}&count={count}";
+    }
+
+    private string GetTypingLevelNameUrl(uint difficultyLevel)
+    {
+        return $"{TypingLevelApiUrl}/{difficultyLevel}?cultureCode={CurrentCultureName}";
+    }
+
+    private string GetTypingTextByDifficultyLevelUrl(uint difficultyLevel)
+    {
+        return $"{TypingTextApiUrl}/{difficultyLevel}?cultureCode={CurrentCultureName}";
+    }
 
     public async Task<TypingTestDto?> GetTest(long testId)
     {
-        var cacheKey = $"GetTest-{testId}";
-        if (memoryCache.TryGetValue(cacheKey, out TypingTestDto? cachedData))
-            return cachedData;
-
         var response = await _httpClient.GetAsync(GetTestUrl(testId));
         var typingTestDto = await HandleResponse<TypingTestDto>(response);
-        memoryCache.Set(cacheKey, typingTestDto, TimeSpan.FromMinutes(1));
         return typingTestDto;
     }
 
@@ -73,26 +85,30 @@ public class ApiClient(IHttpClientFactory httpClientFactory, IMemoryCache memory
 
     public async Task<ICollection<TypingTextDto>?> GetAllTypingTypingTextByDifficultyLevel(uint difficultyLevel)
     {
-        var cacheKey = $"TypingTextByDifficulty-{difficultyLevel}";
-        if (memoryCache.TryGetValue(cacheKey, out ICollection<TypingTextDto>? cachedData))
-            return cachedData;
-
         var response = await _httpClient.GetAsync(GetTypingTextByDifficultyLevelUrl(difficultyLevel));
         var typingTextDtos = await HandleResponse<TypingTextDto[]>(response);
-        memoryCache.Set(cacheKey, typingTextDtos, TimeSpan.FromMinutes(1));
         return typingTextDtos;
     }
 
     public async Task<ICollection<TypingLevelDto>?> GetAllTypingLevels()
     {
-        const string cacheKey = "AllTypingLevels";
-        if (memoryCache.TryGetValue(cacheKey, out ICollection<TypingLevelDto>? cachedData))
-            return cachedData;
-
-        var response = await _httpClient.GetAsync(TypingLevelApiUrl);
+        var response = await _httpClient.GetAsync(GetAllTypingLevelsUrl);
         var typingLevelDtos = await HandleResponse<TypingLevelDto[]>(response);
-        memoryCache.Set(cacheKey, typingLevelDtos, TimeSpan.FromMinutes(1));
         return typingLevelDtos;
+    }
+
+    public async Task<string?> GetTypingLevelName(uint difficultyLevel, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync(GetTypingLevelNameUrl(difficultyLevel), cancellationToken);
+            var levelName = await HandleResponse<string>(response);
+            return levelName;
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
     }
 
     public async Task<TypingTestDto?> CreateTest(CreateTestRequest createTestRequest)

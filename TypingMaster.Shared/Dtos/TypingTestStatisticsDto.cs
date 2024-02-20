@@ -9,4 +9,3 @@ public record TypingTestStatisticsDto(
     long MistakesClicks,
     long OverallRating
 );
-

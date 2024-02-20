@@ -35,7 +35,7 @@
     private string _currentText = string.Empty;
     private string _visibilityClass = "visible";
     private string[] _selectLanguageTexts = Array.Empty<string>();
-    private CancellationTokenSource _cts = new();
+    private readonly CancellationTokenSource _cts = new();
 
 
     protected override void OnInitialized()

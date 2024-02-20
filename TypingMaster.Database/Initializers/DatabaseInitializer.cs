@@ -7,6 +7,7 @@ namespace TypingMaster.Database.Initializers;
 public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, TestDbContext context) : IInitializable
 {
     public uint Priority => 1;
+
     public async Task Initialize()
     {
         logger.LogInformation("Initialize");

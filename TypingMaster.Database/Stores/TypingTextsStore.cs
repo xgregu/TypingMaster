@@ -22,7 +22,8 @@ public class TypingTextsStore(ILogger<TypingTextsStore> logger, IServiceProvider
         return entity;
     }
 
-    public async Task<IReadOnlyList<TypingTextEntity>> GetByDifficultyLevelAsync(uint difficultyLevel, string cultureCode)
+    public async Task<IReadOnlyList<TypingTextEntity>> GetByDifficultyLevelAsync(uint difficultyLevel,
+        string cultureCode)
     {
         logger.LogInformation("GetByDifficultyLevelAsync | DifficultyLevel={difficultyLevel}", difficultyLevel);
 

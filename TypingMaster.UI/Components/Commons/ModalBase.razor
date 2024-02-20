@@ -1,5 +1,4 @@
-﻿@using System.Text
-@if (_isShown)
+﻿@if (_isShown)
 {
     <div class="@ClassModal" tabindex="-1" role="dialog" style="display: block; overflow-y: auto;">
         <div class="@ClassModalDialog" role="document">
@@ -55,4 +54,5 @@
         _isShown = false;
         await InvokeAsync(StateHasChanged);
     }
+
 }

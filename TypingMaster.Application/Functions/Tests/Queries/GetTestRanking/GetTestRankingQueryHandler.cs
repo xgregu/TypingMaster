@@ -13,18 +13,26 @@ public class GetTestRankingResponse : Response<long>
         Item = ranking;
         Status = ResponseStatus.Success;
     }
-    
+
     private GetTestRankingResponse(ResponseStatus status, string message = "")
     {
         Status = status;
         Message = message;
     }
 
-    public static GetTestRankingResponse Success(long ranking) => new(ranking);
-    public static GetTestRankingResponse Failure(ResponseStatus status, string message = "") => new(status, message);
+    public static GetTestRankingResponse Success(long ranking)
+    {
+        return new GetTestRankingResponse(ranking);
+    }
+
+    public static GetTestRankingResponse Failure(ResponseStatus status, string message = "")
+    {
+        return new GetTestRankingResponse(status, message);
+    }
 }
 
-public class GetTestRankingHandler(ITypingTestStore typingTestStore) : IRequestHandler<GetTestRankingQuery, GetTestRankingResponse>
+public class GetTestRankingHandler
+    (ITypingTestStore typingTestStore) : IRequestHandler<GetTestRankingQuery, GetTestRankingResponse>
 {
     public async Task<GetTestRankingResponse> Handle(GetTestRankingQuery request, CancellationToken cancellationToken)
     {

@@ -10,13 +10,20 @@ public class CreatedTestCommandResponse : Response<TypingTestDto>
         Item = test;
         Status = ResponseStatus.Success;
     }
-    
+
     private CreatedTestCommandResponse(ResponseStatus status, string message = "")
     {
         Status = status;
         Message = message;
     }
 
-    public static CreatedTestCommandResponse Success(TypingTestDto test) => new(test);
-    public static CreatedTestCommandResponse Failure(ResponseStatus status, string message = "") => new(status, message);
+    public static CreatedTestCommandResponse Success(TypingTestDto test)
+    {
+        return new CreatedTestCommandResponse(test);
+    }
+
+    public static CreatedTestCommandResponse Failure(ResponseStatus status, string message = "")
+    {
+        return new CreatedTestCommandResponse(status, message);
+    }
 }

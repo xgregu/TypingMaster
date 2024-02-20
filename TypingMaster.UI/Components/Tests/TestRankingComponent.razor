@@ -1,4 +1,5 @@
 ﻿@inject ApiClient ApiClient
+@inject LanguageService LanguageService
 @implements IDisposable
 
 <style>
@@ -13,31 +14,31 @@
 <div class="w-100" style="max-height: 70vh; height: 70vh; overflow-y: auto">
     <div class="d-flex justify-content-between">
         <span class="text-primary text-start mx-2">
-            Ranking
+            @Localizer["Ranking"]
         </span>
         <span class="text-secondary text-end mx-2">
-            Wybierz test, aby wyświetlić szczegółowe statystyki
+            @Localizer["SelectATestToViewDetailedStatistics"]
         </span>
     </div>
 
     <table class="table table-hover table-striped w-100">
         <thead class="table-active">
-        <th class="w-25" scope="col">Data</th>
-        <th class="w-50" scope="col">Imię</th>
-        <th class="w-25" scope="col">Punkty</th>
+        <th class="w-25" scope="col">@Localizer["Data"]</th>
+        <th class="w-50" scope="col">@Localizer["Name"]</th>
+        <th class="w-25" scope="col">@Localizer["Points"]</th>
         </thead>
         <tbody class="table-group-divider">
         <Virtualize ItemsProvider="GetTests" Context="test" OverscanCount="100" ItemSize="40">
             <ItemContent>
                 <tr @onclick="() => OnTestClicked(test)">
-                    <td class="w-25">@test.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td class="w-25">@test.StartTime.DateTime.ToShortDateString() @test.StartTime.DateTime.ToShortTimeString()</td>
                     <td class="w-50">@test.ExecutorName</td>
                     <td class="w-25">@test.Statistics.OverallRating</td>
                 </tr>
             </ItemContent>
             <Placeholder>
                 <tr>
-                    <td colspan="3" class="text-center">Ładuje dane...</td>
+                    <td colspan="3" class="text-center">@Localizer["Loading"]...</td>
                 </tr>
             </Placeholder>
         </Virtualize>
@@ -69,7 +70,10 @@
         }
     }
 
-    private async Task OnTestClicked(TypingTestDto test) => await _testDetailsModalRef.Show(test);
+    private async Task OnTestClicked(TypingTestDto test)
+    {
+        await _testDetailsModalRef.Show(test);
+    }
 
     private async Task ResetCts()
     {

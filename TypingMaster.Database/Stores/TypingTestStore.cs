@@ -98,8 +98,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
         var totalCount = await testsQuery.CountAsync();
 
         var tests = await testsQuery
-            .Skip((int)startIndex)
-            .Take((int)count)
+            .Skip((int) startIndex)
+            .Take((int) count)
             .ToArrayAsync();
 
         return (tests, totalCount);

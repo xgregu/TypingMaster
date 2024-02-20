@@ -32,7 +32,7 @@ public partial class TypingTextEntityConfiguration : IEntityTypeConfiguration<Ty
             .WithMany(x => x.TypingTexts)
             .HasForeignKey(x => x.CultureId)
             .IsRequired();
-        
+
         builder.Property(x => x.Text).IsRequired();
     }
 }

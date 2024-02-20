@@ -35,7 +35,7 @@
         private const string DefaultColor = "#ec4c4c";
 
     private string Color => string.IsNullOrWhiteSpace(PleaseWaitService.Color) ? DefaultColor : PleaseWaitService.Color;
-    
+
     private bool _isVisible = false;
 
     protected override Task OnInitializedAsync()

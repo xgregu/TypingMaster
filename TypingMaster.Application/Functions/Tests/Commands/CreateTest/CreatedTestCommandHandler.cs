@@ -10,14 +10,16 @@ namespace TypingMaster.Application.Functions.Tests.Commands.CreateTest;
 public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestStatisticsCalculator statisticsCalculator)
     : IRequestHandler<CreatedTestCommand, CreatedTestCommandResponse>
 {
-    public async Task<CreatedTestCommandResponse> Handle(CreatedTestCommand request, CancellationToken cancellationToken)
+    public async Task<CreatedTestCommandResponse> Handle(CreatedTestCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
             var validatorResult = await ValidateRequest(request, cancellationToken);
 
             if (!validatorResult.IsValid)
-                return CreatedTestCommandResponse.Failure(ResponseStatus.Failed, string.Join(", ", validatorResult.Errors));
+                return CreatedTestCommandResponse.Failure(ResponseStatus.Failed,
+                    string.Join(", ", validatorResult.Errors));
 
             var testStatistisc = await statisticsCalculator.GetTestStatistic(request.CreateTestRequest);
             var testEntity = new TypingTestEntity
@@ -26,7 +28,7 @@ public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestSt
                 StartTime = request.CreateTestRequest.StartTime,
                 EndTime = request.CreateTestRequest.EndTime,
                 TextId = request.CreateTestRequest.TextId,
-                Statistics = testStatistisc,
+                Statistics = testStatistisc
             };
 
             var createdTest = await typingTestStore.AddAsync(testEntity);
@@ -37,8 +39,9 @@ public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestSt
             return CreatedTestCommandResponse.Failure(ResponseStatus.Error, e.Message);
         }
     }
-    
-    private async Task<ValidationResult> ValidateRequest(CreatedTestCommand request, CancellationToken cancellationToken)
+
+    private async Task<ValidationResult> ValidateRequest(CreatedTestCommand request,
+        CancellationToken cancellationToken)
     {
         var validator = new CreatedTestCommandValidator();
         var validatorResult = await validator.ValidateAsync(request, cancellationToken);

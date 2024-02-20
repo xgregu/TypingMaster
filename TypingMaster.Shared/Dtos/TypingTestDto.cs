@@ -7,4 +7,3 @@ public record TypingTestDto(
     DateTimeOffset EndTime,
     TypingTextDto Text,
     TypingTestStatisticsDto Statistics);
-

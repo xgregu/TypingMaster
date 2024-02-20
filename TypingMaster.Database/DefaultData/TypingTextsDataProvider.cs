@@ -1,5 +1,4 @@
-﻿using TypingMaster.Database.DefaultData.Interface;
-using TypingMaster.Domain.Entities;
+﻿using TypingMaster.Domain.Entities;
 
 namespace TypingMaster.Database.DefaultData;
 
@@ -7,8 +6,9 @@ public class TypingTextsDataProvider
 {
     public IEnumerable<TypingTextEntity> TypingTexts { get; } = GetTypingTexts();
 
-    private static IEnumerable<TypingTextEntity> GetTypingTexts() =>
-        new List<TypingTextEntity>
+    private static IEnumerable<TypingTextEntity> GetTypingTexts()
+    {
+        return new List<TypingTextEntity>
         {
             new() {Id = 1, CultureId = 1, DifficultyLevelId = 1, Text = "Przysłowiowy kot."},
             new() {Id = 2, CultureId = 1, DifficultyLevelId = 1, Text = "Miłość jest ślepa."},
@@ -550,4 +550,5 @@ public class TypingTextsDataProvider
                 Text = "学习一门新语言是发展技能和探索新文化的好方法。如今，由于广泛获取教育材料和在线工具的便利，这变得比以往任何时候都更容易。"
             }
         };
+    }
 }

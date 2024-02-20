@@ -15,24 +15,24 @@ public class TypingTestEntity : BaseEntity
     public long StatisticsId { get; set; }
 }
 
-public partial class TestEntityConfiguration : IEntityTypeConfiguration<TypingTestEntity>
+public class TestEntityConfiguration : IEntityTypeConfiguration<TypingTestEntity>
 {
     public void Configure(EntityTypeBuilder<TypingTestEntity> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
-        
+
         builder
             .HasOne(x => x.Text)
             .WithMany(x => x.Tests)
             .HasForeignKey(x => x.TextId);
-        
+
         builder.Property(x => x.ExecutorName)
             .IsRequired();
-        
+
         builder.Property(x => x.StartTime)
             .IsRequired();
-        
+
         builder.Property(x => x.EndTime)
             .IsRequired();
 

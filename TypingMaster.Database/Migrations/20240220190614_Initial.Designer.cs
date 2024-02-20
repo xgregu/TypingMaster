@@ -11,7 +11,7 @@ using TypingMaster.Database;
 namespace TypingMaster.Database.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20240220140244_Initial")]
+    [Migration("20240220190614_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -41,58 +41,6 @@ namespace TypingMaster.Database.Migrations
                     b.ToTable("Cultures");
                 });
 
-            modelBuilder.Entity("TypingMaster.Domain.Entities.TranslationEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTimeOffset>("LastChangeDate")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Translations");
-                });
-
-            modelBuilder.Entity("TypingMaster.Domain.Entities.TranslationInLanguageEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("CultureId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("LastChangeDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Translation")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("TranslationEntityId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CultureId");
-
-                    b.HasIndex("TranslationEntityId");
-
-                    b.ToTable("TranslationInLanguages");
-                });
-
             modelBuilder.Entity("TypingMaster.Domain.Entities.TypingLevelEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -111,13 +59,40 @@ namespace TypingMaster.Database.Migrations
                     b.Property<DateTimeOffset>("LastChangeDate")
                         .HasColumnType("TEXT");
 
+                    b.HasKey("Id");
+
+                    b.ToTable("TypingLevels");
+                });
+
+            modelBuilder.Entity("TypingMaster.Domain.Entities.TypingLevelNameEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("CultureId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("LastChangeDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<long>("TypingLevelId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.ToTable("TypingLevels");
+                    b.HasIndex("CultureId");
+
+                    b.HasIndex("TypingLevelId");
+
+                    b.ToTable("TypingLevelName");
                 });
 
             modelBuilder.Entity("TypingMaster.Domain.Entities.TypingTestEntity", b =>
@@ -224,23 +199,23 @@ namespace TypingMaster.Database.Migrations
                     b.ToTable("TypingTexts");
                 });
 
-            modelBuilder.Entity("TypingMaster.Domain.Entities.TranslationInLanguageEntity", b =>
+            modelBuilder.Entity("TypingMaster.Domain.Entities.TypingLevelNameEntity", b =>
                 {
                     b.HasOne("TypingMaster.Domain.Entities.CultureEntity", "Culture")
-                        .WithMany("TranslationInLanguages")
+                        .WithMany("TypingLevelNames")
                         .HasForeignKey("CultureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TypingMaster.Domain.Entities.TranslationEntity", "TranslationEntity")
-                        .WithMany("TranslationsInLanguages")
-                        .HasForeignKey("TranslationEntityId")
+                    b.HasOne("TypingMaster.Domain.Entities.TypingLevelEntity", "TypingLevel")
+                        .WithMany("TypingLevelNames")
+                        .HasForeignKey("TypingLevelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Culture");
 
-                    b.Navigation("TranslationEntity");
+                    b.Navigation("TypingLevel");
                 });
 
             modelBuilder.Entity("TypingMaster.Domain.Entities.TypingTestEntity", b =>
@@ -283,18 +258,15 @@ namespace TypingMaster.Database.Migrations
 
             modelBuilder.Entity("TypingMaster.Domain.Entities.CultureEntity", b =>
                 {
-                    b.Navigation("TranslationInLanguages");
+                    b.Navigation("TypingLevelNames");
 
                     b.Navigation("TypingTexts");
                 });
 
-            modelBuilder.Entity("TypingMaster.Domain.Entities.TranslationEntity", b =>
-                {
-                    b.Navigation("TranslationsInLanguages");
-                });
-
             modelBuilder.Entity("TypingMaster.Domain.Entities.TypingLevelEntity", b =>
                 {
+                    b.Navigation("TypingLevelNames");
+
                     b.Navigation("TypingTexts");
                 });
 

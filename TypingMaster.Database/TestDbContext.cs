@@ -12,10 +12,9 @@ public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactor
     public DbSet<TypingTextEntity> TypingTexts { get; set; }
     public DbSet<TypingTestStatisticsEntity> TypingTestStatistics { get; set; }
     public DbSet<CultureEntity> Cultures { get; set; }
-    public DbSet<TranslationEntity> Translations { get; set; }
-    public DbSet<TranslationInLanguageEntity> TranslationInLanguages { get; set; }
+    public DbSet<TypingLevelNameEntity> TypingLevelName { get; set; }
 
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseLoggerFactory(loggerFactory);
@@ -26,11 +25,10 @@ public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactor
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
-    
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
         var dateNow = DateTimeOffset.Now;

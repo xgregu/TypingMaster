@@ -2,13 +2,19 @@
 
 public class SingleInstanceProtector : IDisposable
 {
-    private bool _hasHandle;
     private readonly Mutex _mutex;
+    private bool _hasHandle;
 
     public SingleInstanceProtector(string appGuid)
     {
         var mutexId = $"Global\\{{{appGuid}}}";
         _mutex = new Mutex(false, mutexId, out _);
+    }
+
+    public void Dispose()
+    {
+        if (_hasHandle)
+            _mutex.ReleaseMutex();
     }
 
     public bool CheckOneInstanceRunning()
@@ -23,11 +29,5 @@ public class SingleInstanceProtector : IDisposable
         }
 
         return _hasHandle;
-    }
-
-    public void Dispose()
-    {
-        if (_hasHandle)
-            _mutex.ReleaseMutex();
     }
 }

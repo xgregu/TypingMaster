@@ -1,5 +1,4 @@
 ﻿@using TypingMaster.UI.Components.Tests.Models
-
 @inject IMessageService MessageService
 @inject INotificationService NotificationService
 @inject ApiClient ApiClient
@@ -34,13 +33,13 @@
 
 <ModalBase @ref="_modalBaseRef" IsCentered>
     <Title>
-        Test @(_testInProgress.Text.Level.Name)
+        @Localizer["GoodLuck"]!
     </Title>
     <Body>
     @if (_executorNameIsValid)
     {
         <Highlighter Class="my-2" Style="@StyleHighlighter" Text="@_testInProgress.Text.Text" HighlightedText="@_inputText" CaseSensitive/>
-        <MemoEdit Background="Background.Transparent" TextColor="@_currentTextColor" Placeholder="@Placeholder" Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
+        <MemoEdit Background="Background.Transparent" TextColor="@_currentTextColor" Placeholder="@MemoEditPlaceholder" Text="@_testInProgress.CurrentText" AutoSize TextChanged="@OnDestinationChanged" Class="my-2"/>
 
         <div class="progress" role="progressbar" aria-valuenow="@_testInProgress.CompletionPercentage" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: @_testInProgress.CompletionPercentage%">@_testInProgress.CompletionPercentage%</div>
@@ -49,12 +48,12 @@
         <div class="separator">@_testInProgress.CurrentTestTime.ToString()</div>
     }
     <Validation Validator="ValidateExecutorName">
-        <TextEdit Background="Background.Transparent" Placeholder="Przedstaw się..." @bind-Text="_executorName" Disabled="_testInProgress.IsStarted"/>
+        <TextEdit Background="Background.Transparent" Placeholder="@ExecutorNamePlaceholder" @bind-Text="_executorName" Disabled="_testInProgress.IsStarted"/>
     </Validation>
     </Body>
     <Footer>
-        <Button Color="Color.Primary" Clicked="@Clear" Disabled="@(!_testInProgress.IsStarted)">Rozpocznij od nowa</Button>
-        <Button Color="Color.Secondary" Clicked="@Hide">Zamknij test</Button>
+        <Button Color="Color.Primary" Clicked="@Clear" Disabled="@(!_testInProgress.IsStarted)">@Localizer["StartOver"]</Button>
+        <Button Color="Color.Secondary" Clicked="@Hide">@Localizer["Close"]</Button>
     </Footer>
 </ModalBase>
 <TestDetailsModal @ref="_testDetailsModalRef"/>
@@ -63,7 +62,8 @@
         private const int RequiredExecutorNameLenght = 2;
         private const string StyleHighlighter = "background-color: #80bdff; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;-moz-user-select: none; -ms-user-select: none; user-select: none;";
 
-    private string Placeholder => _testInProgress.IsStarted ? string.Empty : "Zacznij pisać aby rozpocząć test...";
+    private string ExecutorNamePlaceholder => $"{Localizer["IntroduceYourself"]}...";
+    private string MemoEditPlaceholder => _testInProgress.IsStarted ? string.Empty : $"{Localizer["StartTypingToStartTheTest"]}...";
     private TestDetailsModal _testDetailsModalRef = default!;
     private ModalBase? _modalBaseRef = default!;
     private bool _cancelClose;
@@ -131,7 +131,7 @@
     {
         try
         {
-            await PleaseWaitService.Show(new PleaseWaitParameters()
+            await PleaseWaitService.Show(new PleaseWaitParameters
             {
                 Color = "#0b5ed7"
             });

@@ -8,7 +8,7 @@
 
 <div class="container-fluid d-flex flex-column align-items-center">
     <div class="d-flex justify-content-center">
-        <h5>Wybierz test</h5>
+        <h5>@Localizer["SelectTest"]</h5>
     </div>
     <div class="d-flex align-items-center justify-content-center flex-wrap p-1">
         @foreach (var typingLevel in _typingLevels)
@@ -17,8 +17,8 @@
         }
     </div>
     <div class="d-flex justify-content-center">
-        <p class="text-danger mx-1">Uwaga!</p>
-        <p class="text-secondary mx-1">Długość testu wpływa na jego poziom trudności</p>
+        <p class="text-danger mx-1">@Localizer["Attention"]!</p>
+        <p class="text-secondary mx-1">@Localizer["TheLengthOfTheTestAffectsItsDifficultyLevel"]</p>
     </div>
     <div class="container-fluid d-flex justify-content-center">
         <TestRankingComponent @ref="_testRankingComponent"/>
@@ -36,18 +36,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if(!_typingLevels.Any())
+        if (!_typingLevels.Any())
             _ = Initialize();
-        
+
         await base.OnInitializedAsync();
     }
 
     private async Task Initialize()
     {
-        await PleaseWaitService.Show(new PleaseWaitParameters
-        {
-            Text = "Inicjalizacja"
-        });
+        await PleaseWaitService.Show();
 
         while (!_typingLevels.Any())
         {

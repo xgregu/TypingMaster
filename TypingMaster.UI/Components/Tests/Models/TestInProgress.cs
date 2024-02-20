@@ -20,8 +20,15 @@ public class TestInProgress
     public bool IsComplete { get; private set; }
     public TimeSpan CurrentTestTime => IsStarted ? (IsComplete ? EndTime : DateTime.Now) - StartTime : default;
 
-    public static TestInProgress InitializeTest(TypingTextDto text) => new( text);
-    public static TestInProgress EmptyTest() => new(new TypingTextDto(long.MinValue, string.Empty, new TypingLevelDto(long.MinValue, string.Empty, 0)));
+    public static TestInProgress InitializeTest(TypingTextDto text)
+    {
+        return new TestInProgress(text);
+    }
+
+    public static TestInProgress EmptyTest()
+    {
+        return new TestInProgress(new TypingTextDto(long.MinValue, string.Empty, 0));
+    }
 
     public bool UpdateCurrentText(string newText)
     {
@@ -69,7 +76,10 @@ public class TestInProgress
 
 public static class TestInProgressExtensions
 {
-    public static CreateTestRequest EndTest(this TestInProgress testInProgress, string executorName) => new(executorName,
-        testInProgress.StartTime, testInProgress.EndTime, testInProgress.TotalClicks,
-        testInProgress.Text.Id);
+    public static CreateTestRequest EndTest(this TestInProgress testInProgress, string executorName)
+    {
+        return new CreateTestRequest(executorName,
+            testInProgress.StartTime, testInProgress.EndTime, testInProgress.TotalClicks,
+            testInProgress.Text.Id);
+    }
 }
