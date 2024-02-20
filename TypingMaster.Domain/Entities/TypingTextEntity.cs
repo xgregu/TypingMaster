@@ -7,6 +7,8 @@ namespace TypingMaster.Domain.Entities;
 public class TypingTextEntity : BaseEntity
 {
     public string Text { get; set; }
+    public CultureEntity Culture { get; set; }
+    public long CultureId { get; set; }
     public TypingLevelEntity DifficultyLevel { get; set; }
     public long DifficultyLevelId { get; set; }
     public ICollection<TypingTestEntity> Tests { get; set; } = new List<TypingTestEntity>();
@@ -25,6 +27,12 @@ public partial class TypingTextEntityConfiguration : IEntityTypeConfiguration<Ty
             .HasForeignKey(x => x.DifficultyLevelId)
             .IsRequired();
 
+        builder
+            .HasOne(x => x.Culture)
+            .WithMany(x => x.TypingTexts)
+            .HasForeignKey(x => x.CultureId)
+            .IsRequired();
+        
         builder.Property(x => x.Text).IsRequired();
     }
 }

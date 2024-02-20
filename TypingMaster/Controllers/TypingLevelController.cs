@@ -15,8 +15,8 @@ public class TypingLevelController(IMediator mediator) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TypingLevelDto>>> GetAllLevels()
     {
-        var reponse = await mediator.Send(new GetAllTypingLevelsQuery());
-        return HandleResponse<IEnumerable<TypingLevelDto>, GetAllTypingLevelsResponse>(reponse);
+        var response = await mediator.Send(new GetAllTypingLevelsQuery());
+        return HandleResponse<IEnumerable<TypingLevelDto>, GetAllTypingLevelsResponse>(response);
     }
 
     private ActionResult<T1> HandleResponse<T1, T2>(T2 response) where T2: Response<T1>

@@ -16,6 +16,7 @@ public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactor
     public DbSet<TypingLevelEntity> TypingLevels { get; set; }
     public DbSet<TypingTextEntity> TypingTexts { get; set; }
     public DbSet<TypingTestStatisticsEntity> TypingTestStatistics { get; set; }
+    public DbSet<CultureEntity> Cultures { get; set; }
 
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -30,10 +31,6 @@ public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactor
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
-        
-        
-        modelBuilder.Entity<TypingLevelEntity>().HasData(DefaultDataProvider.GetTypingLevels());
-        modelBuilder.Entity<TypingTextEntity>().HasData(DefaultDataProvider.GetTypingTexts());
     }
     
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())

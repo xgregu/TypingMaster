@@ -26,15 +26,16 @@ public class TypingTextsStore(ILogger<TypingTextsStore> logger, IServiceProvider
         return entity;
     }
 
-    public async Task<IReadOnlyList<TypingTextEntity>> GetByDifficultyLevelAsync(uint difficultyLevel)
+    public async Task<IReadOnlyList<TypingTextEntity>> GetByDifficultyLevelAsync(uint difficultyLevel, string cultureCode)
     {
         logger.LogInformation("GetByDifficultyLevelAsync | DifficultyLevel={difficultyLevel}", difficultyLevel);
 
         await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         return await context.TypingTexts
             .AsNoTracking()
+            .Include(x => x.Culture)
             .Include(x => x.DifficultyLevel)
-            .Where(x => x.DifficultyLevel.DifficultyLevel == difficultyLevel)
+            .Where(x => x.DifficultyLevel.DifficultyLevel == difficultyLevel && x.Culture.CultureCode == cultureCode)
             .ToListAsync();
     }
 }

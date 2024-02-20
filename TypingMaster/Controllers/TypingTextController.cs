@@ -14,10 +14,10 @@ namespace TypingMaster.Controllers;
 public class TypingTextController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{difficultyLevel:int}")]
-    public async Task<ActionResult<IEnumerable<TypingTextDto>>> GetTextsByDifficultyLevel([Required] int difficultyLevel)
+    public async Task<ActionResult<IEnumerable<TypingTextDto>>> GetTextsByDifficultyLevel([Required] int difficultyLevel, [Required][FromQuery] string cultureCode)
     {
-        var reponse = await mediator.Send(new GetTypingTextsByDifficultyLevelQuery((uint)difficultyLevel));
-        return HandleResponse<IEnumerable<TypingTextDto>, GetTypingTextsByDifficultyLevelResponse>(reponse);
+        var response = await mediator.Send(new GetTypingTextsByDifficultyLevelQuery((uint)difficultyLevel, cultureCode));
+        return HandleResponse<IEnumerable<TypingTextDto>, GetTypingTextsByDifficultyLevelResponse>(response);
     }
 
     private ActionResult<T1> HandleResponse<T1, T2>(T2 response) where T2: Response<T1>

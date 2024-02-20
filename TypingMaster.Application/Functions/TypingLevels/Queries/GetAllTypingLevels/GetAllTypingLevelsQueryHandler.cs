@@ -2,6 +2,7 @@
 using TypingMaster.Application.Extensions;
 using TypingMaster.Application.Functions.Common;
 using TypingMaster.Application.Interfaces;
+using TypingMaster.Domain.Entities;
 using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Functions.TypingLevels.Queries.GetAllTypingLevels;

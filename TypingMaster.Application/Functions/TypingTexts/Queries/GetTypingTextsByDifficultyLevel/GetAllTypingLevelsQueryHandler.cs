@@ -5,7 +5,7 @@ using TypingMaster.Application.Interfaces;
 using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Functions.TypingTexts.Queries.GetTypingTextsByDifficultyLevel;
-public record GetTypingTextsByDifficultyLevelQuery(uint DifficultyLevel): IRequest<GetTypingTextsByDifficultyLevelResponse>;
+public record GetTypingTextsByDifficultyLevelQuery(uint DifficultyLevel, string CultureCode): IRequest<GetTypingTextsByDifficultyLevelResponse>;
 
 public class GetTypingTextsByDifficultyLevelResponse : Response<IEnumerable<TypingTextDto>>
 {
@@ -31,7 +31,7 @@ public class GetTypingTextsByDifficultyLevelQueryHandler(ITypingTextsStore typin
     {
         try
         {
-            var typingTextEntities = await typingTextsStore.GetByDifficultyLevelAsync(request.DifficultyLevel);
+            var typingTextEntities = await typingTextsStore.GetByDifficultyLevelAsync(request.DifficultyLevel, request.CultureCode);
             return GetTypingTextsByDifficultyLevelResponse.Success(typingTextEntities.ToDto());
         }
         catch (Exception e)

@@ -27,4 +27,10 @@
       <ProjectReference Include="..\TypingMaster.Application\TypingMaster.Application.csproj" />
       <ProjectReference Include="..\TypingMaster.Domain\TypingMaster.Domain.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+        <HintPath>..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 </Project>

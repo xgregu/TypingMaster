@@ -28,6 +28,7 @@ public static class Registration
         services.AddSingleton<ITypingTextsStore, TypingTextsStore>();
         
         services.AddTransient<IInitializable, DatabaseInitializer>();
+        services.AddTransient<IInitializable, StoreInitializer>();
         return services;
     }
 }

@@ -51,13 +51,13 @@
     {
         while (!_cts.IsCancellationRequested)
         {
-            foreach (var tekst in _selectLanguageTexts)
+            foreach (var text in _selectLanguageTexts)
             {
-                if (tekst == _currentText)
+                if (text == _currentText)
                     continue;
 
                 await HideText();
-                await ChangeText(tekst);
+                await ChangeText(text);
                 await ShowText();
                 await Task.Delay(TimeSpan.FromSeconds(ShowTextDurationSeconds));
             }
