@@ -5,17 +5,6 @@ namespace TypingMaster.UI.Localizations;
 public static class CultureConstants
 {
     public static readonly CultureInfo DefaultCulture = new(LanguageCountryCode.Polish);
-
-    public static readonly IReadOnlyCollection<CultureInfo> SupportedCultures = new List<CultureInfo>
-    {
-        new(LanguageCountryCode.Polish),
-        new(LanguageCountryCode.English),
-        new(LanguageCountryCode.German),
-        new(LanguageCountryCode.Spanish),
-        new(LanguageCountryCode.French),
-        new(LanguageCountryCode.Chinese)
-    }.AsReadOnly();
-
     public static class LanguageCountryCode
     {
         public const string Polish = "pl-PL";

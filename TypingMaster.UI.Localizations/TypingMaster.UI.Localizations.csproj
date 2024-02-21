@@ -24,7 +24,6 @@
         <Compile Update="Translations\App.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
-            <DependentUpon>App.resx</DependentUpon>
         </Compile>
     </ItemGroup>
     

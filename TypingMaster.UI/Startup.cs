@@ -71,13 +71,6 @@ public class Startup(IConfiguration configuration)
             endpoints.MapFallbackToPage("/_Host");
         });
 
-        var supportedCultures = CultureConstants.SupportedCultures.Select(x => x.Name).ToArray();
-
-        var localizationOptions = new RequestLocalizationOptions()
-            .SetDefaultCulture(CultureConstants.DefaultCulture.Name)
-            .AddSupportedCultures(supportedCultures)
-            .AddSupportedUICultures(supportedCultures);
-
-        app.UseRequestLocalization(localizationOptions);
+        app.ConfigureLocalizations();
     }
 }

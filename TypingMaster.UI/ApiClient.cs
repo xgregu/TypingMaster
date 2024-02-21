@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using TypingMaster.Shared.Dtos;
-using TypingMaster.UI.Localizations.Services;
+using TypingMaster.UI.Localizations;
 
 namespace TypingMaster.UI;
 
-public class ApiClient(IHttpClientFactory httpClientFactory, LanguageService languageService)
+public class ApiClient(IHttpClientFactory httpClientFactory, ICultureContext cultureContext)
 {
     private const string TestApiUrl = "TypingTest";
 
@@ -12,7 +12,7 @@ public class ApiClient(IHttpClientFactory httpClientFactory, LanguageService lan
 
     private const string TypingTextApiUrl = "TypingText";
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("ApiClient");
-    private string CurrentCultureName => languageService.GetCurrentCulture().Name;
+    private string CurrentCultureName => cultureContext.CurrentCulture.Name;
     private string GetAllTypingLevelsUrl => $"{TypingLevelApiUrl}?cultureCode={CurrentCultureName}";
 
     private static string GetTestUrl(long testId)

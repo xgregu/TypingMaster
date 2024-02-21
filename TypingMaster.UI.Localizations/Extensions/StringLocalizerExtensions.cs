@@ -36,6 +36,9 @@ public static class StringLocalizerExtensions
                 if (resourceSet == null)
                     continue;
 
+                if(string.IsNullOrWhiteSpace(cultureInfo.Name))
+                    continue;
+                
                 cultures.Add(cultureInfo);
             }
             catch (CultureNotFoundException)

@@ -1,5 +1,6 @@
 ﻿@implements IDisposable
-@inject LanguageService LanguageService;
+@inject ICultureContext CultureContext
+@inject LanguageService LanguageService
 
 
 <a class="dropdown-toggle mx-2 text-black d-inline" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -11,22 +12,27 @@
     {
         <li>
             <a class="dropdown-item text-black" @onclick="() => SetLanguage(language.Name)">
-                <div class="@($"btn flag-icon flag-icon-{language.Name.Split('-')[1].ToLower()} m-2 h-75 w-25")"/> @(new RegionInfo(language.LCID).NativeName)
+                <div class="@($"btn flag-icon flag-icon-{language.TwoLetterISOLanguageName.ToLower()} m-2 h-75 w-25")"/> @(new RegionInfo(language.LCID).NativeName)
             </a>
         </li>
     }
 </ul>
 
 @code{
-    private CultureInfo _currentCulture = default!;
-    private IEnumerable<CultureInfo> _avaiableCultures = default!;
+    private CultureInfo _currentCulture = CultureConstants.DefaultCulture;
+    private CultureInfo[] _avaiableCultures = Array.Empty<CultureInfo>();
 
     private bool _isChanging;
 
     protected override Task OnInitializedAsync()
     {
-        _currentCulture = LanguageService.GetCurrentCulture();
-        _avaiableCultures = CultureConstants.SupportedCultures.Where(language => _currentCulture.Name != language.Name);
+        var dupa = new CultureInfo("de-DE");
+        var dupa2 = new CultureInfo("de");
+        var d = new RegionInfo(dupa.LCID).NativeName;
+        var d2 = new RegionInfo(dupa2.LCID).NativeName;
+        
+        _currentCulture = CultureContext.CurrentCulture;
+        _avaiableCultures = CultureContext.SupportedCultures.Where(language => _currentCulture.Name != language.Name).ToArray();
 
         return base.OnInitializedAsync();
     }
@@ -37,7 +43,11 @@
             return;
 
         _isChanging = true;
-        await InvokeAsync(async () => { await LanguageService.SetLanguage(languageCountryCode); });
+        await InvokeAsync(() =>
+        {
+            LanguageService.SetLanguage(languageCountryCode);
+            return Task.CompletedTask;
+        });
     }
 
     public void Dispose()
