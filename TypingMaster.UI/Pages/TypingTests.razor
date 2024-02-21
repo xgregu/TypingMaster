@@ -7,15 +7,37 @@
 <PageTitle>Test</PageTitle>
 
 <div class="container-fluid d-flex flex-column align-items-center">
-    <div class="d-flex justify-content-center">
-        <h5>@Localizer["SelectTest"]</h5>
+    <div class="d-flex w-100 justify-content-start align-items-center py-2">
+        <div class="w-25 text-center">
+            <image src="logo.png" class="img-fluid" style="max-height: 15vh"/>
+        </div>
+        <div class="w-100 d-flex flex-column justify-content-center align-items-center overflow-x-auto" style="max-height: 15vh">
+            <div class="d-none d-md-flex d-flex align-items-center justify-content-center flex-wrap flex-md-nowrap p-1 w-100">
+                @foreach (var typingLevel in _typingLevels)
+                {
+                    @GetButton(typingLevel)
+                }
+            </div>
+
+            <div class="d-md-none w-75">
+                <button class="btn btn-secondary dropdown-toggle btn-lg btn-block w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    @Localizer["SelectTest"]
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end text-black" aria-labelledby="dropdownMenuButton">
+                    @foreach (var typingLevel in _typingLevels)
+                    {
+                        <a class="dropdown-item">
+                            @GetButton(typingLevel)
+                        </a>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="w-25 d-flex justify-content-end align-items-center">
+            <SelectLanguage/>
+        </div>
     </div>
-    <div class="d-flex align-items-center justify-content-center flex-wrap p-1">
-        @foreach (var typingLevel in _typingLevels)
-        {
-            @GetButton(typingLevel)
-        }
-    </div>
+
     <div class="d-flex justify-content-center">
         <p class="text-danger mx-1">@Localizer["Attention"]!</p>
         <p class="text-secondary mx-1">@Localizer["TheLengthOfTheTestAffectsItsDifficultyLevel"]</p>
@@ -85,7 +107,7 @@
             _ => "btn btn-primary"
             };
 
-        return $"{baseClass} m-1";
+        return $"{baseClass} m-1 btn-block w-100";
     }
 
 }

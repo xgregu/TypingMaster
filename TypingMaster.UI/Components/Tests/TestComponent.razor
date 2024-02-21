@@ -2,7 +2,6 @@
 @inject IMessageService MessageService
 @inject INotificationService NotificationService
 @inject ApiClient ApiClient
-@inject IPleaseWaitService PleaseWaitService
 
 <style>
 .separator {
@@ -52,7 +51,7 @@
     </Validation>
     </Body>
     <Footer>
-        <Button Color="Color.Primary" Clicked="@Clear" Disabled="@(!_testInProgress.IsStarted)">@Localizer["StartOver"]</Button>
+        <Button Color="Color.Primary" Clicked="@Clear" Outline="@(!_testInProgress.IsStarted)" Disabled="@(!_testInProgress.IsStarted)" >@Localizer["StartOver"]</Button>
         <Button Color="Color.Secondary" Clicked="@Hide">@Localizer["Close"]</Button>
     </Footer>
 </ModalBase>
@@ -87,11 +86,13 @@
     {
         try
         {
+            await PleaseWaitService.Show();
             var texts = await ApiClient.GetAllTypingTypingTextByDifficultyLevel(typingLevel.DifficultyLevel);
             _testInProgress = TestInProgress.InitializeTest(texts.MinBy(x => Guid.NewGuid()));
             _confirmationTask = new TaskCompletionSource();
             _cancelClose = true;
             await _modalBaseRef?.Show()!;
+            PleaseWaitService.Hide();
             await _confirmationTask.Task;
         }
         finally
@@ -104,8 +105,8 @@
     {
         await Clear();
         _cancelClose = false;
-        _modalBaseRef?.Hide();
         PleaseWaitService.Hide();
+        _modalBaseRef?.Hide();
     }
 
     private async Task Clear()

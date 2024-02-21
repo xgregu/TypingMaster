@@ -24,8 +24,7 @@
 
 </style>
 
-<p class="@($"{_visibilityClass} d-none d-sm-inline")" style="color: black; display: inline;">@_currentText</p><i class="bi bi-globe ms-2" style="display: inline;"></i>
-
+<p class="@($"{_visibilityClass} d-none d-md-inline me-2")" style="display: inline;">@_currentText</p><i class="bi bi-globe" style="display: inline;"></i>
 
 @code {
 
@@ -46,7 +45,7 @@
         if (_selectLanguageTexts.Length > 1)
             _ = Task.Run(AnimationLoop);
     }
-
+    
     private async Task AnimationLoop()
     {
         while (!_cts.IsCancellationRequested)
@@ -89,5 +88,4 @@
         _cts.Cancel();
         _cts.Dispose();
     }
-
 }

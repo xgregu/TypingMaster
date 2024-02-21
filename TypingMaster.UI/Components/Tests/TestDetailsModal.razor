@@ -1,6 +1,6 @@
 ﻿@inject ApiClient ApiClient
 
-<ModalBase @ref="_modalBaseRef">
+<ModalBase @ref="_modalBaseRef" IsCentered>
     <Title>
         @_test?.ExecutorName
     </Title>
@@ -8,7 +8,7 @@
     <TestDetailsTable Test="_test" TestRanking="_testRanking" LevelName="@_levelName"/>
     </Body>
     <Footer>
-        <Button Color="@Color.Primary" Clicked="Deinitialize">Zamknij</Button>
+        <Button Color="@Color.Primary" Clicked="Deinitialize">@Localizer["Close"]</Button>
     </Footer>
 </ModalBase>
 
@@ -23,10 +23,18 @@
 
     public async Task Show(TypingTestDto? test)
     {
-        if (test == null)
-            return;
-
-        await Initialize(test);
+        try
+        {
+            await PleaseWaitService.Show();
+            if (test == null)
+                return;
+        
+            await Initialize(test);
+        }
+        finally
+        {
+            PleaseWaitService.Hide();
+        }
     }
 
     private async Task Initialize(TypingTestDto test)
@@ -62,6 +70,7 @@
         await ResetCts();
         _test = null;
         _testRanking = null;
+        PleaseWaitService.Hide();
         await _modalBaseRef.Hide();
     }
 
