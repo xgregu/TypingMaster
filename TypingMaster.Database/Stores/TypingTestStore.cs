@@ -1,12 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TypingMaster.Application.Events;
 using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
 
 namespace TypingMaster.Database.Stores;
 
-public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider serviceProvider)
+public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider serviceProvider, IMediator mediator)
     : BaseRepository<TypingTestEntity>(logger, serviceProvider), ITypingTestStore
 {
     public async Task<TypingTestEntity> AddAsync(TypingTestEntity entity)
@@ -15,7 +17,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
         await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         await context.AddAsync(entity);
         await context.SaveChangesAsync();
-
+        _ = mediator.Publish(new TestUpdatedEvent());
+        
         var savedEntity = await GetByIdAsync(entity.Id);
         return savedEntity;
     }

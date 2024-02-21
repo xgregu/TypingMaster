@@ -1,6 +1,7 @@
 ﻿using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Easy.MessageHub;
 using NLog.Extensions.Logging;
 using TypingMaster.UI.Components.PleaseWait;
 using TypingMaster.UI.Localizations;
@@ -32,12 +33,15 @@ public class Startup(IConfiguration configuration)
             .AddJsonFile("appsettings.json", false, true)
             .Build());
 
+        services.AddOptions<BackendSettings>()
+            .Configure<IConfiguration>((o, c) => c.GetSection(BackendSettings.SectionName).Bind(o));
+        
 
         services.AddHttpClient<ApiClient>("ApiClient", client =>
         {
             var backendSettings = Configuration.GetSection(BackendSettings.SectionName).Get<BackendSettings>();
-            if (backendSettings?.ApiGateway != null)
-                client.BaseAddress = new Uri(backendSettings.ApiGateway);
+            if (backendSettings?.Gateway != null)
+                client.BaseAddress = new Uri(backendSettings.Gateway + "/api/");
         });
 
         services.AddTransient<ApiClient>();
@@ -46,6 +50,11 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IPleaseWaitService, PleaseWaitService>();
 
         services.AddTypingMasterLocalizations();
+        
+        services.AddSignalR();
+        services.AddSingleton<SignalRConnectivity>();
+        services.AddHostedService<SignalRConnectivity>(provider => provider.GetRequiredService<SignalRConnectivity>());
+        services.AddSingleton<IMessageHub, MessageHub>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env,

@@ -72,4 +72,10 @@
     <data name="Type" xml:space="preserve">
         <value>Type</value>
     </data>
+    <data name="ConnectionToTheServerWasInterrupted" xml:space="preserve">
+        <value>La connexion au serveur a été interrompue</value>
+    </data>
+    <data name="TypingMaster" xml:space="preserve">
+        <value>Maître dactylographique</value>
+    </data>
 </root>

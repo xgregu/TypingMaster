@@ -72,4 +72,10 @@
     <data name="Type" xml:space="preserve">
         <value>Tipo</value>
     </data>
+    <data name="ConnectionToTheServerWasInterrupted" xml:space="preserve">
+        <value>La conexión al servidor se interrumpió</value>
+    </data>
+    <data name="TypingMaster" xml:space="preserve">
+        <value>Maestro de escritura</value>
+    </data>
 </root>

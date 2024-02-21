@@ -1,4 +1,10 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@inject IMessageHub MessageHub
+@inject IPleaseWaitService PleaseWaitService
+@inject SignalRConnectivity SignalRConnectivity
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
     </Found>
@@ -7,6 +13,42 @@
     </NotFound>
 </Router>
 
-<MessageAlert/>
-<NotificationAlert/>
 <PleaseWaitPopup/>
+
+
+@code
+{
+    private Action? _unsubscribeEvents;
+
+    protected override Task OnInitializedAsync()
+    {
+        var backendConnectionStateChanged = MessageHub.Subscribe<BackendConnectionStateChanged>(OnBackendConnectionStateChanged);
+        _unsubscribeEvents = () => { MessageHub.Unsubscribe(backendConnectionStateChanged); };
+        return base.OnInitializedAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (SignalRConnectivity.IsConnected)
+            PleaseWaitService.Hide();
+        else
+            PleaseWaitService.Show(new PleaseWaitParameters {Text = Localizer["ConnectionToTheServerWasInterrupted"], Color = "red"});
+
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void OnBackendConnectionStateChanged(BackendConnectionStateChanged obj)
+    {
+        if (obj.IsConnected)
+        {
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+        else
+            PleaseWaitService.Show(new PleaseWaitParameters {Text = Localizer["ConnectionToTheServerWasInterrupted"], Color = "red"});
+    }
+
+    public void Dispose()
+    {
+        _unsubscribeEvents?.Invoke();
+    }
+}

@@ -7,11 +7,11 @@
         <SelectLanguageAnimate/>
 </button>
 
-<ul class="dropdown-menu dropdown-menu-end text-black" aria-labelledby="dropdownMenuButton">
+<ul class="dropdown-menu dropdown-menu-end text-white bg-dark bg-opacity-75" aria-labelledby="dropdownMenuButton">
     @foreach (var language in _avaiableCultures)
     {
         <li>
-            <a class="dropdown-item text-black" @onclick="() => SetLanguage(language.Name)">
+            <a class="dropdown-item text-white" @onclick="() => SetLanguage(language.Name)">
                 <div class="@($"btn flag-icon flag-icon-{language.TwoLetterISORegionName().ToLower()} h-75 w-25")"/> @language.LanguageName()
             </a>
         </li>

@@ -72,4 +72,10 @@
     <data name="Type" xml:space="preserve">
         <value>类型</value>
     </data>
+    <data name="ConnectionToTheServerWasInterrupted" xml:space="preserve">
+        <value>与服务器的连接被中断</value>
+    </data>
+    <data name="TypingMaster" xml:space="preserve">
+        <value>打字大师</value>
+    </data>
 </root>

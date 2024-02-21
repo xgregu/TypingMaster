@@ -1,37 +1,40 @@
 ﻿@page "/TypingTests"
 @page "/"
 
-@inject IPleaseWaitService PleaseWaitService
+@inject NavigationManager NavigationManager
 @inject ApiClient ApiClient
-
-<PageTitle>Test</PageTitle>
-
 <div class="container-fluid d-flex flex-column align-items-center">
     <div class="d-flex w-100 justify-content-start align-items-center py-2">
-        <div class="w-25 text-center">
-            <image src="logo.png" class="img-fluid" style="max-height: 15vh"/>
+        <div class="w-25 text-center d-flex flex-column align-items-center">
+            <img src="logo.png" class="img-fluid" style="max-height: 15vh" @onclick="() => NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true)"/>
         </div>
         <div class="w-100 d-flex flex-column justify-content-center align-items-center overflow-x-auto" style="max-height: 15vh">
-            <div class="d-none d-md-flex d-flex align-items-center justify-content-center flex-wrap flex-md-nowrap p-1 w-100">
-                @foreach (var typingLevel in _typingLevels)
-                {
-                    @GetButton(typingLevel)
-                }
-            </div>
-
-            <div class="d-md-none w-75">
-                <button class="btn btn-secondary dropdown-toggle btn-lg btn-block w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    @Localizer["SelectTest"]
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end text-black" aria-labelledby="dropdownMenuButton">
+            @if (_typingLevels.Any())
+            {
+                <div class="d-none d-md-flex d-flex align-items-center justify-content-center flex-wrap flex-md-nowrap p-1 w-100">
                     @foreach (var typingLevel in _typingLevels)
                     {
-                        <a class="dropdown-item">
-                            @GetButton(typingLevel)
-                        </a>
+                        @GetButton(typingLevel)
                     }
-                </ul>
-            </div>
+                </div>
+                <div class="d-md-none w-75">
+                    <button class="btn btn-secondary dropdown-toggle btn-lg btn-block w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        @Localizer["SelectTest"]
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end text-white bg-dark bg-opacity-75" aria-labelledby="dropdownMenuButton">
+                        @foreach (var typingLevel in _typingLevels)
+                        {
+                            <a class="dropdown-item">
+                                @GetButton(typingLevel)
+                            </a>
+                        }
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="spinner-border" role="status"></div>
+            }
         </div>
         <div class="w-25 d-flex justify-content-end align-items-center">
             <SelectLanguage/>
@@ -59,29 +62,22 @@
     protected override async Task OnInitializedAsync()
     {
         if (!_typingLevels.Any())
-            _ = Initialize();
+            await RefreshTypingLevels();
 
         await base.OnInitializedAsync();
     }
 
-    private async Task Initialize()
+    private async Task RefreshTypingLevels()
     {
-        await PleaseWaitService.Show();
-
-        while (!_typingLevels.Any())
+        try
         {
-            try
-            {
-                _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
-                await InvokeAsync(StateHasChanged);
-            }
-            catch
-            {
-    // ignored
-            }
+            _typingLevels = await ApiClient.GetAllTypingLevels() ?? new List<TypingLevelDto>();
+            await InvokeAsync(StateHasChanged);
         }
-
-        PleaseWaitService.Hide();
+        catch
+        {
+    // ignored
+        }
     }
 
     private async Task StartTest(TypingLevelDto typingLevel) => await _testModalRef.ShowAndWaitForResult(typingLevel);
@@ -97,17 +93,16 @@
 
     private static string GetButtonClass(TypingLevelDto type)
     {
-        var baseClass = type.DifficultyLevel switch
+        var btnColor = type.DifficultyLevel switch
         {
-            1 => "btn btn-primary",
-            2 => "btn btn-secondary",
-            3 => "btn btn-success",
-            4 => "btn btn-warning",
-            5 => "btn btn-danger",
-            _ => "btn btn-primary"
+            1 => "primary",
+            2 => "secondary",
+            3 => "success",
+            4 => "warning",
+            5 => "danger",
+            _ => "primary"
             };
 
-        return $"{baseClass} m-1 btn-block w-100";
+        return $"btn btn-{btnColor} m-1 btn-block w-100";
     }
-
 }

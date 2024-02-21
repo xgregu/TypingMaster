@@ -72,4 +72,10 @@
     <data name="StartTypingToStartTheTest" xml:space="preserve">
         <value>Start typing to start the test</value>
     </data>
+    <data name="ConnectionToTheServerWasInterrupted" xml:space="preserve">
+        <value>Connection to the server was interrupted</value>
+    </data>
+    <data name="TypingMaster" xml:space="preserve">
+        <value>Typing master</value>
+    </data>
 </root>

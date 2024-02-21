@@ -1,8 +1,6 @@
 ﻿using System.Text.Json;
-using MediatR;
 using TypingMaster.Application;
 using TypingMaster.Application.Functions.Tests.Commands.CreateTest;
-using TypingMaster.Application.Functions.TypingTexts.Queries.GetTypingTextsByDifficultyLevel;
 using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Entities;

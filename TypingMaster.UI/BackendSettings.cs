@@ -4,5 +4,5 @@ public class BackendSettings
 {
     public const string SectionName = "BackendSettings";
 
-    public string ApiGateway { get; init; } = string.Empty;
+    public string Gateway { get; init; } = string.Empty;
 }

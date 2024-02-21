@@ -72,4 +72,10 @@
     <data name="Close" xml:space="preserve">
         <value>Zamknij</value>
     </data>
+    <data name="ConnectionToTheServerWasInterrupted" xml:space="preserve">
+        <value>Połączenie z serwerem zostało przerwane</value>
+    </data>
+    <data name="TypingMaster" xml:space="preserve">
+        <value>Mistrz klawiatury</value>
+    </data>
 </root>

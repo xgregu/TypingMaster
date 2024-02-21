@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using TypingMaster.Application;
 using TypingMaster.Database;
-using TypingMaster.DevTools;
 using TypingMaster.Domain;
+using TypingMaster.Hubs;
 
 namespace TypingMaster;
 
@@ -44,7 +44,8 @@ public class Startup
         services.AddApplication();
         services.AddCore();
         services.AddDatabase();
-
+        services.AddSignalR();
+        
         services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -70,7 +71,11 @@ public class Startup
 
         app.UseCors();
 
-        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapHub<TypingMasterHub>("/Hub");
+        });
 
         app.UseAuthentication();
 

@@ -1,5 +1,6 @@
 ﻿@inject ApiClient ApiClient
 @inject LanguageService LanguageService
+@inject IMessageHub MessageHub
 @implements IDisposable
 
 <style>
@@ -11,7 +12,7 @@
     }
 </style>
 
-<div class="w-100" style="max-height: 72vh; height: 72vh; overflow-y: auto">
+<div class="w-100" style="max-height: 66vh; height: 66vh; overflow-y: auto">
     <div class="d-flex justify-content-between">
         <span class="text-primary text-start mx-2">
             @Localizer["Ranking"]
@@ -28,7 +29,7 @@
         <th class="w-25" scope="col">@Localizer["Points"]</th>
         </thead>
         <tbody class="table-group-divider">
-        <Virtualize ItemsProvider="GetTests" Context="test" OverscanCount="100" ItemSize="40">
+        <Virtualize @ref="@_virtualizeRef" ItemsProvider="GetTests" Context="test" OverscanCount="100" ItemSize="40">
             <ItemContent>
                 <tr @onclick="() => OnTestClicked(test)">
                     <td class="w-25">@test.StartTime.DateTime.ToShortDateString() @test.StartTime.DateTime.ToShortTimeString()</td>
@@ -51,6 +52,22 @@
 
     private TestDetailsModal _testDetailsModalRef = default!;
     private CancellationTokenSource _cts = new();
+    private Action? _unsubscribeEvents;
+    private Virtualize<TypingTestDto> _virtualizeRef = default!;
+
+    protected override Task OnInitializedAsync()
+    {
+        var testUpdatedEventId = MessageHub.Subscribe<TestUpdatedEvent>(RefreshTable);
+        _unsubscribeEvents = () => { MessageHub.Unsubscribe(testUpdatedEventId); };
+
+        return base.OnInitializedAsync();
+    }
+
+    private async void RefreshTable(TestUpdatedEvent obj)
+    {
+        await _virtualizeRef.RefreshDataAsync();
+        await InvokeAsync(StateHasChanged);
+    }
 
     private async ValueTask<ItemsProviderResult<TypingTestDto>> GetTests(ItemsProviderRequest request)
     {
@@ -85,6 +102,7 @@
     public void Dispose()
     {
         _ = ResetCts();
+        _unsubscribeEvents?.Invoke();
     }
 
 }
