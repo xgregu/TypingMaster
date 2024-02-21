@@ -101,7 +101,8 @@ public class ApiClient(IHttpClientFactory httpClientFactory, ICultureContext cul
     {
         try
         {
-            var response = await _httpClient.GetAsync(GetTypingLevelNameUrl(difficultyLevel), cancellationToken);
+            var test = GetTypingLevelNameUrl(difficultyLevel);
+            var response = await _httpClient.GetAsync(GetTypingLevelNameUrl(difficultyLevel));
             var levelName = await HandleResponse<string>(response);
             return levelName;
         }

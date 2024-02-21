@@ -32,7 +32,9 @@ public class TypingTextsStore(ILogger<TypingTextsStore> logger, IServiceProvider
             .AsNoTracking()
             .Include(x => x.Culture)
             .Include(x => x.DifficultyLevel)
-            .Where(x => x.DifficultyLevel.DifficultyLevel == difficultyLevel && x.Culture.CultureCode == cultureCode)
+            .Where(x => 
+                x.DifficultyLevel.DifficultyLevel == difficultyLevel && 
+                EF.Functions.Like(x.Culture.CultureCode, cultureCode))
             .ToListAsync();
     }
 }

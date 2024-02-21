@@ -1,4 +1,5 @@
 ﻿@inject ApiClient ApiClient
+@inject ICultureContext CultureContext
 
 @if (Test is not null)
 {
@@ -37,7 +38,7 @@
         </tr>
         <tr>
             <td>@Localizer["Duration"]</td>
-            <td>@CompletionTime.Humanize() (@CompletionTime)</td>
+            <td>@CompletionTime.Humanize(culture: CultureContext.CurrentCulture) (@CompletionTime)</td>
         </tr>
         <tr>
             <td>@Localizer["ClicksPerMinute"]</td>

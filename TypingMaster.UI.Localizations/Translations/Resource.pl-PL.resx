@@ -69,4 +69,7 @@
     <data name="StartTypingToStartTheTest" xml:space="preserve">
         <value>Zacznij pisać aby rozpocząć test</value>
     </data>
+    <data name="Close" xml:space="preserve">
+        <value>Zamknij</value>
+    </data>
 </root>

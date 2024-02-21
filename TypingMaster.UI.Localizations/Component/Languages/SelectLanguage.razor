@@ -12,7 +12,7 @@
     {
         <li>
             <a class="dropdown-item text-black" @onclick="() => SetLanguage(language.Name)">
-                <div class="@($"btn flag-icon flag-icon-{language.TwoLetterISOLanguageName.ToLower()} m-2 h-75 w-25")"/> @(new RegionInfo(language.LCID).NativeName)
+                <div class="@($"btn flag-icon flag-icon-{language.TwoLetterISORegionName().ToLower()} h-75 w-25")"/> @language.LanguageName()
             </a>
         </li>
     }
@@ -26,14 +26,8 @@
 
     protected override Task OnInitializedAsync()
     {
-        var dupa = new CultureInfo("de-DE");
-        var dupa2 = new CultureInfo("de");
-        var d = new RegionInfo(dupa.LCID).NativeName;
-        var d2 = new RegionInfo(dupa2.LCID).NativeName;
-        
         _currentCulture = CultureContext.CurrentCulture;
         _avaiableCultures = CultureContext.SupportedCultures.Where(language => _currentCulture.Name != language.Name).ToArray();
-
         return base.OnInitializedAsync();
     }
 

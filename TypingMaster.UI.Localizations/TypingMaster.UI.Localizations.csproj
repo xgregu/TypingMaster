@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Translations\App.Designer.cs">
+        <Compile Update="Translations\Resource.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
         </Compile>

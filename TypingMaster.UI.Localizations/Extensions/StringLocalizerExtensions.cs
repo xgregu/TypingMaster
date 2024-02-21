@@ -33,6 +33,7 @@ public static class StringLocalizerExtensions
             try
             {
                 using var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false);
+                
                 if (resourceSet == null)
                     continue;
 

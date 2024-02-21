@@ -12,12 +12,13 @@ public class TypingLevelNamesStore(ILogger<TypingLevelNamesStore> logger, IServi
     public async Task<IReadOnlyList<TypingLevelNameEntity>> GetAllAsync(string cultureCode)
     {
         logger.LogInformation("GetAllAsync");
+        
         await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
         return await context.TypingLevelName
             .AsNoTracking()
             .Include(x => x.Culture)
             .Include(x => x.TypingLevel)
-            .Where(x => x.Culture.CultureCode.Equals(cultureCode))
+            .Where(x => EF.Functions.Like(x.Culture.CultureCode, cultureCode))
             .ToListAsync();
     }
 }

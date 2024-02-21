@@ -11,7 +11,7 @@ using TypingMaster.Database;
 namespace TypingMaster.Database.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    [Migration("20240220190614_Initial")]
+    [Migration("20240221080712_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

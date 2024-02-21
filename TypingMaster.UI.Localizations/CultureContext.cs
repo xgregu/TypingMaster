@@ -12,7 +12,7 @@ public class CultureContext : ICultureContext
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CultureContext(ILogger<CultureContext> logger, IStringLocalizer<App> stringLocalizer,
+    public CultureContext(ILogger<CultureContext> logger, IStringLocalizer<Resource> stringLocalizer,
         IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;

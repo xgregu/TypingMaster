@@ -1,0 +1,12 @@
+﻿using System.Globalization;
+
+namespace TypingMaster.UI.Localizations.Extensions;
+
+public static class CultureExtensions
+{
+    public static string RegionName(this CultureInfo cultureInfo) => cultureInfo.RegionInfo().Name;
+    public static string RegionNativeName(this CultureInfo cultureInfo) => cultureInfo.RegionInfo().NativeName;
+    public static string TwoLetterISORegionName(this CultureInfo cultureInfo) => cultureInfo.RegionInfo().TwoLetterISORegionName;
+    public static string LanguageName(this CultureInfo cultureInfo) => new CultureInfo(cultureInfo.TwoLetterISOLanguageName).NativeName.CapitalizeFirstLetter();
+    public static RegionInfo RegionInfo(this CultureInfo cultureInfo) => new(cultureInfo.Name);
+}

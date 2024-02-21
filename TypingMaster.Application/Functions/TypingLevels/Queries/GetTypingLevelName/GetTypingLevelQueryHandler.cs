@@ -43,7 +43,7 @@ public class GetAllTypingLevelsQueryHandler
             var typingLevelNamesEntities = await typingLevelNamesStore.GetAllAsync(request.CultureCode);
             var levelName = typingLevelNamesEntities.FirstOrDefault(x =>
                 x.TypingLevel.DifficultyLevel == request.DifficultyLevel &&
-                x.Culture.CultureCode == request.CultureCode);
+                x.Culture.CultureCode.Equals(request.CultureCode, StringComparison.CurrentCultureIgnoreCase));
 
             return levelName is not null
                 ? GetTypingLevelNameResponse.Success(levelName.Name)
