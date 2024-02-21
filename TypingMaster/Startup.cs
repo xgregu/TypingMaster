@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using TypingMaster.Application;
 using TypingMaster.Database;
+using TypingMaster.DevTools;
 using TypingMaster.Domain;
 
 namespace TypingMaster;
@@ -52,6 +53,8 @@ public class Startup
             })
             .AddEntityFrameworkStores<TestDbContext>()
             .AddDefaultTokenProviders();
+
+        //services.AddTransient<IInitializable, RandomTestProvider>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
