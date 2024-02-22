@@ -1,5 +1,6 @@
 ﻿using FluentValidation.Results;
 using MediatR;
+using TypingMaster.Application.Events;
 using TypingMaster.Application.Extensions;
 using TypingMaster.Application.Functions.Common;
 using TypingMaster.Domain;
@@ -8,7 +9,7 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Application.Functions.Tests.Commands.CreateTest;
 
-public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestStatisticsCalculator statisticsCalculator)
+public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestStatisticsCalculator statisticsCalculator, IPublisher mediator)
     : IRequestHandler<CreatedTestCommand, CreatedTestCommandResponse>
 {
     public async Task<CreatedTestCommandResponse> Handle(CreatedTestCommand request,
@@ -33,6 +34,8 @@ public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestSt
             };
 
             var createdTest = await typingTestStore.AddAsync(testEntity);
+            
+            _ = mediator.Publish(new TestUpdatedEvent(), cancellationToken);
             return CreatedTestCommandResponse.Success(createdTest.ToDto());
         }
         catch (Exception e)

@@ -18,7 +18,11 @@ public class HealthController(IDbContextFactory<TestDbContext> dbFactory) : Cont
         
         try
         {
+            
             await using var dbContext = await dbFactory.CreateDbContextAsync(cancellationToken);
+
+            var culture = dbContext.Cultures.ToList();
+            
             var result = await dbContext.HealthCheck(cancellationToken);
             
             if(result.IsOk)

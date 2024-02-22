@@ -38,5 +38,7 @@ public class TestEntityConfiguration : IEntityTypeConfiguration<TypingTestEntity
 
         builder.HasOne(x => x.Statistics)
             .WithOne(x => x.TypingTest);
+        
+        builder.Navigation(x => x.Statistics).AutoInclude();
     }
 }

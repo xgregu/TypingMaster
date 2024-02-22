@@ -34,5 +34,8 @@ public class TypingLevelNameEntityConfiguration : IEntityTypeConfiguration<Typin
             .WithMany(x => x.TypingLevelNames)
             .HasForeignKey(x => x.TypingLevelId)
             .IsRequired();
+        
+        builder.Navigation(x => x.Culture).AutoInclude();
+        builder.Navigation(x => x.TypingLevel).AutoInclude();
     }
 }

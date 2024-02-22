@@ -34,5 +34,10 @@ public partial class TypingTextEntityConfiguration : IEntityTypeConfiguration<Ty
             .IsRequired();
 
         builder.Property(x => x.Text).IsRequired();
+        
+        builder.Navigation(x => x.Culture).AutoInclude();
+        builder.Navigation(x => x.DifficultyLevel).AutoInclude();
+        builder.Navigation(x=> x.Tests).AutoInclude();
+
     }
 }

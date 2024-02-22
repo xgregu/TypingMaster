@@ -14,6 +14,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.2"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
@@ -26,11 +27,5 @@
     <ItemGroup>
         <ProjectReference Include="..\TypingMaster.Application\TypingMaster.Application.csproj"/>
         <ProjectReference Include="..\TypingMaster.Domain\TypingMaster.Domain.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-            <HintPath>..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-        </Reference>
     </ItemGroup>
 </Project>

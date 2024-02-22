@@ -90,7 +90,17 @@ public class TestDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a =>
+            {
+                var name = a.GetName().Name;
+                return name != null && name.StartsWith("TypingMaster.");
+            });
+
+        foreach (var assembly in assemblies)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(assembly);
+        }
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())

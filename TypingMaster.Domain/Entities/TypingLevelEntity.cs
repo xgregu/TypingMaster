@@ -21,5 +21,11 @@ public class TypingLevelEntityConfiguration : IEntityTypeConfiguration<TypingLev
 
         builder.HasIndex(x => x.DifficultyLevel)
             .IsUnique();
+        
+        builder.HasMany(x => x.TypingTexts);
+        builder.Navigation(x => x.TypingTexts).AutoInclude();
+        
+        builder.HasMany(x => x.TypingLevelNames);
+        builder.Navigation(x => x.TypingLevelNames).AutoInclude();
     }
 }

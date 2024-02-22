@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using TypingMaster.Domain.Entities.Common;
 using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
 public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFactory<TestDbContext> dbFactory)
-    : IAsyncRepository<T>
-    where T : class
+    : IAsyncRepository<T> where T : BaseEntity
 {
-    public virtual async Task<T> AddAsync(T entity)
+    public async Task<T> AddAsync(T entity)
     {
         logger.LogInformation("AddAsync | {@entity}", entity);
 
@@ -19,7 +19,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
         return entity;
     }
 
-    public async Task AddRangeAsync(T[] entities)
+    public async Task AddRangeAsync(IEnumerable<T> entities)
     {
         logger.LogInformation("AddAsync | {@entities}", entities);
 
@@ -28,7 +28,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
         await dbContext.SaveChangesAsync();
     }
 
-    public virtual async Task DeleteAsync(T entity)
+    public async Task DeleteAsync(T entity)
     {
         logger.LogInformation("DeleteAsync | {@entity}", entity);
 
@@ -37,7 +37,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
         await dbContext.SaveChangesAsync();
     }
 
-    public virtual async Task<IReadOnlyList<T>> GetAllAsync()
+    public async Task<IReadOnlyList<T>> GetAllAsync()
     {
         logger.LogInformation("GetAllAsync");
 
@@ -45,7 +45,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
         return await dbContext.Set<T>().ToListAsync();
     }
 
-    public virtual async Task<T> GetByIdAsync(long id)
+    public async Task<T> GetByIdAsync(long id)
     {
         logger.LogInformation("GetByIdAsync | Id={@id}", id);
 
@@ -53,7 +53,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
         return await dbContext.Set<T>().FindAsync(id);
     }
 
-    public virtual async Task UpdateAsync(T entity)
+    public async Task UpdateAsync(T entity)
     {
         logger.LogInformation("UpdateAsync | {@entity}", entity);
 
