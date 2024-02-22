@@ -7,24 +7,25 @@ namespace TypingMaster.Controllers;
 
 [ApiController]
 [AllowAnonymous]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class HealthController(IDbContextFactory<TestDbContext> dbFactory) : Controller
 {
     [HttpGet]
     public async Task<ActionResult> CheckHealth(CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return StatusCode(StatusCodes.Status500InternalServerError, $"{DateTimeOffset.Now} ❌ - Request cancelled");
+        
         try
         {
-            if (cancellationToken.IsCancellationRequested)
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"{DateTimeOffset.Now} ❌ - Request cancelled");
-            
             await using var dbContext = await dbFactory.CreateDbContextAsync(cancellationToken);
-            if (!await dbContext.Database.CanConnectAsync(cancellationToken))
-                return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    $"{DateTimeOffset.Now} 👎 - Database connection failed");
-
-            return Ok($"{DateTimeOffset.Now} 👍 - Connection healthy");
+            var result = await dbContext.HealthCheck(cancellationToken);
+            
+            if(result.IsOk)
+                return Ok($"{DateTimeOffset.Now} 👍 - Connection healthy");
+            
+            return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                $"{DateTimeOffset.Now} 👎 - {result.Error}");
         }
         catch (OperationCanceledException)
         {

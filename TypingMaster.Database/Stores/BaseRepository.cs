@@ -22,7 +22,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
     public async Task AddRangeAsync(T[] entities)
     {
         logger.LogInformation("AddAsync | {@entities}", entities);
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         await dbContext.Set<T>().AddRangeAsync(entities);
         await dbContext.SaveChangesAsync();
@@ -31,7 +31,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
     public virtual async Task DeleteAsync(T entity)
     {
         logger.LogInformation("DeleteAsync | {@entity}", entity);
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         dbContext.Set<T>().Remove(entity);
         await dbContext.SaveChangesAsync();
@@ -40,7 +40,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
     public virtual async Task<IReadOnlyList<T>> GetAllAsync()
     {
         logger.LogInformation("GetAllAsync");
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         return await dbContext.Set<T>().ToListAsync();
     }
@@ -48,7 +48,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
     public virtual async Task<T> GetByIdAsync(long id)
     {
         logger.LogInformation("GetByIdAsync | Id={@id}", id);
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         return await dbContext.Set<T>().FindAsync(id);
     }
@@ -56,7 +56,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
     public virtual async Task UpdateAsync(T entity)
     {
         logger.LogInformation("UpdateAsync | {@entity}", entity);
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         dbContext.Entry(entity).State = EntityState.Modified;
         await dbContext.SaveChangesAsync();

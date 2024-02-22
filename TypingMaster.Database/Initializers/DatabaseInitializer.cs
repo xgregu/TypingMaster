@@ -4,7 +4,8 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Initializers;
 
-public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, IDbContextFactory<TestDbContext> dbFactory) : IInitializable
+public class DatabaseInitializer
+    (ILogger<DatabaseInitializer> logger, IDbContextFactory<TestDbContext> dbFactory) : IInitializable
 {
     public uint Priority => 1;
 

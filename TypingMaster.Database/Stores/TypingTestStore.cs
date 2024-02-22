@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TypingMaster.Application.Events;
 using TypingMaster.Domain.Entities;
@@ -8,18 +7,19 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
-public class TypingTestStore(ILogger<TypingTestStore> logger, IDbContextFactory<TestDbContext> dbFactory, IMediator mediator)
+public class TypingTestStore(ILogger<TypingTestStore> logger, IDbContextFactory<TestDbContext> dbFactory,
+        IMediator mediator)
     : BaseRepository<TypingTestEntity>(logger, dbFactory), ITypingTestStore
 {
     public async Task<TypingTestEntity> AddAsync(TypingTestEntity entity)
     {
         logger.LogInformation("AddAsync | {@entity}", entity);
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
-        
+
         await dbContext.AddAsync(entity);
         await dbContext.SaveChangesAsync();
-        
+
         _ = mediator.Publish(new TestUpdatedEvent());
 
         var savedEntity = await GetByIdAsync(entity.Id);
@@ -29,7 +29,7 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IDbContextFactory<
     public override async Task<IReadOnlyList<TypingTestEntity>> GetAllAsync()
     {
         logger.LogInformation("GetAllAsync");
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         return await dbContext.TypingTests
             .AsNoTracking()
@@ -56,7 +56,7 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IDbContextFactory<
     public async Task<TypingTestEntity> GetLast()
     {
         logger.LogInformation("GetLast");
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         var entity = await dbContext.TypingTests
             .AsNoTracking()
@@ -115,7 +115,7 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IDbContextFactory<
     public async Task<long> GetCount()
     {
         logger.LogInformation("GetCount");
-        
+
         await using var dbContext = await dbFactory.CreateDbContextAsync();
         return dbContext.TypingTests
             .AsNoTracking()

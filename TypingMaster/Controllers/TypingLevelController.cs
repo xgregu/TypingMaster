@@ -11,7 +11,7 @@ namespace TypingMaster.Controllers;
 
 [ApiController]
 [AllowAnonymous]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class TypingLevelController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{difficultyLevel:int}")]

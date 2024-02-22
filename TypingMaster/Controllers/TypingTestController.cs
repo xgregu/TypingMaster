@@ -15,7 +15,7 @@ namespace TypingMaster.Controllers;
 
 [ApiController]
 [AllowAnonymous]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class TypingTestController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
