@@ -47,14 +47,14 @@ public class RandomTestProvider(ICulturesStore culturesStore, ITypingTextsStore 
 
                         var test = new CreateTestRequest(fakePerson.name, startDate, endDate, totalClicks, text.Id);
                         var request = new CreatedTestCommand(test);
-                        var testStatistisc = await statisticsCalculator.GetTestStatistic(request.CreateTestRequest);
+                        var testStatistic = await statisticsCalculator.GetTestStatistic(request.CreateTestRequest);
                         var testEntity = new TypingTestEntity
                         {
                             ExecutorName = request.CreateTestRequest.ExecutorName,
                             StartTime = request.CreateTestRequest.StartTime,
                             EndTime = request.CreateTestRequest.EndTime,
                             TextId = request.CreateTestRequest.TextId,
-                            Statistics = testStatistisc
+                            Statistics = testStatistic
                         };
 
                         _ = typingTestStore.AddAsync(testEntity);

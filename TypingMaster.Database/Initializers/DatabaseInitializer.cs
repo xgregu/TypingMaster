@@ -4,7 +4,7 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Initializers;
 
-public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, TestDbContext context) : IInitializable
+public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, IDbContextFactory<TestDbContext> dbFactory) : IInitializable
 {
     public uint Priority => 1;
 
@@ -17,6 +17,7 @@ public class DatabaseInitializer(ILogger<DatabaseInitializer> logger, TestDbCont
     private async Task MigrateDatabase()
     {
         logger.LogInformation("MigrateDatabase");
-        await context.Database.MigrateAsync();
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        await dbContext.Database.MigrateAsync();
     }
 }

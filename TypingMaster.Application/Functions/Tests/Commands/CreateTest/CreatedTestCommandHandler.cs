@@ -22,14 +22,14 @@ public class CreatedTestCommandHandler(ITypingTestStore typingTestStore, ITestSt
                 return CreatedTestCommandResponse.Failure(ResponseStatus.Failed,
                     string.Join(", ", validatorResult.Errors));
 
-            var testStatistisc = await statisticsCalculator.GetTestStatistic(request.CreateTestRequest);
+            var testStatistic = await statisticsCalculator.GetTestStatistic(request.CreateTestRequest);
             var testEntity = new TypingTestEntity
             {
                 ExecutorName = request.CreateTestRequest.ExecutorName,
                 StartTime = request.CreateTestRequest.StartTime,
                 EndTime = request.CreateTestRequest.EndTime,
                 TextId = request.CreateTestRequest.TextId,
-                Statistics = testStatistisc
+                Statistics = testStatistic
             };
 
             var createdTest = await typingTestStore.AddAsync(testEntity);

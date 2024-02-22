@@ -8,18 +8,17 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
-public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFactory scopeFactory, IMediator mediator)
-    : BaseRepository<TypingTestEntity>(logger, scopeFactory), ITypingTestStore
+public class TypingTestStore(ILogger<TypingTestStore> logger, IDbContextFactory<TestDbContext> dbFactory, IMediator mediator)
+    : BaseRepository<TypingTestEntity>(logger, dbFactory), ITypingTestStore
 {
     public async Task<TypingTestEntity> AddAsync(TypingTestEntity entity)
     {
         logger.LogInformation("AddAsync | {@entity}", entity);
         
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
         
-        await context.AddAsync(entity);
-        await context.SaveChangesAsync();
+        await dbContext.AddAsync(entity);
+        await dbContext.SaveChangesAsync();
         
         _ = mediator.Publish(new TestUpdatedEvent());
 
@@ -31,10 +30,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFacto
     {
         logger.LogInformation("GetAllAsync");
         
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-        
-        return await context.TypingTests
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        return await dbContext.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
             .ThenInclude(x => x.DifficultyLevel)
@@ -46,10 +43,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFacto
     {
         logger.LogInformation("GetByIdAsync | Id={id}", id);
 
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-        
-        var entity = await context.TypingTests
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        var entity = await dbContext.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
             .ThenInclude(x => x.DifficultyLevel)
@@ -62,10 +57,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFacto
     {
         logger.LogInformation("GetLast");
         
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-        
-        var entity = await context.TypingTests
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        var entity = await dbContext.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
             .ThenInclude(x => x.DifficultyLevel)
@@ -80,10 +73,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFacto
     {
         logger.LogInformation("GetPages | TestId={testId}", testId);
 
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-        
-        var index = context.TypingTestStatistics
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        var index = dbContext.TypingTestStatistics
             .Include(x => x.TypingTest)
             .AsNoTracking()
             .OrderByDescending(x => x.OverallRating)
@@ -100,10 +91,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFacto
     {
         logger.LogInformation("GetPages | StartIndex={start}, Count={count}", startIndex, count);
 
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-
-        var testsQuery = context.TypingTests
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        var testsQuery = dbContext.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
             .ThenInclude(x => x.DifficultyLevel)
@@ -127,10 +116,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFacto
     {
         logger.LogInformation("GetCount");
         
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-        
-        return context.TypingTests
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        return dbContext.TypingTests
             .AsNoTracking()
             .Count();
     }

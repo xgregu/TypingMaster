@@ -6,17 +6,15 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
-public class TypingLevelNamesStore(ILogger<TypingLevelNamesStore> logger, IServiceScopeFactory scopeFactory)
-    : BaseRepository<TypingLevelNameEntity>(logger, scopeFactory), ITypingLevelNamesStore
+public class TypingLevelNamesStore(ILogger<TypingLevelNamesStore> logger, IDbContextFactory<TestDbContext> dbFactory)
+    : BaseRepository<TypingLevelNameEntity>(logger, dbFactory), ITypingLevelNamesStore
 {
     public async Task<IReadOnlyList<TypingLevelNameEntity>> GetAllAsync(string cultureCode)
     {
         logger.LogInformation("GetAllAsync");
 
-        await using var scope = scopeFactory.CreateAsyncScope();
-        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
-        
-        return await context.TypingLevelName
+        await using var dbContext = await dbFactory.CreateDbContextAsync();
+        return await dbContext.TypingLevelName
             .AsNoTracking()
             .Include(x => x.Culture)
             .Include(x => x.TypingLevel)
