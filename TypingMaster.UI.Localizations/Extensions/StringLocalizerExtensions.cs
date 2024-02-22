@@ -33,13 +33,13 @@ public static class StringLocalizerExtensions
             try
             {
                 using var resourceSet = resourceManager.GetResourceSet(cultureInfo, true, false);
-                
+
                 if (resourceSet == null)
                     continue;
 
-                if(string.IsNullOrWhiteSpace(cultureInfo.Name))
+                if (string.IsNullOrWhiteSpace(cultureInfo.Name))
                     continue;
-                
+
                 cultures.Add(cultureInfo);
             }
             catch (CultureNotFoundException)

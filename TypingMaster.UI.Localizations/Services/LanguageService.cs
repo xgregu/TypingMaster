@@ -4,21 +4,22 @@ using Microsoft.Extensions.Logging;
 
 namespace TypingMaster.UI.Localizations.Services;
 
-public class LanguageService(ILogger<LanguageService> logger, NavigationManager navigationManager, ICultureContext cultureContext)
+public class LanguageService(ILogger<LanguageService> logger, NavigationManager navigationManager,
+    ICultureContext cultureContext)
 {
     public bool SetLanguage(string languageCountryCode)
     {
         if (string.IsNullOrWhiteSpace(languageCountryCode))
             return true;
-        
+
         return SetLanguage(new CultureInfo(languageCountryCode));
     }
-    
+
     public bool SetLanguage(CultureInfo targetCultureInfo)
     {
         logger.LogInformation("SetLanguage | Current: {Current}. Target: {Target}", cultureContext.CurrentCulture.Name,
             targetCultureInfo.Name);
-        
+
         if (cultureContext.CurrentCulture.Name == targetCultureInfo.Name
             && CultureInfo.CurrentCulture.Name == targetCultureInfo.Name
             && CultureInfo.CurrentUICulture.Name == targetCultureInfo.Name

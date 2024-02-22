@@ -15,7 +15,7 @@ public static class Registration
 
         return serviceCollection;
     }
-    
+
     public static IApplicationBuilder ConfigureLocalizations(this IApplicationBuilder app)
     {
         var cultureContext = app.ApplicationServices.GetRequiredService<ICultureContext>();
@@ -23,7 +23,7 @@ public static class Registration
             .SetDefaultCulture(cultureContext.DefaultCulture.Name)
             .AddSupportedCultures(cultureContext.SupportedCultures.Select(x => x.Name).ToArray())
             .AddSupportedUICultures(cultureContext.SupportedCultures.Select(x => x.Name).ToArray());
-        
+
         app.UseRequestLocalization(requestLocalizationOptions);
         return app;
     }

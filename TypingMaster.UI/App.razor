@@ -41,7 +41,7 @@
     {
         if (obj.IsConnected)
         {
-            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            NavigationManager.NavigateTo(NavigationManager.Uri, true);
         }
         else
             PleaseWaitService.Show(new PleaseWaitParameters {Text = Localizer["ConnectionToTheServerWasInterrupted"], Color = "red"});

@@ -4,7 +4,8 @@ using TypingMaster.UI.Localizations;
 
 namespace TypingMaster.UI;
 
-public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientFactory, ICultureContext cultureContext, SignalRConnectivity signalRConnectivity)
+public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientFactory, ICultureContext cultureContext,
+    SignalRConnectivity signalRConnectivity)
 {
     private const string TestApiUrl = "TypingTest";
 
@@ -15,7 +16,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
     private string CurrentCultureName => cultureContext.CurrentCulture.Name;
     private string GetAllTypingLevelsUrl => $"{TypingLevelApiUrl}?cultureCode={CurrentCultureName}";
     private bool IsConnected => signalRConnectivity.IsConnected;
-    
+
     private static string GetTestUrl(long testId)
     {
         return $"{TestApiUrl}/{testId}";
@@ -48,7 +49,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         var response = await _httpClient.GetAsync(GetTestUrl(testId));
         var typingTestDto = await HandleResponse<TypingTestDto>(response);
         return typingTestDto;
@@ -61,7 +62,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         try
         {
             var response = await _httpClient.GetAsync(GetTestRankingUrl(testId), cancellationToken);
@@ -81,7 +82,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         var response = await _httpClient.GetAsync(TestApiUrl);
         var typingTestDto = await HandleResponse<TypingTestDto[]>(response);
         return typingTestDto;
@@ -95,7 +96,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         try
         {
             var response = await _httpClient.GetAsync(GetTestPageUrl(startIndex, count), cancellationToken);
@@ -115,7 +116,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         var response = await _httpClient.GetAsync(GetTypingTextByDifficultyLevelUrl(difficultyLevel));
         var typingTextDtos = await HandleResponse<TypingTextDto[]>(response);
         return typingTextDtos;
@@ -128,7 +129,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         var response = await _httpClient.GetAsync(GetAllTypingLevelsUrl);
         var typingLevelDtos = await HandleResponse<TypingLevelDto[]>(response);
         return typingLevelDtos;
@@ -141,7 +142,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         try
         {
             var response = await _httpClient.GetAsync(GetTypingLevelNameUrl(difficultyLevel), cancellationToken);
@@ -161,7 +162,7 @@ public class ApiClient(ILogger<ApiClient> logger, IHttpClientFactory httpClientF
             logger.LogWarning("Backend is not avaiable");
             return null;
         }
-        
+
         var response = await _httpClient.PostAsJsonAsync(TestApiUrl, createTestRequest);
         var typingTestDto = await HandleResponse<TypingTestDto>(response);
         return typingTestDto;

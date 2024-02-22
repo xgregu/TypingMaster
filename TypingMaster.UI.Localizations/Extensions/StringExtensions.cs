@@ -6,7 +6,7 @@ public static class StringExtensions
 {
     public static string CapitalizeFirstLetter(this string input)
     {
-        if (string.IsNullOrWhiteSpace(input)) 
+        if (string.IsNullOrWhiteSpace(input))
             return input;
 
         return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(input);

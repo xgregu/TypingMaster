@@ -45,7 +45,7 @@
         if (_selectLanguageTexts.Length > 1)
             _ = Task.Run(AnimationLoop);
     }
-    
+
     private async Task AnimationLoop()
     {
         while (!_cts.IsCancellationRequested)
@@ -88,4 +88,5 @@
         _cts.Cancel();
         _cts.Dispose();
     }
+
 }

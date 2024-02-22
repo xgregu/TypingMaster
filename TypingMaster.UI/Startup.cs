@@ -35,7 +35,7 @@ public class Startup(IConfiguration configuration)
 
         services.AddOptions<BackendSettings>()
             .Configure<IConfiguration>((o, c) => c.GetSection(BackendSettings.SectionName).Bind(o));
-        
+
 
         services.AddHttpClient<ApiClient>("ApiClient", client =>
         {
@@ -50,7 +50,7 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IPleaseWaitService, PleaseWaitService>();
 
         services.AddTypingMasterLocalizations();
-        
+
         services.AddSignalR();
         services.AddSingleton<SignalRConnectivity>();
         services.AddHostedService<SignalRConnectivity>(provider => provider.GetRequiredService<SignalRConnectivity>());

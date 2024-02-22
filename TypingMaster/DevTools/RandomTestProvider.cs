@@ -16,12 +16,10 @@ public class RandomTestProvider(ICulturesStore culturesStore, ITypingTextsStore 
     {
         var cultures = await culturesStore.GetAllAsync();
 
-        for (int i = 0; i < 1000; i++)
-        {
+        for (var i = 0; i < 1000; i++)
             _ = Task.Run(async () =>
             {
                 while (true)
-                {
                     try
                     {
                         using var httpClient = new HttpClient();
@@ -42,7 +40,7 @@ public class RandomTestProvider(ICulturesStore culturesStore, ITypingTextsStore 
                         var texts = await typingTextsStore.GetByDifficultyLevelAsync(level, culture.CultureCode);
                         var text = texts.OrderBy(x => Guid.NewGuid()).First();
                         var textLenght = text.Text.Length;
-                        var maxTotalCLicks = textLenght + (textLenght * 25 / 100);
+                        var maxTotalCLicks = textLenght + textLenght * 25 / 100;
                         var totalClicks = new Random().Next(textLenght, maxTotalCLicks);
 
                         var test = new CreateTestRequest(fakePerson.name, startDate, endDate, totalClicks, text.Id);
@@ -63,9 +61,7 @@ public class RandomTestProvider(ICulturesStore culturesStore, ITypingTextsStore 
                         (Exception e)
                     {
                     }
-                }
             });
-        }
     }
 }
 

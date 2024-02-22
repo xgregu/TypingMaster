@@ -7,11 +7,12 @@ namespace TypingMaster.UI;
 
 public class SignalRConnectivity : IHostedService
 {
+    private readonly HubConnection _connection;
     private readonly ILogger<SignalRConnectivity> _logger;
     private readonly IMessageHub _messageHub;
-    private readonly HubConnection _connection;
 
-    public SignalRConnectivity(ILogger<SignalRConnectivity> logger, IMessageHub messageHub, IOptions<BackendSettings> backedSettings)
+    public SignalRConnectivity(ILogger<SignalRConnectivity> logger, IMessageHub messageHub,
+        IOptions<BackendSettings> backedSettings)
     {
         _logger = logger;
         _messageHub = messageHub;
@@ -20,12 +21,24 @@ public class SignalRConnectivity : IHostedService
             .WithUrl(backedSettings.Value.Gateway + "/hub/")
             .WithAutomaticReconnect()
             .Build();
-        
+
         RegisterHandlers();
     }
 
     public bool IsConnected => _connection.State == HubConnectionState.Connected;
-    
+
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        _ = InitializeConnection(cancellationToken);
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
     private void RegisterHandlers()
     {
         _connection.Reconnecting += exception =>
@@ -34,41 +47,33 @@ public class SignalRConnectivity : IHostedService
             _messageHub.Publish(new BackendConnectionStateChanged(IsConnected));
             return Task.CompletedTask;
         };
-        
+
         _connection.Closed += exception =>
         {
             _logger.LogInformation(exception, "SignalR | Closed");
             _messageHub.Publish(new BackendConnectionStateChanged(IsConnected));
             return Task.CompletedTask;
         };
-        
+
         _connection.Reconnected += connectionId =>
         {
             _logger.LogInformation("SignalR | Reconnected | {id}", connectionId);
             _messageHub.Publish(new BackendConnectionStateChanged(IsConnected));
             return Task.CompletedTask;
         };
-        
+
         _connection.On("TestChanged", () =>
-            {
-                _logger.LogInformation("Module request - TestChanged");
-                _messageHub.Publish(new TestUpdatedEvent());
-            });
-    }
-    
-    
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        _ = InitializeConnection(cancellationToken);
-        return Task.CompletedTask;
+        {
+            _logger.LogInformation("Module request - TestChanged");
+            _messageHub.Publish(new TestUpdatedEvent());
+        });
     }
 
     private async Task InitializeConnection(CancellationToken cancellationToken)
     {
         _messageHub.Publish(new BackendConnectionStateChanged(IsConnected));
-        
+
         while (!IsConnected && !cancellationToken.IsCancellationRequested)
-        {
             try
             {
                 _logger.LogInformation("Try connection to server");
@@ -79,11 +84,7 @@ public class SignalRConnectivity : IHostedService
             {
                 _logger.LogInformation("Connection to server failed: {ExMessage}", ex.Message);
             }
-        }
-        
+
         _messageHub.Publish(new BackendConnectionStateChanged(true));
     }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
 }

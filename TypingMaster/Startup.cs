@@ -44,7 +44,7 @@ public class Startup
         services.AddApplication();
         services.AddCore();
         services.AddDatabase();
-        
+
         services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;

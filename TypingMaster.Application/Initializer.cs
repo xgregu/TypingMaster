@@ -16,5 +16,8 @@ public class Initializer(IServiceScopeFactory scopeFactory) : IHostedService
         await StopAsync(cancellationToken);
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
 }
