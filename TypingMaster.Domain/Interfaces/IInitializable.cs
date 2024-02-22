@@ -1,4 +1,4 @@
-namespace TypingMaster.Domain;
+namespace TypingMaster.Domain.Interfaces;
 
 public interface IInitializable
 {

@@ -6,7 +6,8 @@ public static class Registration
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddTransient<ITestStatisticsCalculator, TestStatisticsCalculator>();
+        services.AddSignalR();
+        services.AddHostedService<Initializer>();
         return services;
     }
 }

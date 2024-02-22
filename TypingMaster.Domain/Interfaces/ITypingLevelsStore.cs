@@ -1,5 +1,5 @@
 using TypingMaster.Domain.Entities;
 
-namespace TypingMaster.Application.Interfaces;
+namespace TypingMaster.Domain.Interfaces;
 
 public interface ITypingLevelsStore : IAsyncRepository<TypingLevelEntity>;

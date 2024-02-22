@@ -2,8 +2,9 @@
 using MediatR;
 using TypingMaster.Application.Extensions;
 using TypingMaster.Application.Functions.Common;
-using TypingMaster.Application.Interfaces;
+using TypingMaster.Domain;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Application.Functions.Tests.Commands.CreateTest;
 

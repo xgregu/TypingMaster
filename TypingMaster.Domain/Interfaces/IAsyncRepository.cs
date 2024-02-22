@@ -1,4 +1,4 @@
-﻿namespace TypingMaster.Application.Interfaces;
+﻿namespace TypingMaster.Domain.Interfaces;
 
 public interface IAsyncRepository<T> where T : class
 {

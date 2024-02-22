@@ -1,21 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
-public class TypingTextsStore(ILogger<TypingTextsStore> logger, IServiceProvider serviceProvider)
+public class TypingTextsStore(ILogger<TypingTextsStore> logger, IServiceScopeFactory scopeFactory, TestDbContext dbContext)
     : BaseRepository<TypingTextEntity>(logger,
-        serviceProvider), ITypingTextsStore
+        scopeFactory), ITypingTextsStore
 {
     public override async Task<TypingTextEntity> GetByIdAsync(long id)
     {
         logger.LogInformation("GetByIdAsync | Id={id}", id);
 
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
-        var entity = await context.TypingTexts
+               await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        var entity = await dbContext.TypingTexts
             .AsNoTracking()
             .Include(x => x.DifficultyLevel)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -27,7 +28,8 @@ public class TypingTextsStore(ILogger<TypingTextsStore> logger, IServiceProvider
     {
         logger.LogInformation("GetByDifficultyLevelAsync | DifficultyLevel={difficultyLevel}", difficultyLevel);
 
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+               await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
         return await context.TypingTexts
             .AsNoTracking()
             .Include(x => x.Culture)

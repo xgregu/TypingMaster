@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TypingMaster.Domain;
+using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Initializers;
 

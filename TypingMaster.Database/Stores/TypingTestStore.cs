@@ -3,22 +3,26 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TypingMaster.Application.Events;
-using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
-public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider serviceProvider, IMediator mediator)
-    : BaseRepository<TypingTestEntity>(logger, serviceProvider), ITypingTestStore
+public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceScopeFactory scopeFactory, IMediator mediator)
+    : BaseRepository<TypingTestEntity>(logger, scopeFactory), ITypingTestStore
 {
     public async Task<TypingTestEntity> AddAsync(TypingTestEntity entity)
     {
         logger.LogInformation("AddAsync | {@entity}", entity);
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        
+        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        
         await context.AddAsync(entity);
         await context.SaveChangesAsync();
-        _ = mediator.Publish(new TestUpdatedEvent());
         
+        _ = mediator.Publish(new TestUpdatedEvent());
+
         var savedEntity = await GetByIdAsync(entity.Id);
         return savedEntity;
     }
@@ -26,7 +30,10 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
     public override async Task<IReadOnlyList<TypingTestEntity>> GetAllAsync()
     {
         logger.LogInformation("GetAllAsync");
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        
+        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        
         return await context.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
@@ -39,7 +46,9 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
     {
         logger.LogInformation("GetByIdAsync | Id={id}", id);
 
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        
         var entity = await context.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
@@ -52,7 +61,10 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
     public async Task<TypingTestEntity> GetLast()
     {
         logger.LogInformation("GetLast");
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        
+        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        
         var entity = await context.TypingTests
             .AsNoTracking()
             .Include(x => x.Text)
@@ -68,7 +80,9 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
     {
         logger.LogInformation("GetPages | TestId={testId}", testId);
 
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        
         var index = context.TypingTestStatistics
             .Include(x => x.TypingTest)
             .AsNoTracking()
@@ -86,7 +100,8 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
     {
         logger.LogInformation("GetPages | StartIndex={start}, Count={count}", startIndex, count);
 
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
 
         var testsQuery = context.TypingTests
             .AsNoTracking()
@@ -111,7 +126,10 @@ public class TypingTestStore(ILogger<TypingTestStore> logger, IServiceProvider s
     public async Task<long> GetCount()
     {
         logger.LogInformation("GetCount");
-        await using var context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<TestDbContext>();
+        
+        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var context = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        
         return context.TypingTests
             .AsNoTracking()
             .Count();

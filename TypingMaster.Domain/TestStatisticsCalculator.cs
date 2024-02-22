@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Domain.Interfaces;
 using TypingMaster.Shared.Dtos;
 
-namespace TypingMaster.Application;
+namespace TypingMaster.Domain;
 
 public interface ITestStatisticsCalculator
 {

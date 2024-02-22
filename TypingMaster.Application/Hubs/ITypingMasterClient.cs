@@ -1,4 +1,4 @@
-﻿namespace TypingMaster.Hubs;
+﻿namespace TypingMaster.Application.Hubs;
 
 public interface ITypingMasterClient
 {

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using TypingMaster.Application.Functions.Common;
-using TypingMaster.Application.Interfaces;
+using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Application.Functions.Tests.Queries.GetTestRanking;
 

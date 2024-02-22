@@ -1,9 +1,8 @@
 ﻿using System.Text.Json;
-using TypingMaster.Application;
 using TypingMaster.Application.Functions.Tests.Commands.CreateTest;
-using TypingMaster.Application.Interfaces;
 using TypingMaster.Domain;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Domain.Interfaces;
 using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.DevTools;

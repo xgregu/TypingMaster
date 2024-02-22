@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using TypingMaster.Application;
+using TypingMaster.Application.Hubs;
 using TypingMaster.Database;
 using TypingMaster.Domain;
-using TypingMaster.Hubs;
 
 namespace TypingMaster;
 
@@ -44,7 +44,6 @@ public class Startup
         services.AddApplication();
         services.AddCore();
         services.AddDatabase();
-        services.AddSignalR();
         
         services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
@@ -54,8 +53,6 @@ public class Startup
             })
             .AddEntityFrameworkStores<TestDbContext>()
             .AddDefaultTokenProviders();
-
-        //services.AddTransient<IInitializable, RandomTestProvider>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -78,7 +75,5 @@ public class Startup
         });
 
         app.UseAuthentication();
-
-        AppInitializer.Initialize(app.ApplicationServices).Wait();
     }
 }

@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TypingMaster.Application.Interfaces;
 using TypingMaster.Database.DefaultData;
 using TypingMaster.Database.Initializers;
 using TypingMaster.Database.Stores;
-using TypingMaster.Domain;
+using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database;
 

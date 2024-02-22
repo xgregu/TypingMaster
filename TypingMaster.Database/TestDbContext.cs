@@ -21,6 +21,9 @@ public class TestDbContext(DbContextOptions options, ILoggerFactory loggerFactor
 
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             optionsBuilder.EnableSensitiveDataLogging();
+        
+        ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        ChangeTracker.LazyLoadingEnabled = false;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

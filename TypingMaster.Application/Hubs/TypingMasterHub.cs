@@ -1,8 +1,7 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.SignalR;
-using TypingMaster.Application.Events;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
-namespace TypingMaster.Hubs;
+namespace TypingMaster.Application.Hubs;
 
 public class TypingMasterHub(ILogger<TypingMasterHub> logger) : Hub<ITypingMasterClient>
 {
@@ -18,10 +17,3 @@ public class TypingMasterHub(ILogger<TypingMasterHub> logger) : Hub<ITypingMaste
         return base.OnDisconnectedAsync(exception);
     }
 }
-
-public class TestUpdatedHandler(IHubContext<TypingMasterHub, ITypingMasterClient> hubContext)
-    : INotificationHandler<TestUpdatedEvent>
-{
-    public Task Handle(TestUpdatedEvent notification, CancellationToken cancellationToken) => hubContext.Clients.All.TestChanged();
-}
-

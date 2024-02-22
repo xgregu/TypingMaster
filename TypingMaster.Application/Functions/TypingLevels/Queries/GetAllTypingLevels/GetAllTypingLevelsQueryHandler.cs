@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using TypingMaster.Application.Functions.Common;
-using TypingMaster.Application.Interfaces;
+using TypingMaster.Domain.Interfaces;
 using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Functions.TypingLevels.Queries.GetAllTypingLevels;

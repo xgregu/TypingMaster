@@ -1,7 +1,6 @@
-﻿using TypingMaster.Application.Interfaces;
-using TypingMaster.Database.DefaultData;
-using TypingMaster.Domain;
+﻿using TypingMaster.Database.DefaultData;
 using TypingMaster.Domain.Entities;
+using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Initializers;
 
