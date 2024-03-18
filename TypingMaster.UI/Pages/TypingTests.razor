@@ -51,6 +51,7 @@
 </div>
 
 <TestComponent @ref="_testModalRef"/>
+<TestDetailsModal @ref="_testDetailsModalRef"/>
 
 @code
 {
@@ -58,6 +59,7 @@
 
     private TestComponent _testModalRef = default!;
     private TestRankingComponent _testRankingComponent = default!;
+    private TestDetailsModal _testDetailsModalRef = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,7 +82,22 @@
         }
     }
 
-    private async Task StartTest(TypingLevelDto typingLevel) => await _testModalRef.ShowAndWaitForResult(typingLevel);
+    private async Task StartTest(TypingLevelDto typingLevel)
+    {
+        try
+        {
+            var test = await _testModalRef.ShowAndWaitForResult(typingLevel);
+            if (test is not null)
+            {
+                var createdTest = await ApiClient.CreateTest(test);
+                await _testDetailsModalRef.Show(createdTest);
+            }
+        }
+        finally
+        {
+            PleaseWaitService.Hide();
+        }
+    }
 
     private RenderFragment GetButton(TypingLevelDto typingLevel) =>
         @<button

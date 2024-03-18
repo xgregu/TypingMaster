@@ -5,10 +5,11 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
-public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFactory<TestDbContext> dbFactory)
-    : IAsyncRepository<T> where T : BaseEntity
+public class BaseRepository<T>(ILogger logger, IDbContextFactory<TestDbContext> dbFactory) : IAsyncRepository<T>
+    where T : BaseEntity
 {
-    public async Task<T> AddAsync(T entity)
+
+    public virtual async Task<T> AddAsync(T entity)
     {
         logger.LogInformation("AddAsync | {@entity}", entity);
 
@@ -16,19 +17,20 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
 
         await dbContext.Set<T>().AddAsync(entity);
         await dbContext.SaveChangesAsync();
-        return entity;
+        return await GetByIdAsync(entity.Id);
     }
 
-    public async Task AddRangeAsync(IEnumerable<T> entities)
+    public virtual async Task<IReadOnlyList<T>> AddRangeAsync(IEnumerable<T> entities)
     {
         logger.LogInformation("AddAsync | {@entities}", entities);
-
         await using var dbContext = await dbFactory.CreateDbContextAsync();
-        await dbContext.Set<T>().AddRangeAsync(entities);
+        var entitiesToSave = entities.ToList();
+        await dbContext.Set<T>().AddRangeAsync(entitiesToSave);
         await dbContext.SaveChangesAsync();
+        return entitiesToSave.ToList().AsReadOnly();
     }
 
-    public async Task DeleteAsync(T entity)
+    public virtual async Task DeleteAsync(T entity)
     {
         logger.LogInformation("DeleteAsync | {@entity}", entity);
 
@@ -37,15 +39,21 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<IReadOnlyList<T>> GetAllAsync()
+    public virtual async Task<IReadOnlyList<T>> GetAllAsync()
     {
         logger.LogInformation("GetAllAsync");
 
         await using var dbContext = await dbFactory.CreateDbContextAsync();
-        return await dbContext.Set<T>().ToListAsync();
+        return await dbContext.Set<T>().AsNoTracking().ToListAsync();
+    }
+    
+    public IQueryable<T> GetAllQuerable(DbContext dbContext)
+    {
+        logger.LogInformation("GetAllQuerable");
+        return dbContext.Set<T>().AsNoTracking().AsQueryable();
     }
 
-    public async Task<T> GetByIdAsync(long id)
+    public virtual async Task<T> GetByIdAsync(long id)
     {
         logger.LogInformation("GetByIdAsync | Id={@id}", id);
 
@@ -53,7 +61,7 @@ public class BaseRepository<T>(ILogger<BaseRepository<T>> logger, IDbContextFact
         return await dbContext.Set<T>().FindAsync(id);
     }
 
-    public async Task UpdateAsync(T entity)
+    public virtual async Task UpdateAsync(T entity)
     {
         logger.LogInformation("UpdateAsync | {@entity}", entity);
 

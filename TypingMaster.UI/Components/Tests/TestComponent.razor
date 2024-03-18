@@ -55,7 +55,6 @@
         <Button Color="Color.Secondary" Clicked="@Hide">@Localizer["Close"]</Button>
     </Footer>
 </ModalBase>
-<TestDetailsModal @ref="_testDetailsModalRef"/>
 
 @code {
         private const int RequiredExecutorNameLenght = 2;
@@ -63,7 +62,7 @@
 
     private string ExecutorNamePlaceholder => $"{Localizer["IntroduceYourself"]}...";
     private string MemoEditPlaceholder => _testInProgress.IsStarted ? string.Empty : $"{Localizer["StartTypingToStartTheTest"]}...";
-    private TestDetailsModal _testDetailsModalRef = default!;
+
     private ModalBase? _modalBaseRef = default!;
     private bool _cancelClose;
     private TextColor _currentTextColor = TextColor.Default;
@@ -73,7 +72,7 @@
 
     private TestInProgress _testInProgress = TestInProgress.EmptyTest();
 
-    private TaskCompletionSource _confirmationTask;
+    private TaskCompletionSource<CreateTestRequest?> _confirmationTask = new();
     private string? _inputText;
 
     protected override async Task OnInitializedAsync()
@@ -82,14 +81,14 @@
         await base.OnInitializedAsync();
     }
 
-    public async Task ShowAndWaitForResult(TypingLevelDto typingLevel)
+    public async Task<CreateTestRequest?> ShowAndWaitForResult(TypingLevelDto typingLevel)
     {
         try
         {
             await PleaseWaitService.Show();
             var texts = await ApiClient.GetAllTypingTypingTextByDifficultyLevel(typingLevel.DifficultyLevel);
             _testInProgress = TestInProgress.InitializeTest(texts.MinBy(x => Guid.NewGuid()));
-            _confirmationTask = new TaskCompletionSource();
+            _confirmationTask = new TaskCompletionSource<CreateTestRequest?>();
             _cancelClose = true;
             await _modalBaseRef?.Show()!;
             PleaseWaitService.Hide();
@@ -99,13 +98,14 @@
         {
             await Hide();
         }
+
+        return _confirmationTask.Task.Result;
     }
 
     private async Task Hide()
     {
         await Clear();
         _cancelClose = false;
-        PleaseWaitService.Hide();
         _modalBaseRef?.Hide();
     }
 
@@ -130,21 +130,18 @@
 
     private async Task EndTest()
     {
+        var test = _testInProgress.EndTest(_executorName);
+
         try
         {
             await PleaseWaitService.Show(new PleaseWaitParameters
             {
                 Color = "#0b5ed7"
             });
-            var test = _testInProgress.EndTest(_executorName);
-
-            var createdTest = await ApiClient.CreateTest(test);
-            PleaseWaitService.Hide();
-            await _testDetailsModalRef.Show(createdTest);
         }
         finally
         {
-            _confirmationTask.SetResult();
+            _confirmationTask.SetResult(test);
         }
     }
 

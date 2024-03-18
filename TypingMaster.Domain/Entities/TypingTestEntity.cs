@@ -39,6 +39,13 @@ public class TestEntityConfiguration : IEntityTypeConfiguration<TypingTestEntity
         builder.HasOne(x => x.Statistics)
             .WithOne(x => x.TypingTest);
         
+        builder
+            .HasOne(x => x.Text)
+            .WithMany(x => x.Tests)
+            .HasForeignKey(x => x.TextId)
+            .IsRequired();
+        
         builder.Navigation(x => x.Statistics).AutoInclude();
+        builder.Navigation(x => x.Text).AutoInclude();
     }
 }

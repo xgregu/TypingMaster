@@ -20,8 +20,6 @@ public class CultureEntityConfiguration : IEntityTypeConfiguration<CultureEntity
         builder.HasIndex(x => x.CultureCode).IsUnique();
 
         builder.HasMany(x => x.TypingTexts);
-        builder.Navigation(x => x.TypingTexts).AutoInclude();
         builder.HasMany(x => x.TypingLevelNames);
-        builder.Navigation(x => x.TypingLevelNames).AutoInclude();
     }
 }

@@ -28,19 +28,22 @@ public static class Registration
         services.AddSingleton<ICulturesStore, CulturesStore>();
         services.AddSingleton<ITypingTextsStore, TypingTextsStore>();
         services.AddSingleton<ITypingLevelNamesStore, TypingLevelNamesStore>();
+        services.AddSingleton<ITestStatisticStore, TestStatisticStore>();
 
         services.AddTransient<IInitializable, DatabaseInitializer>();
+        services.AddMemoryCache();
+        
+        
+        if (!IsDatabaseExists(services))
+        {
+            services.AddSingleton<CultureDataProvider>();
+            services.AddSingleton<TypingTextsDataProvider>();
+            services.AddSingleton<TypingLevelsDataProvider>();
 
-        if (IsDatabaseExists(services))
-            return services;
-
-        services.AddSingleton<CultureDataProvider>();
-        services.AddSingleton<TypingTextsDataProvider>();
-        services.AddSingleton<TypingLevelsDataProvider>();
-
-        services.AddTransient<IInitializable, CultureStoreInitializer>();
-        services.AddTransient<IInitializable, TypingLevelStoreInitializer>();
-        services.AddTransient<IInitializable, TypingTextStoreInitializer>();
+            services.AddTransient<IInitializable, CultureStoreInitializer>();
+            services.AddTransient<IInitializable, TypingLevelStoreInitializer>();
+            services.AddTransient<IInitializable, TypingTextStoreInitializer>();
+        }
 
         return services;
     }

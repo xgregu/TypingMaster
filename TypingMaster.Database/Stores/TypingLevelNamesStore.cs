@@ -13,10 +13,8 @@ public class TypingLevelNamesStore(ILogger<TypingLevelNamesStore> logger, IDbCon
         logger.LogInformation("GetAllAsync");
 
         await using var dbContext = await dbFactory.CreateDbContextAsync();
-        return await dbContext.TypingLevelName
-            .AsNoTracking()
-            .Include(x => x.Culture)
-            .Include(x => x.TypingLevel)
+        var entitiesQuerabe = GetAllQuerable(dbContext);
+        return await entitiesQuerabe
             .Where(x => EF.Functions.Like(x.Culture.CultureCode, cultureCode))
             .ToListAsync();
     }

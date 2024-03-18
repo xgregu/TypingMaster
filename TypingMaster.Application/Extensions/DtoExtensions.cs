@@ -3,14 +3,6 @@ using TypingMaster.Shared.Dtos;
 
 namespace TypingMaster.Application.Extensions;
 
-public static class TypingLevelDtoExtensions
-{
-    public static TypingLevelDto ToDto(this TypingLevelEntity entity, string levelName)
-    {
-        return new TypingLevelDto(entity.DifficultyLevel, levelName);
-    }
-}
-
 public static class TypingTestDtoExtensions
 {
     public static TypingTestDto ToDto(this TypingTestEntity entity)

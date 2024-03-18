@@ -1,10 +1,7 @@
 ﻿using System.Globalization;
+using System.Diagnostics;
 
 namespace TypingMaster.Middlewares;
-
-using Microsoft.AspNetCore.Http;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 public class RequestTimingMiddleware(RequestDelegate next)
 {

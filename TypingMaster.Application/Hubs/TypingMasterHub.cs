@@ -5,7 +5,7 @@ using TypingMaster.Application.Events;
 
 namespace TypingMaster.Application.Hubs;
 
-public class TypingMasterHub(ILogger<TypingMasterHub> logger) : Hub<ITypingMasterClient>, INotificationHandler<TestUpdatedEvent>
+public class TypingMasterHub(ILogger<TypingMasterHub> logger) : Hub<ITypingMasterClient>
 {
     public override async Task OnConnectedAsync()
     {
@@ -17,10 +17,5 @@ public class TypingMasterHub(ILogger<TypingMasterHub> logger) : Hub<ITypingMaste
     {
         logger.LogInformation(exception, "Client disconnected {Id}", Context.ConnectionId);
         return base.OnDisconnectedAsync(exception);
-    }
-
-    public Task Handle(TestUpdatedEvent notification, CancellationToken cancellationToken)
-    {
-        return Clients.All.TestChanged();
     }
 }

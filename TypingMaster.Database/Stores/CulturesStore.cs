@@ -5,5 +5,6 @@ using TypingMaster.Domain.Interfaces;
 
 namespace TypingMaster.Database.Stores;
 
-public class CulturesStore(ILogger<CulturesStore> logger, IDbContextFactory<TestDbContext> dbFactory)
-    : BaseRepository<CultureEntity>(logger, dbFactory), ICulturesStore;
+public class CulturesStore
+    (ILogger<CulturesStore> logger, IDbContextFactory<TestDbContext> dbFactory) : BaseRepository<CultureEntity>(logger,
+        dbFactory), ICulturesStore;

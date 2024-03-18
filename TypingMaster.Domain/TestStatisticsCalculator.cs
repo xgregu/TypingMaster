@@ -13,8 +13,6 @@ public interface ITestStatisticsCalculator
 public class TestStatisticsCalculator(ILogger<TestStatisticsCalculator> logger, ITypingTextsStore typingTextsStore)
     : ITestStatisticsCalculator
 {
-    private readonly ILogger<TestStatisticsCalculator> _logger = logger;
-
     public async Task<TypingTestStatisticsEntity> GetTestStatistic(CreateTestRequest createTest)
     {
         var textEntity = await typingTextsStore.GetByIdAsync(createTest.TextId);
