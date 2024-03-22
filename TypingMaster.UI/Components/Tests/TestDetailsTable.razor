@@ -1,10 +1,38 @@
 ﻿@inject ApiClient ApiClient
 @inject ICultureContext CultureContext
 
+<style>
+    .background-table {
+        position: relative;
+        border-radius: 10px;
+        padding: 10px;
+    }
+    
+    .background-table:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-image: url('@BackgroundPath');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 10px;
+        opacity: 0.3;
+    }
+    
+    .table-content {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
 @if (Test is not null)
 {
-    <table class="table table-striped table-responsive">
-        <tbody>
+    <table class="table table-striped table-responsive @(string.IsNullOrWhiteSpace(BackgroundPath) ? string.Empty : "background-table")">
+        <tbody class="table-content">
         <tr>
             <td>@Localizer["Ranking"]</td>
             <td>
@@ -53,6 +81,8 @@
 }
 
 @code {
+    private string BackgroundPath => GetBackgroundPath();
+
     private TimeSpan CompletionTime => TimeSpan.FromMilliseconds(Test?.Statistics.CompletionTimeMilliseconds ?? 0);
     private CancellationTokenSource _cts = new();
 
@@ -67,5 +97,16 @@
     [Parameter]
     [EditorRequired]
     public TypingTestDto? Test { get; set; }
+
+    private string GetBackgroundPath()
+    {
+        return TestRanking switch
+        {
+            1 => "medal_gold.png",
+            2 => "medal_silver.png",
+            3 => "medal_bronze.png",
+            _ => string.Empty
+            };
+    }
 
 }
